@@ -1,0 +1,9 @@
+{
+  "name": "ai-proxy",
+  "description": "DeepSeek API 云代理",
+  "config": {
+    "permissions": {
+      "openapi": []
+    }
+  }
+}

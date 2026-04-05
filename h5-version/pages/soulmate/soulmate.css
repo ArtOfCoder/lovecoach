@@ -1,0 +1,720 @@
+/* H5版本 灵魂伴侣页面样式 */
+
+.soulmate-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding-bottom: 40px;
+}
+
+.step-section {
+  padding: 20px 16px;
+}
+
+/* 头部装饰 */
+.header-deco {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.star-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
+}
+
+.big-star {
+  font-size: 60px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 2s infinite;
+}
+
+.zodiac-float {
+  position: absolute;
+  font-size: 24px;
+  opacity: 0.6;
+}
+
+.z1 { top: 0; left: 50%; transform: translateX(-50%); }
+.z2 { top: 50%; right: 0; transform: translateY(-50%); }
+.z3 { bottom: 0; left: 50%; transform: translateX(-50%); }
+.z4 { top: 50%; left: 0; transform: translateY(-50%); }
+
+.header-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.header-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+}
+
+/* 表单卡片 */
+.form-card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.optional-tag {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* 性别选择 */
+.gender-row {
+  display: flex;
+  gap: 12px;
+}
+
+.gender-opt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+
+.gender-opt:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+.gender-opt.active {
+  background: rgba(255,107,138,0.3);
+  border-color: #FF6B8A;
+}
+
+.gender-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.gender-text {
+  font-size: 14px;
+  color: white;
+}
+
+/* 日期输入 */
+.date-row {
+  display: flex;
+  gap: 8px;
+}
+
+.date-input-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 0 12px;
+}
+
+.date-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 12px 0;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  text-align: center;
+}
+
+.date-input::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+
+.date-unit {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  margin-left: 4px;
+}
+
+/* 城市输入 */
+.city-input-wrap {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 0 12px;
+}
+
+.city-icon {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.city-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 14px 0;
+  color: white;
+  font-size: 14px;
+  outline: none;
+}
+
+.city-input::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+
+/* 表单提示 */
+.form-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(255,215,0,0.1);
+  border-radius: 10px;
+}
+
+.form-tip-icon {
+  font-size: 18px;
+}
+
+.form-tip-text {
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.5;
+}
+
+/* 生成按钮 */
+.generate-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #FF6B8A 0%, #FF8E53 100%);
+  padding: 16px;
+  border-radius: 30px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(255,107,138,0.4);
+  transition: transform 0.2s;
+}
+
+.generate-btn:hover {
+  transform: translateY(-2px);
+}
+
+.generate-btn-icon {
+  font-size: 20px;
+}
+
+.generate-btn-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+}
+
+/* 底部说明 */
+.bottom-note {
+  text-align: center;
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.bottom-note-sub {
+  display: block;
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 4px;
+}
+
+.ai-disclaimer {
+  text-align: center;
+  padding: 12px;
+}
+
+.ai-disclaimer-text {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* 加载中 */
+.loading-cosmos {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 60px auto 40px;
+}
+
+.cosmos-ring {
+  position: absolute;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+}
+
+.ring1 {
+  width: 200px;
+  height: 200px;
+  top: 0;
+  left: 0;
+  animation: rotate 8s linear infinite;
+}
+
+.ring2 {
+  width: 140px;
+  height: 140px;
+  top: 30px;
+  left: 30px;
+  animation: rotate 6s linear infinite reverse;
+}
+
+.ring3 {
+  width: 80px;
+  height: 80px;
+  top: 60px;
+  left: 60px;
+  animation: rotate 4s linear infinite;
+}
+
+.orbit-star {
+  position: absolute;
+  font-size: 20px;
+}
+
+.s1 { top: -10px; left: 50%; transform: translateX(-50%); }
+.s2 { bottom: -10px; left: 50%; transform: translateX(-50%); }
+.s3 { top: 50%; right: -10px; transform: translateY(-50%); }
+
+.cosmos-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  text-align: center;
+  font-size: 16px;
+  color: white;
+  margin-bottom: 30px;
+}
+
+.loading-steps {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ls-dot {
+  width: 10px;
+  height: 10px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.ls-dot.done {
+  background: #FF6B8A;
+  box-shadow: 0 0 10px #FF6B8A;
+}
+
+/* 结果页 */
+.astro-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.astro-tag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+}
+
+.at-symbol {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.at-name {
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+}
+
+.astro-divider {
+  font-size: 20px;
+  color: rgba(255,255,255,0.4);
+}
+
+/* 灵魂伴侣卡片 */
+.soulmate-card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.sm-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.sm-subtitle {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* 头像区域 */
+.avatar-zone {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.avatar-blur-wrap {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.blur-avatar-gradient {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #FF6B8A 0%, #FF8E53 100%);
+  filter: blur(25px);
+}
+
+.unlock-mask-light {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+}
+
+.um-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.um-lock-small {
+  font-size: 16px;
+}
+
+.um-title-small {
+  font-size: 12px;
+  color: white;
+}
+
+.um-price-small {
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFD700;
+}
+
+.avatar-unlocked-wrap {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.unlocked-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.unlocked-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.6);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  color: #FFD700;
+}
+
+.longpress-hint {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+}
+
+/* 描述 */
+.sm-desc-wrap {
+  position: relative;
+  padding: 20px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.sm-desc-quote {
+  font-size: 40px;
+  color: rgba(255,255,255,0.2);
+  line-height: 1;
+}
+
+.sm-desc-quote.end-quote {
+  text-align: right;
+}
+
+.sm-desc {
+  font-size: 15px;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.8;
+  text-align: center;
+  padding: 0 20px;
+}
+
+/* 星盘详情 */
+.astro-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ad-item {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+}
+
+.ad-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 4px;
+}
+
+.ad-value {
+  font-size: 14px;
+  color: white;
+}
+
+.ad-highlight {
+  color: #FFD700;
+  font-weight: 600;
+}
+
+/* 打赏区域 */
+.pay-section {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+.pay-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.pay-section-icon {
+  font-size: 24px;
+}
+
+.pay-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+}
+
+.pay-price-wrap {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.pay-price-currency {
+  font-size: 24px;
+  color: #FFD700;
+}
+
+.pay-price-value {
+  font-size: 48px;
+  font-weight: bold;
+  color: #FFD700;
+}
+
+.pay-price-unit {
+  font-size: 16px;
+  color: rgba(255,255,255,0.6);
+}
+
+.pay-benefits {
+  margin-bottom: 24px;
+}
+
+.pay-benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+}
+
+/* 二维码区域 */
+.pay-qr-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.pay-qr-title {
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 12px;
+}
+
+.pay-qr-wrap {
+  position: relative;
+  display: inline-block;
+  padding: 12px;
+  background: white;
+  border-radius: 12px;
+}
+
+.pay-qr-image {
+  width: 180px;
+  height: 180px;
+  display: block;
+}
+
+.pay-qr-hint {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 8px;
+}
+
+/* 用户ID */
+.user-id-section {
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.user-id-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 8px;
+}
+
+.user-id-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #FFD700;
+  font-family: monospace;
+  margin-bottom: 8px;
+}
+
+.user-id-hint {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* 打赏说明 */
+.pay-notice {
+  text-align: center;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.pay-notice-text {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+}
+
+/* 已解锁操作 */
+.unlocked-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ua-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+}
+
+.ua-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* 重新测算 */
+.regen-btn {
+  text-align: center;
+  padding: 16px;
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.regen-btn:hover {
+  color: white;
+}

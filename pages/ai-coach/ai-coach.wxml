@@ -1,0 +1,196 @@
+<!-- pages/ai-coach/ai-coach.wxml - 恋爱顾问 -->
+<view class="page-wrap">
+
+  <!-- 顶部 -->
+  <view class="ai-header gradient-bg-purple">
+    <view class="ai-header-avatar">💕</view>
+    <view class="ai-header-info">
+      <view class="ai-header-name">恋爱顾问 · 小爱</view>
+      <view class="ai-header-status">
+        <view class="status-dot"></view>
+        <text>在线回答</text>
+      </view>
+    </view>
+    <view class="ai-header-actions">
+      <view class="action-btn" bindtap="clearChat">清空</view>
+    </view>
+  </view>
+
+  <!-- 模式选择条 -->
+  <view class="mode-bar">
+    <view
+      class="mode-item {{currentMode === item.id ? 'active' : ''}}"
+      wx:for="{{modes}}"
+      wx:key="id"
+      bindtap="switchMode"
+      data-id="{{item.id}}"
+    >
+      <text>{{item.icon}}</text>
+      <text> {{item.name}}</text>
+    </view>
+  </view>
+
+  <!-- 快捷问题（无消息时显示） -->
+  <view class="quick-panel" wx:if="{{messages.length === 0}}">
+
+    <!-- 角色练习模式：场景选择 -->
+    <view wx:if="{{currentMode === 'practice'}}">
+      <view class="quick-panel-title">🎭 选择练习场景（自动生成剧本）</view>
+      <view class="scene-grid">
+        <view
+          class="scene-card {{selectedScene === item.id ? 'selected' : ''}}"
+          wx:for="{{practiceScenes}}"
+          wx:key="id"
+          bindtap="selectScene"
+          data-id="{{item.id}}"
+        >
+          <view class="scene-icon">{{item.icon}}</view>
+          <view class="scene-title">{{item.title}}</view>
+          <view class="scene-desc">{{item.desc}}</view>
+        </view>
+      </view>
+      <view class="scene-actions" wx:if="{{selectedScene}}">
+        <view class="btn-primary" bindtap="generatePracticeScenario">生成剧本开始练习</view>
+      </view>
+    </view>
+
+    <!-- 其他模式：快捷问题 -->
+    <view wx:elif="{{currentMode !== 'practice'}}">
+      <view class="quick-panel-title">💬 你可以这样问我</view>
+      <view class="quick-panel-grid">
+        <view
+          class="quick-chip"
+          wx:for="{{quickQuestions}}"
+          wx:key="*this"
+          bindtap="sendQuick"
+          data-q="{{item}}"
+        >{{item}}</view>
+      </view>
+    </view>
+    <!-- 情绪入口 -->
+    <view class="mood-section">
+      <view class="mood-title">今天心情如何？</view>
+      <view class="mood-row">
+        <view
+          class="mood-item {{currentMood === item.id ? 'selected' : ''}}"
+          wx:for="{{moods}}"
+          wx:key="id"
+          bindtap="selectMood"
+          data-id="{{item.id}}"
+          data-label="{{item.label}}"
+        >
+          <view class="mood-emoji">{{item.emoji}}</view>
+          <view class="mood-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 对话区 -->
+  <scroll-view
+    scroll-y
+    class="chat-scroll"
+    scroll-into-view="{{scrollToId}}"
+    scroll-with-animation
+    enhanced
+    bounces
+  >
+    <view class="chat-inner">
+
+      <!-- 消息列表 -->
+      <view wx:for="{{messages}}" wx:key="id" id="msg-{{item.id}}" class="msg-wrapper">
+
+        <!-- 时间戳 -->
+        <view wx:if="{{item.showTime}}" class="time-stamp">{{item.timeStr}}</view>
+
+        <!-- 顾问消息 -->
+        <view class="msg-row ai-row" wx:if="{{item.role === 'assistant' || item.role === 'ai'}}">
+          <view class="ai-ava">💕</view>
+          <view class="msg-col">
+            <view class="ai-bubble" bindlongpress="copyMessage" data-text="{{item.content}}">
+              <!-- 打字机效果：显示逐字内容 -->
+              <view class="msg-text">{{item.displayContent}}</view>
+              <!-- 情感标签 -->
+              <view wx:if="{{item.emotionTag}}" class="emotion-tag">
+                {{item.emotionTag}}
+              </view>
+            </view>
+            <!-- 追问按钮 -->
+            <view wx:if="{{item.suggestions && item.suggestions.length > 0}}" class="suggestions-row">
+              <view
+                class="suggest-chip"
+                wx:for="{{item.suggestions}}"
+                wx:for-item="s"
+                wx:key="*this"
+                bindtap="clickSuggestion"
+                data-q="{{s}}"
+              >{{s}}</view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 用户消息 -->
+        <view class="msg-row user-row" wx:if="{{item.role === 'user'}}">
+          <view class="user-bubble">
+            <view class="msg-text">{{item.content}}</view>
+          </view>
+        </view>
+
+      </view>
+
+      <!-- 打字中动画 -->
+      <view class="msg-row ai-row typing-row" wx:if="{{isTyping}}">
+        <view class="ai-ava">💕</view>
+        <view class="ai-bubble typing-bubble">
+          <view class="typing-dots">
+            <view class="dot"></view>
+            <view class="dot"></view>
+            <view class="dot"></view>
+          </view>
+        </view>
+      </view>
+
+        <!-- 顶部模式/状态提示 -->
+        <view wx:if="{{aiStatus==='thinking'}}" class="ai-thinking-row">
+          <view class="ai-ava">💕</view>
+          <view class="ai-thinking-text">思考中<view class="thinking-dots"><view class="dot"></view><view class="dot"></view><view class="dot"></view></view></view>
+        </view>
+
+      <view id="scroll-bottom" style="height:16rpx;"></view>
+    </view>
+  </scroll-view>
+
+  <!-- 免责声明 -->
+  <view class="ai-footer-notice">
+    <text>本功能基于本地知识库提供建议，仅供学习参考</text>
+  </view>
+
+  <!-- 输入区 -->
+  <view class="input-area">
+    <!-- 工具栏 -->
+    <view class="input-toolbar">
+      <view class="tool-btn" bindtap="insertTemplate" data-type="situation">📍 说说情况</view>
+      <view class="tool-btn" bindtap="insertTemplate" data-type="feeling">💭 表达感受</view>
+      <view class="tool-btn" bindtap="insertTemplate" data-type="help">🙋 需要建议</view>
+    </view>
+    <view class="input-row">
+      <input
+        class="chat-input"
+        placeholder="把你的情况告诉我..."
+        placeholder-style="color:#bbb;font-size:28rpx;"
+        value="{{inputText}}"
+        bindinput="onInput"
+        confirm-type="send"
+        bindconfirm="sendMessage"
+        adjust-position
+        cursor-spacing="20"
+        maxlength="500"
+      />
+      <view class="send-btn {{inputText.length > 0 ? 'active' : ''}}" bindtap="sendMessage">
+        <text wx:if="{{!isTyping}}">发送</text>
+        <text wx:if="{{isTyping}}">...</text>
+      </view>
+    </view>
+  </view>
+
+</view>

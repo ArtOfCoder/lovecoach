@@ -1,0 +1,118 @@
+<!-- pages/course/course.wxml -->
+<view class="container">
+
+  <!-- 顶部 -->
+  <view class="header gradient-bg">
+    <view class="header-title">恋爱课程 📚</view>
+    <view class="header-sub">从入门到高手，系统提升你的情感能力</view>
+  </view>
+
+  <!-- 性别筛选 -->
+  <view class="filter-bar">
+    <view
+      class="filter-tab {{genderFilter === 'all' ? 'active' : ''}}"
+      bindtap="setFilter" data-type="gender" data-val="all">全部</view>
+    <view
+      class="filter-tab {{genderFilter === 'male' ? 'active' : ''}}"
+      bindtap="setFilter" data-type="gender" data-val="male">👦 男生</view>
+    <view
+      class="filter-tab {{genderFilter === 'female' ? 'active' : ''}}"
+      bindtap="setFilter" data-type="gender" data-val="female">👧 女生</view>
+  </view>
+
+  <!-- 分类标签 -->
+  <scroll-view scroll-x class="cat-scroll">
+    <view class="cat-inner">
+      <view
+        wx:for="{{categories}}"
+        wx:key="*this"
+        class="cat-tag {{activeCategory === item ? 'cat-active' : ''}}"
+        bindtap="setCategory" data-cat="{{item}}">{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- AI 生成课程入口 -->
+  <view class="ai-course-banner" bindtap="generateNewCourses">
+    <view class="acb-left">
+      <view class="acb-icon">🤖</view>
+      <view class="acb-text">
+        <view class="acb-title">{{generatingNew ? 'AI 正在生成课程...' : 'AI 智能生成新课程'}}</view>
+        <view class="acb-sub">{{generatingNew ? '请稍候，正在为你定制...' : '根据当前筛选，AI 为你生成专属课程'}}</view>
+      </view>
+    </view>
+    <view class="acb-btn {{generatingNew ? 'acb-loading' : ''}}">
+      {{generatingNew ? '...' : '生成 →'}}
+    </view>
+  </view>
+
+  <!-- AI 生成课程区 -->
+  <view wx:if="{{showAISection && aiCourses.length > 0}}" class="ai-section">
+    <view class="ai-section-head">
+      <view class="ai-section-title">✨ AI 为你生成的课程</view>
+      <view class="ai-section-clear" bindtap="clearAICourses">清除</view>
+    </view>
+    <view
+      class="course-item card ai-course-card"
+      wx:for="{{aiCourses}}"
+      wx:key="id"
+      bindtap="goToDetail"
+      data-id="{{item.id}}"
+    >
+      <view class="item-cover" style="background:linear-gradient(135deg,#4F8EF7,#6C63FF)">
+        <text class="item-emoji">🤖</text>
+        <view class="free-badge">AI</view>
+      </view>
+      <view class="item-info">
+        <view class="item-top">
+          <text class="tag tag-ai">{{item.category}}</text>
+        </view>
+        <view class="item-title">{{item.title}}</view>
+        <view class="item-desc">{{item.desc}}</view>
+        <view class="item-footer">
+          <text class="item-duration">🤖 AI 生成内容</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 课程列表 -->
+  <view class="section-title-row">
+    <view class="section-ttl-txt">📚 精选课程</view>
+  </view>
+  <view class="course-list">
+    <view
+      class="course-item card"
+      wx:for="{{filteredCourses}}"
+      wx:key="id"
+      bindtap="goToDetail"
+      data-id="{{item.id}}"
+    >
+      <view class="item-cover" style="background:{{item.coverBg}}">
+        <text class="item-emoji">{{item.cover}}</text>
+        <view wx:if="{{item.isFree}}" class="free-badge">免费</view>
+        <view wx:if="{{learnedMap[item.id]}}" class="done-badge">✓</view>
+        <view wx:if="{{item.hot}}" class="hot-badge">🔥</view>
+      </view>
+      <view class="item-info">
+        <view class="item-top">
+          <text class="tag tag-pink">{{item.category}}</text>
+          <text class="item-gender-tag" style="color:{{item.gender==='male'?'#3b82f6':item.gender==='female'?'#ec4899':'#8b5cf6'}}">
+            {{item.gender === 'male' ? '👦男生' : item.gender === 'female' ? '👧女生' : '💑通用'}}
+          </text>
+        </view>
+        <view class="item-title">{{item.title}}</view>
+        <view class="item-desc">{{item.desc}}</view>
+        <view class="item-footer">
+          <text class="item-duration">⏱ {{item.duration}}</text>
+          <text class="item-views">👁 {{item.views}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{filteredCourses.length === 0}}" class="empty">
+      <text>暂无相关课程</text>
+    </view>
+  </view>
+
+  <view style="height:40rpx"></view>
+</view>

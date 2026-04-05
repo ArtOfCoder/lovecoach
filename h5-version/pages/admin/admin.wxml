@@ -1,0 +1,298 @@
+<!-- pages/admin/admin.wxml - 管理后台（本地存储模式） -->
+<view class="admin-page">
+
+  <!-- 登录页 -->
+  <view wx:if="{{!isLogin}}" class="login-section">
+    <view class="login-card">
+      <view class="login-title">🔒 管理后台</view>
+      <view class="login-subtitle">请输入管理员密码</view>
+      <input 
+        class="password-input" 
+        type="password" 
+        placeholder="请输入密码"
+        value="{{password}}"
+        bindinput="onPasswordInput"
+      />
+      <view class="login-btn" bindtap="login">登录</view>
+    </view>
+  </view>
+
+  <!-- 管理面板 -->
+  <view wx:if="{{isLogin}}" class="admin-panel">
+
+    <!-- 标签切换 -->
+    <view class="tab-bar">
+      <view class="tab-item {{activeTab === 'unlock' ? 'active' : ''}}" bindtap="switchTab" data-tab="unlock">
+        <text>🔓 解锁</text>
+      </view>
+      <view class="tab-item {{activeTab === 'payments' ? 'active' : ''}}" bindtap="switchTab" data-tab="payments">
+        <text>💰 支付</text>
+        <text wx:if="{{paymentRecords.length > 0}}" class="tab-badge">{{paymentRecords.length}}</text>
+      </view>
+      <view class="tab-item {{activeTab === 'stats' ? 'active' : ''}}" bindtap="switchTab" data-tab="stats">
+        <text>📊 统计</text>
+      </view>
+      <view class="tab-item {{activeTab === 'soulmate' ? 'active' : ''}}" bindtap="switchTab" data-tab="soulmate">
+        <text>👤 生图</text>
+      </view>
+      <view class="tab-item {{activeTab === 'banned' ? 'active' : ''}}" bindtap="switchTab" data-tab="banned">
+        <text>🚫 黑名单</text>
+      </view>
+    </view>
+
+    <!-- 操作栏 -->
+    <view class="action-bar">
+      <view class="action-btn refresh" bindtap="loadData">
+        <text>🔄 刷新</text>
+      </view>
+      <view class="action-btn logout" bindtap="logout">
+        <text>退出</text>
+      </view>
+    </view>
+
+    <!-- 手动解锁页面 -->
+    <view wx:if="{{activeTab === 'unlock'}}" class="unlock-section">
+      <view class="section-title">🔓 手动解锁用户</view>
+      
+      <view class="unlock-card">
+        <view class="unlock-desc">
+          <text>用户支付后，会提供他们的用户ID给你。</text>
+          <text>在此输入用户ID并确认解锁灵魂伴侣生图功能。</text>
+        </view>
+        
+        <input 
+          class="unlock-input" 
+          type="text" 
+          placeholder="请输入用户ID（如：u_abc123）"
+          value="{{unlockUserId}}"
+          bindinput="onUnlockUserIdInput"
+        />
+        
+        <view class="unlock-actions">
+          <view class="unlock-btn primary" bindtap="unlockByUserId">
+            <text>✅ 确认解锁</text>
+          </view>
+          <view class="unlock-btn secondary" bindtap="checkUserUnlockStatus">
+            <text>🔍 查询状态</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 最近解锁记录 -->
+      <view class="section-title" style="margin-top: 40rpx;">最近解锁记录</view>
+      
+      <view wx:if="{{recentUnlocks.length === 0}}" class="empty-state">
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">暂无解锁记录</text>
+      </view>
+
+      <view wx:for="{{recentUnlocks}}" wx:key="index" class="unlock-record-item">
+        <view class="unlock-record-id">{{item.userId}}</view>
+        <view class="unlock-record-time">{{item.formattedTime}}</view>
+        <view class="unlock-record-type" wx:if="{{item.type === 'soulmate'}}">生图</view>
+      </view>
+
+      <!-- 使用说明 -->
+      <view class="unlock-tips">
+        <view class="unlock-tip-title">💡 使用说明</view>
+        <view class="unlock-tip-item">1. 用户长按二维码支付 ¥9.9</view>
+        <view class="unlock-tip-item">2. 用户添加微信 news-tomato</view>
+        <view class="unlock-tip-item">3. 用户发送用户ID给你</view>
+        <view class="unlock-tip-item">4. 在此输入用户ID并确认解锁</view>
+        <view class="unlock-tip-item">5. 告诉用户"已解锁，请退出小程序重新进入"</view>
+      </view>
+    </view>
+
+    <!-- 灵魂伴侣生图解锁管理 -->
+    <view wx:if="{{activeTab === 'soulmate'}}" class="soulmate-section">
+      <view class="section-title">👤 灵魂伴侣解锁管理</view>
+      
+      <view class="stats-card">
+        <view class="stats-item">
+          <text class="stats-number">{{soulmateUnlocks.length}}</text>
+          <text class="stats-label">已解锁用户</text>
+        </view>
+      </view>
+      
+      <view wx:if="{{soulmateUnlocks.length === 0}}" class="empty-state">
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">暂无解锁记录</text>
+      </view>
+
+      <view wx:for="{{soulmateUnlocks}}" wx:key="index" class="soulmate-item">
+        <view class="soulmate-header">
+          <text class="soulmate-id">{{item.userId}}</text>
+          <view class="soulmate-tags">
+            <text class="tag unlock-type">{{item.unlockType === 'manual' ? '人工' : '自动'}}</text>
+          </view>
+        </view>
+        <view class="soulmate-info">
+          <text>解锁时间：{{item.formattedTime}}</text>
+        </view>
+        <view class="soulmate-actions">
+          <view class="revoke-btn" bindtap="revokeUnlock" data-userid="{{item.userId}}">
+            <text>❌ 取消解锁</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- OCR识别记录 -->
+    <view wx:if="{{activeTab === 'ocr'}}" class="ocr-section">
+      <view class="section-title">📸 OCR识别记录</view>
+      
+      <view class="stats-card">
+        <view class="stats-item">
+          <text class="stats-number">{{ocrRecords.length}}</text>
+          <text class="stats-label">识别记录</text>
+        </view>
+      </view>
+      
+      <view wx:if="{{ocrRecords.length === 0}}" class="empty-state">
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">暂无OCR识别记录</text>
+      </view>
+
+      <view wx:for="{{ocrRecords}}" wx:key="index" class="ocr-item">
+        <view class="ocr-header">
+          <text class="ocr-user">用户: {{item.userId || '未知'}}</text>
+          <text class="ocr-time">{{item.date}}</text>
+        </view>
+        <view class="ocr-text">
+          <text>{{item.text}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 黑名单列表 -->
+    <view wx:if="{{activeTab === 'banned'}}" class="banned-section">
+      <view class="section-title">黑名单管理</view>
+      
+      <!-- 添加黑名单按钮 -->
+      <view class="add-ban-btn" bindtap="addToBanned">
+        <text>➕ 手动添加黑名单</text>
+      </view>
+      
+      <!-- 封禁输入弹窗 -->
+      <view wx:if="{{showBanInput}}" class="ban-input-modal">
+        <view class="ban-input-mask" bindtap="cancelBan"></view>
+        <view class="ban-input-content">
+          <view class="ban-input-title">输入用户ID</view>
+          <input 
+            class="ban-input" 
+            type="text" 
+            placeholder="请输入要封禁的用户ID"
+            value="{{banInputValue}}"
+            bindinput="onBanInputChange"
+            focus
+          />
+          <view class="ban-input-actions">
+            <view class="ban-input-btn cancel" bindtap="cancelBan">取消</view>
+            <view class="ban-input-btn confirm" bindtap="confirmBan">确认封禁</view>
+          </view>
+        </view>
+      </view>
+      
+      <view wx:if="{{bannedUsers.length === 0}}" class="empty-state">
+        <text class="empty-icon">✅</text>
+        <text class="empty-text">暂无封禁用户</text>
+      </view>
+
+      <view wx:for="{{bannedUsers}}" wx:key="index" class="banned-item">
+        <view class="banned-header">
+          <text class="banned-id">{{item.userId}}</text>
+          <text class="banned-tag">已封禁</text>
+        </view>
+        <view class="banned-info">
+          <text>封禁时间：{{item.formattedTime || '-'}}</text>
+        </view>
+        <view class="banned-reason" wx:if="{{item.banReason}}">
+          <text>原因：{{item.banReason}}</text>
+        </view>
+        <view class="banned-actions">
+          <view class="unban-btn" bindtap="unbanUser" data-userid="{{item.userId}}">
+            <text>✓ 解封</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 支付记录页面 -->
+    <view wx:if="{{activeTab === 'payments'}}" class="payments-section">
+      <view class="section-title">💰 支付记录</view>
+      
+      <view class="stats-card" wx:if="{{adminStats}}">
+        <view class="stats-item">
+          <text class="stats-number">{{paymentRecords.length}}</text>
+          <text class="stats-label">总支付</text>
+        </view>
+        <view class="stats-item">
+          <text class="stats-number">¥{{totalRevenue}}</text>
+          <text class="stats-label">总收入</text>
+        </view>
+      </view>
+      
+      <view wx:if="{{paymentRecords.length === 0}}" class="empty-state">
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">暂无支付记录</text>
+      </view>
+
+      <view wx:for="{{paymentRecords}}" wx:key="orderId" class="payment-item">
+        <view class="payment-header">
+          <text class="payment-order">{{item.orderId}}</text>
+          <text class="payment-amount">¥{{item.amount}}</text>
+        </view>
+        <view class="payment-info">
+          <text>用户: {{item.userInfo.nickName || '未知'}}</text>
+          <text>时间: {{item.formattedTime}}</text>
+        </view>
+        <view class="payment-status">
+          <text class="status-tag {{item.status}}">{{item.statusText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 统计数据页面 -->
+    <view wx:if="{{activeTab === 'stats'}}" class="stats-section">
+      <view class="section-title">📊 访问统计</view>
+      
+      <view wx:if="{{adminStats}}" class="stats-grid">
+        <view class="stats-card-item">
+          <text class="stats-number">{{adminStats.totalVisits}}</text>
+          <text class="stats-label">总访问</text>
+        </view>
+        <view class="stats-card-item">
+          <text class="stats-number">{{adminStats.uniqueUsers}}</text>
+          <text class="stats-label">独立用户</text>
+        </view>
+        <view class="stats-card-item">
+          <text class="stats-number">{{adminStats.todayVisits}}</text>
+          <text class="stats-label">今日访问</text>
+        </view>
+      </view>
+
+      <view class="section-title" style="margin-top: 40rpx;">最近行为日志</view>
+      
+      <view wx:if="{{behaviorLogs.length === 0}}" class="empty-state">
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">暂无行为日志</text>
+      </view>
+
+      <view wx:for="{{behaviorLogs}}" wx:key="id" class="log-item">
+        <view class="log-header">
+          <text class="log-action">{{item.action}}</text>
+          <text class="log-time">{{item.formattedTime}}</text>
+        </view>
+        <view class="log-user" wx:if="{{item.user}}">
+          <text>用户: {{item.user.nickname}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部提示 -->
+    <view class="admin-footer">
+      <text>数据仅保存在本地，换设备或清缓存会丢失</text>
+    </view>
+  </view>
+
+</view>

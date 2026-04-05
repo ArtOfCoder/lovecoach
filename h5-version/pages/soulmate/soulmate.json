@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "灵魂伴侣",
+  "navigationBarBackgroundColor": "#1a1a2e",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#1a1a2e",
+  "disableScroll": false,
+  "usingComponents": {},
+  "initialRenderingCache": "static",
+  "componentPlaceholder": {}
+}

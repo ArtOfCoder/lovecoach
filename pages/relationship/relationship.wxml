@@ -1,0 +1,96 @@
+<!-- 关系进度评估页 -->
+<view class="page-wrap">
+  <!-- 标题区 -->
+  <view class="top-banner">
+    <text class="banner-icon">{{typeInfo.icon}}</text>
+    <text class="banner-title">{{typeInfo.title}}</text>
+    <text class="banner-sub">{{typeInfo.sub}}</text>
+  </view>
+
+  <!-- 答题阶段 -->
+  <block wx:if="{{!showResult}}">
+    <view class="progress-bar-wrap">
+      <view class="progress-bar" style="width: {{(currentQ / totalQ) * 100}}%"></view>
+    </view>
+    <text class="progress-text">{{currentQ + 1}} / {{totalQ}}</text>
+
+    <view class="question-card">
+      <text class="question-text">{{questions[currentQ].q}}</text>
+      <text class="question-hint">参考标准：{{questions[currentQ].threshold}}</text>
+    </view>
+
+    <view class="answer-btns">
+      <view class="answer-btn yes" bindtap="answer" data-val="yes">✅ 是的，符合</view>
+      <view class="answer-btn no" bindtap="answer" data-val="no">❌ 还不符合</view>
+      <view class="answer-btn partial" bindtap="answer" data-val="partial">🤔 部分符合</view>
+    </view>
+  </block>
+
+  <!-- 结果阶段 -->
+  <block wx:else>
+    <view class="result-card">
+      <text class="result-emoji">{{resultEmoji}}</text>
+      <text class="result-title">{{resultTitle}}</text>
+      <view class="score-ring">
+        <text class="score-num">{{score}}</text>
+        <text class="score-label">准备度</text>
+      </view>
+      <text class="result-desc">{{resultDesc}}</text>
+    </view>
+
+    <!-- 详细分析 -->
+    <view class="advice-section">
+      <text class="advice-section-title">💡 详细分析</text>
+      <view wx:for="{{resultDetails}}" wx:key="index" class="detail-item">
+        <text class="detail-icon">{{item.pass ? '✅' : '⚠️'}}</text>
+        <view class="detail-content">
+          <text class="detail-q">{{item.q}}</text>
+          <text class="detail-status {{item.pass ? 'pass' : 'fail'}}">{{item.pass ? '已满足' : '建议关注'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- AI 综合评估（动态） -->
+    <view class="ai-summary-section" wx:if="{{aiLoading || aiSummary}}">
+      <view class="ai-summary-header">
+        <text class="ai-summary-icon">🤖</text>
+        <text class="ai-summary-title">AI 个性化解读</text>
+      </view>
+      <view wx:if="{{aiLoading}}" class="ai-loading-row">
+        <view class="ai-dot"></view>
+        <view class="ai-dot"></view>
+        <view class="ai-dot"></view>
+        <text class="ai-loading-text">AI 正在结合你的情况分析...</text>
+      </view>
+      <view wx:else class="ai-summary-body">
+        <text class="ai-summary-text">{{aiSummary}}</text>
+      </view>
+    </view>
+
+    <!-- 下一步建议 -->
+    <view class="next-section">
+      <view class="next-header-row">
+        <text class="next-title">📋 下一步建议</text>
+        <text wx:if="{{!aiLoading && aiSummary}}" class="next-ai-tag">🤖 AI 定制</text>
+        <text wx:elif="{{!aiLoading && !aiSummary}}" class="next-ai-tag next-local-tag">📚 参考建议</text>
+      </view>
+      <view wx:for="{{nextSteps}}" wx:key="index" class="next-item">
+        <text class="next-num">{{index + 1}}</text>
+        <text class="next-text">{{item}}</text>
+      </view>
+    </view>
+
+    <!-- AI 注意事项 -->
+    <view class="ai-note-section" wx:if="{{aiNote}}">
+      <view class="ai-note-bar">
+        <text class="ai-note-icon">⚡</text>
+        <text class="ai-note-text">{{aiNote}}</text>
+      </view>
+    </view>
+
+    <view class="result-btns">
+      <view class="result-btn-retry" bindtap="retry">重新评估</view>
+      <view class="result-btn-back" bindtap="goBack">返回档案</view>
+    </view>
+  </block>
+</view>

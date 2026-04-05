@@ -1,0 +1,425 @@
+<!-- 情侣关系档案页 - 重构版 -->
+<view class="page-bg">
+  <!-- 顶部渐变头 -->
+  <view class="hero-header">
+    <view class="hero-title">💑 我的情侣档案</view>
+    <view class="hero-sub">AI 为你们的关系定制专属建议</view>
+  </view>
+
+  <!-- ===== 无档案 ===== -->
+  <block wx:if="{{!hasProfile}}">
+    <view class="onboard-card">
+      <view class="onboard-emoji">💝</view>
+      <view class="onboard-title">建立你的情侣档案</view>
+      <view class="onboard-desc">填写几个关键信息，AI 马上为你生成个性化恋爱攻略，比如：小明应该带外向型的小红去哪、现在可以亲吻了吗、如何制造惊喜</view>
+      <view class="features-row">
+        <view class="feature-chip">📊 关系阶段判断</view>
+        <view class="feature-chip">🎁 专属惊喜方案</view>
+        <view class="feature-chip">💬 AI 回复生成</view>
+        <view class="feature-chip">💋 时机评估</view>
+      </view>
+      <view class="btn-create-big" bindtap="showCreateStep">立即创建档案</view>
+    </view>
+
+    <!-- 功能预览卡 -->
+    <view class="preview-section">
+      <view class="preview-title">🌟 创建后你能获得</view>
+      <view class="preview-list">
+        <view class="preview-item">
+          <view class="preview-icon-wrap" style="background:#fff0f3">🤖</view>
+          <view class="preview-info">
+            <view class="preview-item-title">每日 AI 专属建议</view>
+            <view class="preview-item-desc">基于你的阶段和TA的性格，生成今日行动方案</view>
+          </view>
+        </view>
+        <view class="preview-item">
+          <view class="preview-icon-wrap" style="background:#eff6ff">💬</view>
+          <view class="preview-info">
+            <view class="preview-item-title">智能聊天回复生成</view>
+            <view class="preview-item-desc">输入TA发的消息，AI 给你3种高情商回法</view>
+          </view>
+        </view>
+        <view class="preview-item">
+          <view class="preview-icon-wrap" style="background:#f0fdf4">🎯</view>
+          <view class="preview-info">
+            <view class="preview-item-title">关系进度评估</view>
+            <view class="preview-item-desc">亲吻/同居/求婚时机，AI 根据你们情况评估</view>
+          </view>
+        </view>
+        <view class="preview-item">
+          <view class="preview-icon-wrap" style="background:#fdf4ff">🎁</view>
+          <view class="preview-info">
+            <view class="preview-item-title">性格匹配活动推荐</view>
+            <view class="preview-item-desc">TA 是冒险型还是宅家型？推荐最适合的约会方案</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ===== 有档案 ===== -->
+  <block wx:else>
+    <!-- 情侣卡片 -->
+    <view class="couple-card">
+      <view class="couple-row">
+        <view class="avatar-block">
+          <view class="avatar-circle" style="background:{{profile.myGender==='male'?'#dbeafe':'#fce7f3'}}">
+            <text class="avatar-big-emoji">{{profile.myEmoji}}</text>
+          </view>
+          <view class="avatar-name">{{profile.myName}}</view>
+          <view class="avatar-role">{{profile.myGender==='male'?'男生':'女生'}}</view>
+        </view>
+        <view class="couple-center">
+          <view class="stage-badge-big">{{stageInfo.icon}}</view>
+          <view class="stage-badge-label">{{stageInfo.name}}</view>
+          <view class="days-count">{{daysTogether}} 天</view>
+          <view wx:if="{{milestone}}" class="milestone-badge">🎉 {{milestone}}</view>
+        </view>
+        <view class="avatar-block">
+          <view class="avatar-circle" style="background:{{profile.myGender==='male'?'#fce7f3':'#dbeafe'}}">
+            <text class="avatar-big-emoji">{{profile.taEmoji}}</text>
+          </view>
+          <view class="avatar-name">{{profile.taName}}</view>
+          <view class="avatar-role">TA</view>
+        </view>
+      </view>
+      <view class="couple-tags">
+        <view class="couple-tag">{{personalityLabel}}</view>
+        <view class="couple-tag">{{profile.startDate}} 认识</view>
+        <view class="couple-tag" wx:if="{{nextMilestone}}">⏳ {{nextMilestone}}</view>
+      </view>
+      <view class="edit-row">
+        <view class="edit-link" bindtap="showEditStep">✏️ 编辑档案</view>
+      </view>
+    </view>
+
+    <!-- 关系进度条 -->
+    <view class="section-card">
+      <view class="section-head">
+        <view class="section-ttl">📈 恋爱进度</view>
+        <view class="section-hint">点击阶段查看详情</view>
+      </view>
+      <scroll-view scroll-x class="stage-scroll">
+        <view class="stage-track">
+          <view
+            wx:for="{{stages}}"
+            wx:key="id"
+            class="stage-node {{item.id===profile.stage?'node-active':''}} {{item.passed?'node-passed':''}}"
+            bindtap="onStageClick"
+            data-id="{{item.id}}"
+          >
+            <view class="node-icon">{{item.icon}}</view>
+            <view class="node-name">{{item.name}}</view>
+            <view wx:if="{{item.id===profile.stage}}" class="node-now">NOW</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- AI 今日建议卡 -->
+    <view class="section-card advice-section">
+      <view class="section-head">
+        <view class="section-ttl">🤖 今日 AI 专属建议</view>
+        <view class="refresh-btn" bindtap="generateAdvice">🔄 换一条</view>
+      </view>
+      <view class="advice-body">
+        <view wx:if="{{adviceLoading}}" class="advice-loading">
+          <view class="loading-dot"></view>
+          <view class="loading-dot"></view>
+          <view class="loading-dot"></view>
+          <view class="loading-text">AI 分析中...</view>
+        </view>
+        <view wx:else>
+          <view class="advice-meta-row">
+            <view class="advice-chip gender-chip">{{profile.myGender==='male'?'👦 男生视角':'👧 女生视角'}}</view>
+            <view class="advice-chip stage-chip">{{stageInfo.name}}</view>
+          </view>
+          <view class="advice-main">{{todayAdvice.main}}</view>
+          <view class="advice-actions-wrap" wx:if="{{todayAdvice.actions&&todayAdvice.actions.length}}">
+            <view class="advice-actions-title">💡 今日行动</view>
+            <view wx:for="{{todayAdvice.actions}}" wx:for-item="act" wx:key="index" class="advice-action-row">
+              <view class="action-num">{{index+1}}</view>
+              <view class="action-content">{{act}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 阶段案例库 -->
+    <view class="section-card cases-section">
+      <view class="section-head">
+        <view class="section-ttl">📖 {{stageInfo.name}}案例库</view>
+        <view class="refresh-btn" bindtap="generateCase">🎨 AI 生成案例</view>
+      </view>
+      <view class="cases-body">
+        <view wx:if="{{caseLoading}}" class="case-loading">
+          <view class="loading-text">AI 生成案例中...</view>
+        </view>
+        <view wx:else>
+          <view class="case-card" wx:if="{{currentCase}}">
+            <view class="case-header">
+              <view class="case-tag">{{currentCase.type}}</view>
+              <view class="case-title">{{currentCase.title}}</view>
+            </view>
+            <view class="case-content">
+              <view class="case-section">
+                <view class="case-section-title">📋 情景描述</view>
+                <view class="case-desc">{{currentCase.situation}}</view>
+              </view>
+              <view class="case-section">
+                <view class="case-section-title">❌ 错误做法</view>
+                <view class="case-bad">{{currentCase.bad}}</view>
+              </view>
+              <view class="case-section">
+                <view class="case-section-title">✅ 正确做法</view>
+                <view class="case-good">{{currentCase.good}}</view>
+              </view>
+              <view class="case-section">
+                <view class="case-section-title">💡 关键要点</view>
+                <view class="case-points">
+                  <view class="case-point" wx:for="{{currentCase.points}}" wx:key="index">
+                    <text class="point-bullet">•</text>
+                    <text class="point-text">{{item}}</text>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+          <view wx:else class="case-empty">
+            <view class="empty-icon">📚</view>
+            <view class="empty-text">点击"AI 生成案例"获取具体实例</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 关系健康度 -->
+    <view class="section-card">
+      <view class="section-head">
+        <view class="section-ttl">❤️ 关系健康度</view>
+        <view class="health-total-badge {{healthTotal>=80?'badge-good':healthTotal>=60?'badge-mid':'badge-low'}}">{{healthTotal}}分</view>
+      </view>
+      <view class="health-grid">
+        <view
+          wx:for="{{healthItems}}"
+          wx:key="id"
+          class="health-cell"
+        >
+          <view class="health-cell-top">
+            <view class="health-icon">{{item.icon}}</view>
+            <view class="health-lbl">{{item.label}}</view>
+            <view class="health-num {{item.score>=80?'num-good':item.score>=60?'num-mid':'num-low'}}">{{item.score}}分</view>
+          </view>
+          <slider
+            class="health-slider"
+            min="0"
+            max="100"
+            step="5"
+            value="{{item.score}}"
+            activeColor="#FF6B8A"
+            backgroundColor="#f0f0f0"
+            block-size="28"
+            bindchanging="onHealthSliding"
+            bindchange="onHealthChange"
+            data-id="{{item.id}}"
+          />
+        </view>
+      </view>
+      <view class="health-tip-bar">{{healthTip}}</view>
+      <!-- AI 健康诊断 -->
+      <view class="health-ai-row">
+        <view class="health-ai-btn {{healthDiagLoading?'health-ai-loading':''}}" bindtap="aiDiagnoseHealth">
+          <view wx:if="{{healthDiagLoading}}" class="health-diag-dots">
+            <view class="hd-dot"></view><view class="hd-dot"></view><view class="hd-dot"></view>
+          </view>
+          <view wx:else>🤖 AI 关系诊断</view>
+        </view>
+      </view>
+      <view wx:if="{{healthDiagnosis}}" class="health-diag-result">
+        <view class="health-diag-title">🩺 AI 诊断结果</view>
+        <view class="health-diag-text">{{healthDiagnosis}}</view>
+      </view>
+    </view>
+
+    <!-- 专属惊喜创意 -->
+    <view class="section-card surprise-section">
+      <view class="section-head">
+        <view class="section-ttl">🎁 专属惊喜方案</view>
+        <view class="refresh-btn" bindtap="refreshSurprise">🔄 AI 重新生成</view>
+      </view>
+      <view class="surprise-body">
+        <view class="surprise-tag">根据 {{profile.taName}} 的 {{personalityLabel}} 性格 × {{stageInfo.name}} 定制</view>
+        <view wx:if="{{surpriseLoading}}" class="surprise-loading">🤖 AI 正在为你定制惊喜方案...</view>
+        <view wx:else class="surprise-text">{{currentSurprise}}</view>
+        <view class="surprise-actions" wx:if="{{!surpriseLoading}}">
+          <view class="surprise-action-btn" bindtap="copySurprise">📋 复制这个方案</view>
+          <view class="surprise-action-btn" bindtap="goChatReply" data-scene="dating_sweet">💬 生成配套话术</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 关系进度评估 -->
+    <view class="section-card">
+      <view class="section-ttl" style="margin-bottom:20rpx">🎯 关系节点评估</view>
+      <view class="readiness-list">
+        <view
+          wx:for="{{readinessList}}"
+          wx:key="id"
+          class="readiness-item"
+          bindtap="goReadinessCheck"
+          data-type="{{item.id}}"
+        >
+          <view class="readiness-left">
+            <view class="readiness-icon-big">{{item.icon}}</view>
+            <view class="readiness-info-block">
+              <view class="readiness-title-text">{{item.title}}</view>
+              <view class="readiness-desc-text">{{item.desc}}</view>
+            </view>
+          </view>
+          <view class="readiness-go">评估 →</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 快速聊天回复入口 -->
+    <view class="section-card">
+      <view class="section-ttl" style="margin-bottom:20rpx">💬 智能回复助手</view>
+      <view class="scene-grid">
+        <view
+          wx:for="{{replyScenarios}}"
+          wx:key="id"
+          class="scene-cell"
+          bindtap="goChatReply"
+          data-scene="{{item.id}}"
+        >
+          <view class="scene-icon">{{item.icon}}</view>
+          <view class="scene-name">{{item.title}}</view>
+          <view class="scene-tag">{{item.tag}}</view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ===== 步骤创建弹窗（修复版：用 catchtap 阻止冒泡，input 独立绑定） ===== -->
+  <view class="modal-overlay" wx:if="{{showModal}}" catchtap="hideModal">
+    <view class="modal-panel" catchtap="stopBubble">
+      <view class="modal-drag-bar"></view>
+      <view class="modal-header">
+        <view class="modal-title">{{editMode?'编辑档案':'创建情侣档案'}}</view>
+        <view class="modal-close" catchtap="hideModal">✕</view>
+      </view>
+      <scroll-view scroll-y class="modal-scroll" enable-back-to-top="{{false}}">
+        <!-- 你的信息 -->
+        <view class="form-section">
+          <view class="form-section-title">👤 关于你</view>
+          <view class="form-row">
+            <view class="form-lbl">你叫什么？</view>
+            <input
+              class="form-inp"
+              type="text"
+              value="{{form.myName}}"
+              bindinput="onMyNameInput"
+              placeholder="输入你的名字或昵称"
+              placeholder-style="color:#bbb;font-size:28rpx;"
+              maxlength="10"
+              confirm-type="next"
+            />
+          </view>
+          <view class="form-row">
+            <view class="form-lbl">你的性别</view>
+            <view class="gender-btns">
+              <view
+                class="gender-option {{form.myGender==='male'?'gender-active':''}}"
+                catchtap="setGender"
+                data-gender="male"
+              >👦 男生</view>
+              <view
+                class="gender-option {{form.myGender==='female'?'gender-active':''}}"
+                catchtap="setGender"
+                data-gender="female"
+              >👧 女生</view>
+            </view>
+          </view>
+        </view>
+
+        <!-- TA 的信息 -->
+        <view class="form-section">
+          <view class="form-section-title">💕 关于 TA</view>
+          <view class="form-row">
+            <view class="form-lbl">TA 叫什么？</view>
+            <input
+              class="form-inp"
+              type="text"
+              value="{{form.taName}}"
+              bindinput="onTaNameInput"
+              placeholder="输入 TA 的名字或昵称"
+              placeholder-style="color:#bbb;font-size:28rpx;"
+              maxlength="10"
+              confirm-type="done"
+            />
+          </view>
+          <view class="form-row">
+            <view class="form-lbl">TA 的性格类型</view>
+            <view class="personality-grid">
+              <view
+                wx:for="{{personalityTypes}}"
+                wx:key="type"
+                class="personality-cell {{form.taPersonality===item.type?'personality-active':''}}"
+                catchtap="setPersonality"
+                data-type="{{item.type}}"
+              >
+                <view class="personality-emoji">{{item.icon}}</view>
+                <view class="personality-name">{{item.label}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 关系阶段 -->
+        <view class="form-section">
+          <view class="form-section-title">💫 关系阶段</view>
+          <view class="form-row">
+            <view class="form-lbl">目前处于哪个阶段？</view>
+            <view class="stage-grid">
+              <view
+                wx:for="{{stagesForSelect}}"
+                wx:key="id"
+                class="stage-pick {{form.stage===item.id?'stage-pick-active':''}}"
+                catchtap="setStage"
+                data-stage="{{item.id}}"
+              >
+                <view class="stage-pick-icon">{{item.icon}}</view>
+                <view class="stage-pick-name">{{item.name}}</view>
+              </view>
+            </view>
+          </view>
+          <view class="form-row" wx:if="{{form.stage!=='stranger'}}">
+            <view class="form-lbl">认识/在一起的日期</view>
+            <picker mode="date" value="{{form.startDate}}" bindchange="onDateChange">
+              <view class="date-pick-view">
+                <view class="date-pick-text">{{form.startDate||'选择日期（可选）'}}</view>
+                <view class="date-pick-icon">📅</view>
+              </view>
+            </picker>
+          </view>
+        </view>
+
+        <!-- AI 分析提示 -->
+        <view class="ai-hint-bar">
+          <view class="ai-hint-icon">🤖</view>
+          <view class="ai-hint-text">填写后，AI 将实时分析你们的情况，生成专属建议</view>
+        </view>
+
+        <view class="modal-bottom-space"></view>
+      </scroll-view>
+
+      <view class="modal-footer">
+        <view class="modal-cancel-btn" catchtap="hideModal">取消</view>
+        <view class="modal-save-btn" catchtap="saveProfile">
+          {{editMode?'保存修改':'创建档案 ✨'}}
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

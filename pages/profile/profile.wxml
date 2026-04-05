@@ -1,0 +1,165 @@
+<!-- pages/profile/profile.wxml -->
+<view class="container">
+
+  <!-- 顶部用户卡片 -->
+  <view class="user-card gradient-bg">
+    <view class="user-avatar" bindtap="chooseAvatar">
+      <text wx:if="{{!userInfo.avatar}}" class="avatar-placeholder">{{userInfo.nickname ? userInfo.nickname[0] : '?'}}</text>
+      <image wx:if="{{userInfo.avatar}}" src="{{userInfo.avatar}}" class="avatar-img" mode="aspectFill"/>
+      <view class="avatar-edit">✎</view>
+    </view>
+    <view class="user-meta">
+      <view class="user-name" bindtap="editNickname">
+        {{userInfo.nickname || '点击设置昵称'}}
+      </view>
+      <view class="user-gender-row">
+        <view
+          class="gender-select {{userInfo.gender === 'male' ? 'selected' : ''}}"
+          bindtap="setGender" data-gender="male">👦 男生</view>
+        <view
+          class="gender-select {{userInfo.gender === 'female' ? 'selected' : ''}}"
+          bindtap="setGender" data-gender="female">👧 女生</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 学习数据 -->
+  <view class="stats-row">
+    <view class="stat-item card">
+      <text class="stat-num">{{stats.learnedCount}}</text>
+      <text class="stat-label">已学课程</text>
+    </view>
+    <view class="stat-item card">
+      <text class="stat-num">{{stats.totalMinutes}}</text>
+      <text class="stat-label">学习分钟</text>
+    </view>
+    <view class="stat-item card">
+      <text class="stat-num">{{stats.streakDays}}</text>
+      <text class="stat-label">连续打卡</text>
+    </view>
+  </view>
+
+  <!-- 学习成就 -->
+  <view class="section">
+    <view class="section-title">🏆 学习成就</view>
+    <view class="badge-list">
+      <view
+        class="badge-item {{item.unlocked ? 'unlocked' : 'locked'}}"
+        wx:for="{{badges}}"
+        wx:key="id"
+      >
+        <view class="badge-icon">{{item.icon}}</view>
+        <view class="badge-name">{{item.name}}</view>
+        <view wx:if="{{!item.unlocked}}" class="badge-lock">🔒</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已学课程 -->
+  <view class="section" wx:if="{{learnedCourses.length > 0}}">
+    <view class="section-title">📚 已学课程</view>
+    <view class="learned-list">
+      <view
+        class="learned-item card"
+        wx:for="{{learnedCourses}}"
+        wx:key="id"
+        bindtap="goToDetail" data-id="{{item.id}}"
+      >
+        <view class="learned-cover" style="background:{{item.coverBg}}">{{item.cover}}</view>
+        <view class="learned-info">
+          <view class="learned-title">{{item.title}}</view>
+          <view class="learned-cat tag tag-pink">{{item.category}}</view>
+        </view>
+        <view class="learned-arrow">→</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 使用统计 -->
+  <view class="section">
+    <view class="section-title">📊 我的数据</view>
+    <view class="feature-card stats-card" bindtap="goToUserStats">
+      <view class="fc-left">
+        <view class="fc-icon-wrap" style="background: #667eea20; color: #667eea;">📈</view>
+        <view class="fc-info">
+          <view class="fc-title">使用统计</view>
+          <view class="fc-sub">查看使用记录、AI对话、付费历史</view>
+        </view>
+      </view>
+      <text class="fc-arrow">›</text>
+    </view>
+    <view class="feature-card history-card" bindtap="goToSoulmateHistory" style="margin-top: 16rpx;">
+      <view class="fc-left">
+        <view class="fc-icon-wrap" style="background: #FF6B8A20; color: #FF6B8A;">💕</view>
+        <view class="fc-info">
+          <view class="fc-title">灵魂伴侣记录</view>
+          <view class="fc-sub">查看历史测算记录和生成的图片</view>
+        </view>
+      </view>
+      <text class="fc-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 账号设置 -->
+  <view class="section">
+    <view class="section-title">⚙️ 账号设置</view>
+    <view class="menu-list card">
+      <view class="menu-item" bindtap="editProfile">
+        <text class="menu-icon">✏️</text>
+        <text class="menu-text">修改资料</text>
+        <text class="menu-arrow">→</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 特色功能入口 -->
+  <view class="section">
+    <view class="section-title">✨ 特色功能</view>
+    <view class="feature-card soulmate-card" bindtap="goToSoulmate">
+      <view class="fc-left">
+        <view class="fc-icon-wrap">🔮</view>
+        <view class="fc-info">
+          <view class="fc-title">灵魂伴侣测算</view>
+          <view class="fc-sub">AI解析星盘命格，找命中注定的另一半</view>
+        </view>
+      </view>
+      <view class="fc-badge">¥9.9</view>
+    </view>
+  </view>
+
+  <!-- 功能入口 -->
+  <view class="section">
+    <view class="section-title">⚙️ 设置</view>
+    <view class="menu-list card">
+      <view class="menu-item" bindtap="clearProgress">
+        <text class="menu-icon">🔄</text>
+        <text class="menu-text">重置学习进度</text>
+        <text class="menu-arrow">→</text>
+      </view>
+      <view class="divider"></view>
+      <view class="menu-item" bindtap="shareApp">
+        <text class="menu-icon">📤</text>
+        <text class="menu-text">分享给朋友</text>
+        <text class="menu-arrow">→</text>
+      </view>
+      <view class="divider"></view>
+      <view class="menu-item" bindtap="showAbout">
+        <text class="menu-icon">ℹ️</text>
+        <text class="menu-text">关于恋爱进化论</text>
+        <text class="menu-arrow">→</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 隐藏入口：连续点击版本号进入管理员后台 -->
+  <view class="version-wrap" bindtap="onVersionClick">
+    <text class="version-text">版本 1.0.0</text>
+  </view>
+
+  <!-- AI生成内容声明 -->
+  <view class="ai-notice">
+    <text class="ai-notice-text">内容由 AI 生成，请核实重要信息。</text>
+  </view>
+
+  <view style="height:60rpx"></view>
+</view>

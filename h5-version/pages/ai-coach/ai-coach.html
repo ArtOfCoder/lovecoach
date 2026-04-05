@@ -1,0 +1,124 @@
+<!-- H5版本 AI顾问页面 -->
+<div class="page ai-coach-page">
+  <!-- 顶部 -->
+  <div class="ai-header gradient-bg-purple">
+    <div class="ai-header-avatar">🤖</div>
+    <div class="ai-header-info">
+      <div class="ai-header-name">AI顾问 · 小爱</div>
+      <div class="ai-header-status">
+        <span class="status-dot"></span>
+        <span>AI智能在线</span>
+      </div>
+    </div>
+    <div class="ai-header-actions">
+      <div class="action-btn" onclick="clearChat()">清空</div>
+    </div>
+  </div>
+
+  <!-- 模式选择条 -->
+  <div class="mode-bar">
+    <div class="mode-item active" data-mode="coach" onclick="switchMode('coach')">
+      <span>💬</span>
+      <span>AI顾问</span>
+    </div>
+    <div class="mode-item" data-mode="signal" onclick="switchMode('signal')">
+      <span>🔍</span>
+      <span>信号分析</span>
+    </div>
+    <div class="mode-item" data-mode="practice" onclick="switchMode('practice')">
+      <span>🎭</span>
+      <span>角色练习</span>
+    </div>
+    <div class="mode-item" data-mode="vent" onclick="switchMode('vent')">
+      <span>💭</span>
+      <span>倾诉模式</span>
+    </div>
+  </div>
+
+  <!-- 快捷问题（无消息时显示） -->
+  <div class="quick-panel" id="quickPanel">
+    <div class="quick-panel-title">💬 你可以这样问我</div>
+    <div class="quick-panel-grid">
+      <div class="quick-chip" onclick="sendQuick('怎么搭讪陌生人？')">怎么搭讪陌生人？</div>
+      <div class="quick-chip" onclick="sendQuick('暧昧期怎么推进关系？')">暧昧期怎么推进关系？</div>
+      <div class="quick-chip" onclick="sendQuick('约会去哪里比较好？')">约会去哪里比较好？</div>
+      <div class="quick-chip" onclick="sendQuick('吵架了怎么和好？')">吵架了怎么和好？</div>
+      <div class="quick-chip" onclick="sendQuick('送什么礼物合适？')">送什么礼物合适？</div>
+      <div class="quick-chip" onclick="sendQuick('怎么判断TA喜不喜欢我？')">怎么判断TA喜不喜欢我？</div>
+    </div>
+    
+    <!-- 情绪入口 -->
+    <div class="mood-section">
+      <div class="mood-title">今天心情如何？</div>
+      <div class="mood-row">
+        <div class="mood-item" onclick="selectMood('happy', '开心')">
+          <div class="mood-emoji">😊</div>
+          <div class="mood-label">开心</div>
+        </div>
+        <div class="mood-item" onclick="selectMood('confused', '困惑')">
+          <div class="mood-emoji">😕</div>
+          <div class="mood-label">困惑</div>
+        </div>
+        <div class="mood-item" onclick="selectMood('sad', '难过')">
+          <div class="mood-emoji">😢</div>
+          <div class="mood-label">难过</div>
+        </div>
+        <div class="mood-item" onclick="selectMood('anxious', '焦虑')">
+          <div class="mood-emoji">😰</div>
+          <div class="mood-label">焦虑</div>
+        </div>
+        <div class="mood-item" onclick="selectMood('excited', '期待')">
+          <div class="mood-emoji">🥰</div>
+          <div class="mood-label">期待</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 对话区 -->
+  <div class="chat-scroll" id="chatScroll">
+    <div class="chat-inner" id="chatInner">
+      <!-- 消息列表 -->
+      <div id="messageList"></div>
+      
+      <!-- 打字中动画 -->
+      <div class="msg-row ai-row typing-row" id="typingIndicator" style="display: none;">
+        <div class="ai-ava">🤖</div>
+        <div class="ai-bubble typing-bubble">
+          <div class="typing-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI免责声明 -->
+  <div class="ai-footer-notice">
+    <span>⚠️ AI生成的内容，仅供学习参考，请仔细甄别</span>
+  </div>
+
+  <!-- 输入区 -->
+  <div class="input-area">
+    <div class="input-toolbar">
+      <div class="tool-btn" onclick="insertTemplate('situation')">📍 说说情况</div>
+      <div class="tool-btn" onclick="insertTemplate('feeling')">💭 表达感受</div>
+      <div class="tool-btn" onclick="insertTemplate('help')">🙋 需要建议</div>
+    </div>
+    <div class="input-row">
+      <input
+        type="text"
+        class="chat-input"
+        id="chatInput"
+        placeholder="把你的情况告诉我..."
+        maxlength="500"
+        onkeypress="if(event.key==='Enter') sendMessage()"
+      />
+      <div class="send-btn" id="sendBtn" onclick="sendMessage()">
+        <span>发送</span>
+      </div>
+    </div>
+  </div>
+</div>

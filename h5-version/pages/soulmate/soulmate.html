@@ -1,0 +1,270 @@
+<!-- H5版本 灵魂伴侣页面 -->
+<div class="page soulmate-page">
+  
+  <!-- 步骤1：输入页 -->
+  <div id="stepInput" class="step-section">
+    <!-- 头部装饰 -->
+    <div class="header-deco">
+      <div class="star-ring">
+        <span class="big-star">✨</span>
+        <span class="zodiac-float z1">♈</span>
+        <span class="zodiac-float z2">♋</span>
+        <span class="zodiac-float z3">♎</span>
+        <span class="zodiac-float z4">♑</span>
+      </div>
+      <div class="header-title">AI灵魂伴侣测算</div>
+      <div class="header-sub">AI解析你的星盘命格，生成专属灵魂伴侣画像</div>
+    </div>
+
+    <!-- 表单卡片 -->
+    <div class="form-card">
+      <!-- 性别选择 -->
+      <div class="form-group">
+        <div class="form-label">我是</div>
+        <div class="gender-row">
+          <div class="gender-opt" id="genderMale" onclick="selectGender('male')">
+            <span class="gender-icon">👦</span>
+            <span class="gender-text">男生</span>
+          </div>
+          <div class="gender-opt" id="genderFemale" onclick="selectGender('female')">
+            <span class="gender-icon">👧</span>
+            <span class="gender-text">女生</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 出生日期 -->
+      <div class="form-group">
+        <div class="form-label">出生日期</div>
+        <div class="date-row">
+          <div class="date-input-wrap">
+            <input type="number" class="date-input" id="birthYear" placeholder="年" maxlength="4">
+            <span class="date-unit">年</span>
+          </div>
+          <div class="date-input-wrap">
+            <input type="number" class="date-input" id="birthMonth" placeholder="月" maxlength="2">
+            <span class="date-unit">月</span>
+          </div>
+          <div class="date-input-wrap">
+            <input type="number" class="date-input" id="birthDay" placeholder="日" maxlength="2">
+            <span class="date-unit">日</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 出生地 -->
+      <div class="form-group">
+        <div class="form-label">出生城市 <span class="optional-tag">（可选）</span></div>
+        <div class="city-input-wrap">
+          <span class="city-icon">📍</span>
+          <input type="text" class="city-input" id="birthCity" placeholder="如：北京、上海（影响上升星座）">
+        </div>
+      </div>
+
+      <!-- 说明文字 -->
+      <div class="form-tip">
+        <span class="form-tip-icon">🔮</span>
+        <span class="form-tip-text">AI将根据你的出生信息分析太阳星座、月亮星座、上升星座，为你找到灵魂伴侣</span>
+      </div>
+    </div>
+
+    <!-- 生成按钮 -->
+    <div class="generate-btn" onclick="startGenerate()">
+      <span class="generate-btn-icon">💫</span>
+      <span class="generate-btn-text">AI生成我的灵魂伴侣</span>
+    </div>
+
+    <!-- 底部说明 -->
+    <div class="bottom-note">
+      <span>灵魂伴侣画像需打赏 9.9 元解锁</span>
+      <span class="bottom-note-sub">基于AI星盘算法的娱乐测试，打赏后可查看完整AI生成结果</span>
+    </div>
+    
+    <!-- 免责声明 -->
+    <div class="ai-disclaimer">
+      <span class="ai-disclaimer-text">本功能基于AI星盘算法生成，仅供娱乐参考</span>
+    </div>
+  </div>
+
+  <!-- 步骤2：加载中 -->
+  <div id="stepLoading" class="step-section" style="display: none;">
+    <div class="loading-cosmos">
+      <div class="cosmos-ring ring1">
+        <span class="orbit-star s1">⭐</span>
+      </div>
+      <div class="cosmos-ring ring2">
+        <span class="orbit-star s2">✨</span>
+      </div>
+      <div class="cosmos-ring ring3">
+        <span class="orbit-star s3">💫</span>
+      </div>
+      <div class="cosmos-center">🔮</div>
+    </div>
+    <div class="loading-text" id="loadingText">AI正在分析星盘...</div>
+    <div class="loading-steps">
+      <div class="ls-dot" id="dot0"></div>
+      <div class="ls-dot" id="dot1"></div>
+      <div class="ls-dot" id="dot2"></div>
+      <div class="ls-dot" id="dot3"></div>
+      <div class="ls-dot" id="dot4"></div>
+    </div>
+  </div>
+
+  <!-- 步骤3：结果页 -->
+  <div id="stepResult" class="step-section" style="display: none;">
+    <!-- 星盘徽章 -->
+    <div class="astro-banner">
+      <div class="astro-tag">
+        <span class="at-symbol" id="zodiacSymbol">♈</span>
+        <span class="at-name" id="zodiacName">白羊座</span>
+      </div>
+      <div class="astro-divider">×</div>
+      <div class="astro-tag soulmate-tag">
+        <span class="at-symbol">💖</span>
+        <span class="at-name">灵魂伴侣</span>
+      </div>
+      <div class="astro-divider">×</div>
+      <div class="astro-tag">
+        <span class="at-symbol">🌙</span>
+        <span class="at-name" id="moonSign">狮子座</span>
+      </div>
+    </div>
+
+    <!-- 核心卡片：灵魂伴侣 -->
+    <div class="soulmate-card">
+      <!-- 标题 -->
+      <div class="sm-title">命中注定的灵魂伴侣</div>
+      <div class="sm-subtitle" id="soulmateSubtitle">
+        你的白羊座星盘，与天秤座灵魂共鸣
+      </div>
+
+      <!-- 头像区域 -->
+      <div class="avatar-zone">
+        <!-- 模糊/未解锁状态 -->
+        <div id="avatarBlur" class="avatar-blur-wrap" onclick="showPayModal()">
+          <div class="blur-avatar-gradient" id="blurAvatar">
+            <div class="blur-hair"></div>
+            <div class="blur-face"></div>
+          </div>
+          <div class="unlock-mask-light">
+            <div class="um-bottom-bar">
+              <div class="um-lock-small">🔒</div>
+              <div class="um-title-small">打赏解锁AI生成画像</div>
+              <div class="um-price-small">¥9.9</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 已解锁状态 -->
+        <div id="avatarUnlocked" class="avatar-unlocked-wrap" style="display: none;">
+          <img id="unlockedImage" class="unlocked-image" src="" alt="AI生成的灵魂伴侣">
+          <div class="unlocked-badge">
+            <span>✨ AI生成 · 已解锁</span>
+          </div>
+          <div class="longpress-hint">长按图片可保存</div>
+        </div>
+      </div>
+
+      <!-- 灵魂伴侣描述 -->
+      <div class="sm-desc-wrap">
+        <div class="sm-desc-quote">"</div>
+        <div class="sm-desc" id="soulmateDesc">AI正在生成描述...</div>
+        <div class="sm-desc-quote end-quote">"</div>
+      </div>
+
+      <!-- 星盘详情 -->
+      <div class="astro-detail">
+        <div class="ad-item">
+          <span class="ad-label">太阳星座</span>
+          <span class="ad-value" id="sunSign">♈ 白羊座</span>
+        </div>
+        <div class="ad-item">
+          <span class="ad-label">上升星座</span>
+          <span class="ad-value" id="ascendant">↑ 双子座</span>
+        </div>
+        <div class="ad-item">
+          <span class="ad-label">月亮星座</span>
+          <span class="ad-value" id="moonSignDetail">🌙 狮子座</span>
+        </div>
+        <div class="ad-item">
+          <span class="ad-label">灵魂伴侣</span>
+          <span class="ad-value ad-highlight" id="soulmateZodiac">💕 天秤座</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI生成免责声明 -->
+    <div class="ai-disclaimer">
+      <span class="ai-disclaimer-text">⚠️ AI生成的内容，仅供学习参考，请仔细甄别</span>
+    </div>
+
+    <!-- 底部按钮组 -->
+    <div class="result-actions">
+      <!-- 未解锁：打赏区域 -->
+      <div id="paySection" class="pay-section">
+        <div class="pay-section-header">
+          <span class="pay-section-icon">💎</span>
+          <span class="pay-section-title">打赏解锁AI生成画像</span>
+        </div>
+        
+        <div class="pay-price-wrap">
+          <span class="pay-price-currency">¥</span>
+          <span class="pay-price-value">9.9</span>
+          <span class="pay-price-unit">元</span>
+        </div>
+        
+        <div class="pay-benefits">
+          <div class="pay-benefit-item">
+            <span class="pay-benefit-icon">✨</span>
+            <span class="pay-benefit-text">AI生成高清专属头像</span>
+          </div>
+          <div class="pay-benefit-item">
+            <span class="pay-benefit-icon">🔮</span>
+            <span class="pay-benefit-text">永久保存与分享</span>
+          </div>
+          <div class="pay-benefit-item">
+            <span class="pay-benefit-icon">💕</span>
+            <span class="pay-benefit-text">查看完整AI星盘解析</span>
+          </div>
+        </div>
+        
+        <div class="pay-qr-section">
+          <div class="pay-qr-title">长按二维码打赏</div>
+          <div class="pay-qr-wrap">
+            <img class="pay-qr-image" src="../../images/pay-qr-code.jpg" alt="收款二维码">
+            <div class="pay-qr-shine"></div>
+          </div>
+          <div class="pay-qr-hint">长按识别二维码支付 ¥9.9</div>
+        </div>
+
+        <div class="user-id-section" onclick="copyUserId()">
+          <div class="user-id-label">您的用户ID（点击复制）</div>
+          <div class="user-id-value" id="userIdDisplay">加载中...</div>
+          <div class="user-id-hint">支付后添加客服微信 news-tomato 发送ID解锁</div>
+        </div>
+        
+        <div class="pay-notice">
+          <span class="pay-notice-text">本功能基于AI星盘算法生成娱乐内容，打赏纯属自愿</span>
+        </div>
+      </div>
+
+      <!-- 已解锁：操作按钮 -->
+      <div id="unlockedActions" class="unlocked-actions" style="display: none;">
+        <div class="ua-btn" onclick="saveImage()">
+          <span class="ua-icon">📥</span>
+          <span>保存图片</span>
+        </div>
+        <div class="ua-btn" onclick="shareResult()">
+          <span class="ua-icon">📤</span>
+          <span>分享好友</span>
+        </div>
+      </div>
+
+      <!-- 重新测算 -->
+      <div id="regenBtn" class="regen-btn" onclick="goBack()" style="display: none;">
+        <span>🔄 重新测算</span>
+      </div>
+    </div>
+  </div>
+
+</div>

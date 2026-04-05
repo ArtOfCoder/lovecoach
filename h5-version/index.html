@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="恋爱进化论 - AI恋爱顾问，提供专业的恋爱建议、聊天回复、灵魂伴侣测算等功能">
+  <title>恋爱进化论 - AI完整版</title>
+  <link rel="stylesheet" href="./styles/common.css">
+  <link rel="stylesheet" href="./styles/pages.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 页面容器 -->
+    <div id="page-container"></div>
+    
+    <!-- TabBar -->
+    <div class="tabbar" id="tabbar">
+      <div class="tab-item active" data-page="index" onclick="switchTab('index')">
+        <div class="tab-icon">🏠</div>
+        <div class="tab-text">首页</div>
+      </div>
+      <div class="tab-item" data-page="ai-coach" onclick="switchTab('ai-coach')">
+        <div class="tab-icon">🤖</div>
+        <div class="tab-text">AI顾问</div>
+      </div>
+      <div class="tab-item" data-page="soulmate" onclick="switchTab('soulmate')">
+        <div class="tab-icon">✨</div>
+        <div class="tab-text">灵魂伴侣</div>
+      </div>
+      <div class="tab-item" data-page="profile" onclick="switchTab('profile')">
+        <div class="tab-icon">👤</div>
+        <div class="tab-text">我的</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 微信API模拟器 -->
+  <script src="./js/wx-simulator.js"></script>
+  <!-- AI模块 -->
+  <script src="./utils/ai.js"></script>
+  <!-- 存储工具 -->
+  <script src="./utils/storage.js"></script>
+  <!-- 主应用 -->
+  <script src="./js/app.js"></script>
+</body>
+</html>

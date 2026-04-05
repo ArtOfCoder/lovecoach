@@ -1,0 +1,131 @@
+<!-- pages/quiz/quiz.wxml - 恋爱风格测评 -->
+<view class="quiz-page">
+
+  <!-- 测评封面 -->
+  <view class="quiz-cover" wx:if="{{phase === 'cover'}}">
+    <view class="cover-bg gradient-bg">
+      <view class="cover-emoji">🧠</view>
+      <view class="cover-title">恋爱风格测评</view>
+      <view class="cover-sub">10道题，揭开你的恋爱模式</view>
+    </view>
+    <view class="cover-body">
+      <view class="quiz-type-list">
+        <view
+          class="quiz-type-card {{selectedType === item.id ? 'selected' : ''}}"
+          wx:for="{{quizTypes}}"
+          wx:key="id"
+          bindtap="selectType"
+          data-id="{{item.id}}"
+        >
+          <view class="qtc-icon">{{item.icon}}</view>
+          <view class="qtc-info">
+            <view class="qtc-name">{{item.name}}</view>
+            <view class="qtc-desc">{{item.desc}}</view>
+          </view>
+          <view class="qtc-check" wx:if="{{selectedType === item.id}}">✓</view>
+        </view>
+      </view>
+      <view class="start-btn btn-primary" bindtap="startQuiz">开始测评 →</view>
+    </view>
+  </view>
+
+  <!-- 做题阶段 -->
+  <view class="quiz-doing" wx:if="{{phase === 'doing'}}">
+    <!-- 进度条 -->
+    <view class="q-progress-bar">
+      <view class="q-progress-bg">
+        <view class="q-progress-fill" style="width:{{progressPct}}%"></view>
+      </view>
+      <view class="q-progress-text">{{currentIdx + 1}} / {{totalQ}}</view>
+    </view>
+
+    <!-- 题目 -->
+    <view class="q-card">
+      <view class="q-num">第 {{currentIdx + 1}} 题</view>
+      <view class="q-text">{{currentQ.q}}</view>
+    </view>
+
+    <!-- 选项 -->
+    <view class="q-options">
+      <view
+        class="q-option {{selectedAns === item.val ? 'selected' : ''}}"
+        wx:for="{{currentQ.options}}"
+        wx:key="val"
+        bindtap="selectAnswer"
+        data-val="{{item.val}}"
+      >
+        <view class="q-opt-radio {{selectedAns === item.val ? 'checked' : ''}}"></view>
+        <view class="q-opt-text">{{item.text}}</view>
+      </view>
+    </view>
+
+    <!-- 下一题 -->
+    <view
+      class="q-next-btn {{selectedAns ? 'active' : 'disabled'}}"
+      bindtap="nextQuestion"
+    >
+      {{currentIdx < totalQ - 1 ? '下一题 →' : '查看结果 →'}}
+    </view>
+  </view>
+
+  <!-- 结果页 -->
+  <view class="quiz-result" wx:if="{{phase === 'result'}}">
+    <view class="result-header" style="background:{{result.color}}">
+      <view class="result-emoji">{{result.emoji}}</view>
+      <view class="result-type">{{result.type}}</view>
+      <view class="result-tagline">{{result.tagline}}</view>
+    </view>
+
+    <view class="result-body">
+      <!-- 特征标签 -->
+      <view class="result-section">
+        <view class="rs-title">你的恋爱特征</view>
+        <view class="rs-tags">
+          <view class="rs-tag" wx:for="{{result.traits}}" wx:key="*this">{{item}}</view>
+        </view>
+      </view>
+
+      <!-- 详细描述 -->
+      <view class="result-section">
+        <view class="rs-title">深度解读</view>
+        <view class="rs-text">{{result.desc}}</view>
+      </view>
+
+      <!-- 优势与盲区 -->
+      <view class="result-row">
+        <view class="result-half card">
+          <view class="rh-icon">✨</view>
+          <view class="rh-title">你的优势</view>
+          <view class="rh-item" wx:for="{{result.pros}}" wx:key="*this">· {{item}}</view>
+        </view>
+        <view class="result-half card">
+          <view class="rh-icon">⚠️</view>
+          <view class="rh-title">成长空间</view>
+          <view class="rh-item" wx:for="{{result.cons}}" wx:key="*this">· {{item}}</view>
+        </view>
+      </view>
+
+      <!-- 适合的对象 -->
+      <view class="result-section card" style="padding:24rpx;">
+        <view class="rs-title">最适合你的伴侣类型</view>
+        <view class="rs-text">{{result.match}}</view>
+      </view>
+
+      <!-- 行动建议 -->
+      <view class="result-section">
+        <view class="rs-title">给你的建议</view>
+        <view class="rs-advice" wx:for="{{result.advice}}" wx:key="*this">
+          <view class="advice-num">{{index + 1}}</view>
+          <view class="advice-text">{{item}}</view>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="result-actions">
+        <view class="btn-outline" bindtap="retakeQuiz">重新测评</view>
+        <view class="btn-primary" bindtap="askAboutResult">问AI顾问</view>
+      </view>
+    </view>
+  </view>
+
+</view>

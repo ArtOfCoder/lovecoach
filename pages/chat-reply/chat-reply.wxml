@@ -1,0 +1,219 @@
+<!-- 聊天回复生成器 - AI驱动重构版 -->
+<view class="page-wrap">
+  <!-- 顶部 -->
+  <view class="top-bar">
+    <view class="top-title">💬 AI 聊天回复</view>
+    <view class="top-sub">粘贴 TA 的消息，3秒生成高情商回复</view>
+  </view>
+
+  <!-- 场景选择（横滑） -->
+  <scroll-view scroll-x class="scene-scroll">
+    <view class="scene-tab-row">
+      <view
+        wx:for="{{scenes}}"
+        wx:key="id"
+        class="scene-tab {{currentScene===item.id?'scene-tab-on':''}}"
+        bindtap="switchScene"
+        data-id="{{item.id}}"
+      >
+        <text class="scene-tab-icon">{{item.icon}}</text>
+        <text class="scene-tab-name">{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 主输入区 -->
+  <view class="input-card">
+    <!-- 我的身份 -->
+    <view class="id-row">
+      <view class="id-label">我是：</view>
+      <view class="id-btns">
+        <view class="id-btn {{myGender==='male'?'id-active':''}}" bindtap="setGender" data-g="male">👦 男生</view>
+        <view class="id-btn {{myGender==='female'?'id-active':''}}" bindtap="setGender" data-g="female">👧 女生</view>
+      </view>
+      <view class="stage-select-inline" wx:if="{{coupleStage}}">
+        <view class="stage-tag-inline">{{stageInfo.icon}} {{stageInfo.name}}</view>
+      </view>
+    </view>
+
+    <!-- TA 发的消息 -->
+    <view class="input-block">
+      <view class="input-block-label">
+        <view class="label-dot"></view>
+        <view class="label-text">TA 发了什么？</view>
+        <view class="label-tip">粘贴或手动输入</view>
+      </view>
+      <textarea
+        class="ta-input"
+        value="{{taText}}"
+        bindinput="onTaInput"
+        placeholder="把 TA 发的消息粘贴进来..."
+        placeholder-style="color:#bbb;font-size:26rpx;"
+        maxlength="200"
+        auto-height
+      />
+      <view class="char-count">{{taText.length}}/200</view>
+    </view>
+
+    <!-- TA 的情绪 -->
+    <view class="mood-block">
+      <view class="mood-label">TA 目前的情绪（选填）：</view>
+      <view class="mood-row">
+        <view
+          wx:for="{{moods}}"
+          wx:key="id"
+          class="mood-chip {{taMood===item.id?'mood-chip-on':''}}"
+          bindtap="setMood"
+          data-id="{{item.id}}"
+        >
+          {{item.emoji}} {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 你的目标 -->
+    <view class="goal-block">
+      <view class="goal-label">这次回复的目标：</view>
+      <view class="goal-row">
+        <view
+          wx:for="{{goals}}"
+          wx:key="id"
+          class="goal-chip {{myGoal===item.id?'goal-chip-on':''}}"
+          bindtap="setGoal"
+          data-id="{{item.id}}"
+        >
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 生成按钮 -->
+    <view class="gen-btn {{generating?'gen-btn-loading':''}}" bindtap="generate">
+      <view wx:if="{{generating}}" class="gen-loading-row">
+        <view class="gen-dot"></view>
+        <view class="gen-dot"></view>
+        <view class="gen-dot"></view>
+        <view class="gen-text">AI 生成中...</view>
+      </view>
+      <view wx:else class="gen-text-row">
+        <view class="gen-icon">✨</view>
+        <view class="gen-text">生成回复方案</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI 生成结果 -->
+  <view class="result-section" wx:if="{{replies.length > 0}}">
+    <view class="result-header">
+      <view class="result-title">🎯 {{sceneInfo.name}} · {{myGender==='male'?'男生版':'女生版'}}</view>
+      <view class="result-regen" bindtap="generate">换一批</view>
+    </view>
+
+    <view
+      wx:for="{{replies}}"
+      wx:key="index"
+      class="reply-card"
+      data-index="{{index}}"
+    >
+      <view class="reply-style-badge">{{item.style}}</view>
+      <view class="reply-bubble">
+        <view class="bubble-text">{{item.text}}</view>
+      </view>
+      <view class="reply-explain">💡 {{item.explain}}</view>
+      <view class="reply-actions">
+        <view class="reply-copy" bindtap="copyReply" data-text="{{item.text}}">📋 复制</view>
+        <view class="reply-upgrade {{item.upgrading?'reply-upgrade-loading':''}}" bindtap="upgradeReply" data-index="{{index}}">
+          <view wx:if="{{item.upgrading}}" class="upgrade-loading-row">
+            <view class="upgrade-dot"></view>
+            <view class="upgrade-dot"></view>
+            <view class="upgrade-dot"></view>
+            <text style="font-size:22rpx;color:#A855F7;margin-left:6rpx;">优化中</text>
+          </view>
+          <view wx:else>✨ AI 优化</view>
+        </view>
+        <view class="reply-save" bindtap="saveReply" data-index="{{index}}">🔖 收藏</view>
+      </view>
+      <!-- 优化后的版本 -->
+      <view class="upgraded-version" wx:if="{{item.upgraded}}">
+        <view class="upgraded-label">✨ AI 优化版：</view>
+        <view class="upgraded-text">{{item.upgraded}}</view>
+        <view class="reply-copy" style="margin-top:12rpx" bindtap="copyReply" data-text="{{item.upgraded}}">📋 复制优化版</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 实战对话剧本 -->
+  <view class="scripts-section" wx:if="{{scripts.length>0}}">
+    <view class="scripts-title">📖 实战对话剧本</view>
+    <view wx:for="{{scripts}}" wx:for-item="script" wx:key="index" class="script-card">
+      <view class="script-scene">{{script.scene}}</view>
+      <view class="script-dialog">
+        <view
+          wx:for="{{script.lines}}"
+          wx:for-item="line"
+          wx:key="index"
+          class="dialog-row {{line.role==='me'?'dialog-me':'dialog-ta'}}"
+        >
+          <view class="dialog-bubble {{line.role==='me'?'bubble-me':'bubble-ta'}}">{{line.text}}</view>
+          <view wx:if="{{line.tip}}" class="dialog-tip">💡 {{line.tip}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 阶段注意事项 -->
+  <view class="tips-section" wx:if="{{stageTips.length>0}}">
+    <view class="tips-title">⚠️ {{sceneInfo.name}} 阶段注意事项</view>
+    <view wx:for="{{stageTips}}" wx:for-item="tip" wx:key="index" class="tip-item">
+      <view class="tip-num">{{index+1}}</view>
+      <view class="tip-text">{{tip}}</view>
+    </view>
+  </view>
+
+  <!-- 收藏夹 -->
+  <view class="saved-section" wx:if="{{savedReplies.length>0}}">
+    <view class="saved-header">
+      <view class="saved-title">🔖 我的收藏 ({{savedReplies.length}})</view>
+      <view class="saved-clear" bindtap="clearSaved">清空</view>
+    </view>
+    <view wx:for="{{savedReplies}}" wx:key="index" class="saved-item">
+      <view class="saved-text">{{item.text}}</view>
+      <view class="saved-copy" bindtap="copyReply" data-text="{{item.text}}">复制</view>
+    </view>
+  </view>
+
+  <!-- AI 解读 TA 的话 入口+结果 -->
+  <view class="analyze-entry">
+    <view class="analyze-card">
+      <view class="analyze-left">
+        <view class="analyze-icon">🔍</view>
+        <view class="analyze-info">
+          <view class="analyze-title">AI 解读 TA 的话</view>
+          <view class="analyze-desc">分析 TA 的真实意图、情绪信号和最佳应对策略</view>
+        </view>
+      </view>
+      <view class="analyze-btn {{analyzingTA?'analyze-btn-loading':''}}" bindtap="goAnalyze">
+        <view wx:if="{{analyzingTA}}" class="analyze-loading-row">
+          <view class="analyze-dot"></view>
+          <view class="analyze-dot"></view>
+          <view class="analyze-dot"></view>
+        </view>
+        <view wx:else>解读 TA →</view>
+      </view>
+    </view>
+
+    <!-- AI 解读结果面板（页面内展示，不再用showModal截断） -->
+    <view class="analyze-result-panel" wx:if="{{analyzeResult}}">
+      <view class="analyze-result-header">
+        <view class="analyze-result-title">🧠 AI 解读结果</view>
+        <view class="analyze-result-close" bindtap="closeAnalyze">✕</view>
+      </view>
+      <view class="analyze-result-body">
+        <text class="analyze-result-text">{{analyzeResult}}</text>
+      </view>
+      <view class="analyze-result-footer">
+        <view class="analyze-copy-btn" bindtap="copyAnalyzeResult">📋 复制解读</view>
+      </view>
+    </view>
+  </view>
+</view>

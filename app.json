@@ -1,0 +1,87 @@
+{
+  "networkTimeout": {
+    "request": 30000,
+    "connectSocket": 20000,
+    "uploadFile": 30000,
+    "downloadFile": 30000
+  },
+  "pages": [
+    "pages/onboarding/onboarding",
+    "pages/index/index",
+    "pages/couple/couple",
+    "pages/chat-reply/chat-reply",
+    "pages/course/course",
+    "pages/detail/detail",
+    "pages/ai-coach/ai-coach",
+    "pages/topics/topics",
+    "pages/profile/profile",
+    "pages/quiz/quiz",
+    "pages/roleplay/roleplay",
+    "pages/relationship/relationship",
+    "pages/soulmate/soulmate",
+    "pages/soulmate-history/soulmate-history",
+    "pages/user-stats/user-stats",
+    "pages/admin/admin"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FF6B8A",
+    "navigationBarTitleText": "恋爱进化论",
+    "navigationBarTextStyle": "white",
+    "enablePullDownRefresh": false,
+    "navigationStyle": "default"
+  },
+  "tabBar": {
+    "color": "#8a8aa0",
+    "selectedColor": "#FF6B8A",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tab-home.png",
+        "selectedIconPath": "images/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/couple/couple",
+        "text": "情侣档案",
+        "iconPath": "images/tab-topic.png",
+        "selectedIconPath": "images/tab-topic-active.png"
+      },
+      {
+        "pagePath": "pages/ai-coach/ai-coach",
+        "text": "恋爱顾问",
+        "iconPath": "images/tab-ai.png",
+        "selectedIconPath": "images/tab-ai-active.png"
+      },
+      {
+        "pagePath": "pages/course/course",
+        "text": "课程",
+        "iconPath": "images/tab-course.png",
+        "selectedIconPath": "images/tab-course-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/tab-me.png",
+        "selectedIconPath": "images/tab-me-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": []
+    }
+  },
+  "requiredBackgroundModes": [],
+  "permission": {
+    "scope.writePhotosAlbum": {
+      "desc": "用于保存灵魂伴侣图片到相册"
+    }
+  }
+}

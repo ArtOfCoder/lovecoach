@@ -1,0 +1,160 @@
+<!-- pages/user-stats/user-stats.wxml -->
+<view class="stats-page">
+  <!-- 加载中 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 内容区 -->
+  <block wx:else>
+    <!-- 顶部概览卡片 -->
+    <view class="overview-card">
+      <view class="overview-header">
+        <text class="overview-title">📊 使用概览</text>
+        <text class="overview-subtitle">始于 {{stats.firstUseTime ? formatDate(stats.firstUseTime) : '今天'}}</text>
+      </view>
+      <view class="overview-stats">
+        <view class="overview-item">
+          <text class="overview-num">{{stats.totalUsageCount || 0}}</text>
+          <text class="overview-label">总使用次数</text>
+        </view>
+        <view class="overview-item">
+          <text class="overview-num">{{moduleList.length}}</text>
+          <text class="overview-label">使用功能数</text>
+        </view>
+        <view class="overview-item">
+          <text class="overview-num">{{soulmatePayments.length}}</text>
+          <text class="overview-label">付费次数</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Tab 切换 -->
+    <view class="tab-bar">
+      <view 
+        class="tab-item {{activeTab === 'overview' ? 'active' : ''}}" 
+        data-tab="overview"
+        bindtap="switchTab"
+      >
+        <text>功能统计</text>
+      </view>
+      <view 
+        class="tab-item {{activeTab === 'history' ? 'active' : ''}}" 
+        data-tab="history"
+        bindtap="switchTab"
+      >
+        <text>使用记录</text>
+      </view>
+      <view 
+        class="tab-item {{activeTab === 'ai' ? 'active' : ''}}" 
+        data-tab="ai"
+        bindtap="switchTab"
+      >
+        <text>AI对话</text>
+      </view>
+    </view>
+
+    <!-- 功能统计 Tab -->
+    <view class="tab-content" wx:if="{{activeTab === 'overview'}}">
+      <view class="section-title">功能使用排行</view>
+      
+      <view class="module-list" wx:if="{{moduleList.length > 0}}">
+        <view 
+          class="module-item" 
+          wx:for="{{moduleList}}" 
+          wx:key="key"
+          data-page="{{item.key}}"
+          bindtap="goToPage"
+        >
+          <view class="module-icon" style="background: {{item.color}}20; color: {{item.color}}">
+            <text>{{item.icon}}</text>
+          </view>
+          <view class="module-info">
+            <text class="module-name">{{item.name}}</text>
+            <text class="module-time">最近使用：{{item.formattedLastTime}}</text>
+          </view>
+          <view class="module-count">
+            <text class="count-num">{{item.count}}</text>
+            <text class="count-label">次</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="empty-tip" wx:else>
+        <text>还没有使用记录，快去探索吧～</text>
+      </view>
+
+      <!-- 灵魂伴侣入口 -->
+      <view class="soulmate-section" wx:if="{{soulmatePayments.length > 0}}">
+        <view class="section-title">💕 灵魂伴侣记录</view>
+        <view class="soulmate-card" bindtap="goToSoulmateHistory">
+          <view class="soulmate-info">
+            <text class="soulmate-count">已解锁 {{soulmatePayments.length}} 次</text>
+            <text class="soulmate-desc">点击查看历史记录和生成的图片</text>
+          </view>
+          <text class="soulmate-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 使用记录 Tab -->
+    <view class="tab-content" wx:if="{{activeTab === 'history'}}">
+      <view class="section-title">最近使用记录</view>
+      
+      <view class="log-list" wx:if="{{recentLogs.length > 0}}">
+        <view class="log-item" wx:for="{{recentLogs}}" wx:key="id">
+          <view class="log-dot"></view>
+          <view class="log-content">
+            <text class="log-action">{{getActionText(item.action)}}</text>
+            <text class="log-time">{{formatDate(item.timestamp)}} {{formatTime(item.timestamp)}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="empty-tip" wx:else>
+        <text>暂无使用记录</text>
+      </view>
+    </view>
+
+    <!-- AI对话 Tab -->
+    <view class="tab-content" wx:if="{{activeTab === 'ai'}}">
+      <view class="section-title">最近AI对话 ({{aiChats.length}}条)</view>
+      
+      <view class="chat-list" wx:if="{{aiChats.length > 0}}">
+        <view 
+          class="chat-item" 
+          wx:for="{{aiChats}}" 
+          wx:key="index"
+          data-index="{{index}}"
+          bindtap="viewAiChat"
+        >
+          <view class="chat-header">
+            <text class="chat-mode">{{item.mode === 'signal' ? '信号分析' : item.mode === 'roleplay' ? '角色练习' : item.mode === 'vent' ? '倾诉模式' : '恋爱顾问'}}</text>
+            <text class="chat-time">{{formatDate(item.timestamp)}}</text>
+          </view>
+          <view class="chat-question">
+            <text class="chat-label">问：</text>
+            <text class="chat-text">{{item.question}}</text>
+          </view>
+          <view class="chat-answer">
+            <text class="chat-label">答：</text>
+            <text class="chat-text">{{item.answer}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="empty-tip" wx:else>
+        <text>还没有AI对话记录</text>
+      </view>
+    </view>
+
+    <!-- 底部操作 -->
+    <view class="footer-actions">
+      <button class="clear-btn" bindtap="clearStats">
+        <text class="btn-icon">🗑️</text>
+        <text>清空统计</text>
+      </button>
+    </view>
+  </block>
+</view>

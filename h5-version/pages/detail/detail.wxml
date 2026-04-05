@@ -1,0 +1,91 @@
+<!-- pages/detail/detail.wxml -->
+<view class="container">
+
+  <!-- 课程封面 -->
+  <view class="cover" style="background:{{course.coverBg}}">
+    <view class="cover-back" bindtap="goBack">←</view>
+    <view class="cover-emoji">{{course.cover}}</view>
+    <view class="cover-badge-row">
+      <text class="tag" style="background:rgba(255,255,255,0.25);color:#fff">{{course.category}}</text>
+      <text class="tag" style="background:rgba(255,255,255,0.25);color:#fff">{{course.duration}}</text>
+      <view wx:if="{{course.isFree}}" class="tag" style="background:#22c55e;color:#fff">免费</view>
+    </view>
+    <view class="cover-title">{{course.title}}</view>
+    <view class="cover-desc">{{course.desc}}</view>
+  </view>
+
+  <!-- 章节列表 -->
+  <view class="chapters-wrap">
+    <view class="chapters-header">
+      <text class="section-title">课程章节</text>
+      <text class="chapters-count">共{{course.chapters.length}}章</text>
+    </view>
+
+    <view
+      class="chapter-item card"
+      wx:for="{{course.chapters}}"
+      wx:key="id"
+      bindtap="openChapter"
+      data-idx="{{index}}"
+    >
+      <view class="chapter-left">
+        <view class="chapter-num" style="background:{{chapterDone[index] ? '#22c55e' : course.coverBg}}">
+          {{chapterDone[index] ? '✓' : index + 1}}
+        </view>
+        <view class="chapter-info">
+          <view class="chapter-title">{{item.title}}</view>
+        </view>
+      </view>
+      <view class="chapter-arrow">→</view>
+    </view>
+  </view>
+
+  <!-- 弹出的章节内容（AI 动态加载版） -->
+  <view class="chapter-modal {{showModal ? 'show' : ''}}">
+    <view class="modal-mask" bindtap="closeModal"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <view class="modal-title">{{currentChapter.title}}</view>
+        <view class="modal-close" bindtap="closeModal">✕</view>
+      </view>
+      <scroll-view scroll-y class="modal-body">
+        <!-- AI 加载中 -->
+        <view wx:if="{{aiLoading}}" class="ai-loading-wrap">
+          <view class="ai-loading-icon">🤖</view>
+          <view class="ai-loading-text">AI 正在为你生成课程内容...</view>
+          <view class="ai-dots">
+            <view class="ai-dot"></view>
+            <view class="ai-dot"></view>
+            <view class="ai-dot"></view>
+          </view>
+        </view>
+
+        <!-- AI 生成的内容 -->
+        <view wx:elif="{{useAIContent && aiContent}}" class="ai-content-wrap">
+          <view class="ai-content-badge">🤖 AI 实时生成</view>
+          <view class="chapter-text">{{aiContent}}</view>
+          <view class="regen-btn" bindtap="reGenerateContent">🔄 重新生成</view>
+        </view>
+
+        <!-- 静态内容 -->
+        <view wx:else class="chapter-text">{{currentChapter.content}}</view>
+      </scroll-view>
+      <view class="modal-footer">
+        <view class="btn-primary" bindtap="markDone">✓ 学完了</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 完成课程提示 -->
+  <view class="complete-card" wx:if="{{isCompleted}}">
+    <text class="complete-emoji">🎉</text>
+    <text class="complete-text">恭喜！本课程已学完</text>
+  </view>
+
+  <!-- 标签 -->
+  <view class="tags-wrap">
+    <text class="tag tag-pink" wx:for="{{course.tags}}" wx:key="*this">{{item}}</text>
+  </view>
+
+  <view style="height:60rpx"></view>
+</view>

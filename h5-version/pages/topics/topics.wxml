@@ -1,0 +1,187 @@
+<!-- pages/topics/topics.wxml -->
+<view class="container">
+
+  <!-- 顶部 -->
+  <view class="header gradient-bg">
+    <view class="header-title">话题库 & 金句 💬</view>
+    <view class="header-sub">约会不冷场，聊天有温度</view>
+  </view>
+
+  <!-- Tab切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'topics' ? 'active' : ''}}" bindtap="switchTab" data-tab="topics">
+      💬 约会话题
+    </view>
+    <view class="tab-item {{activeTab === 'sweet' ? 'active' : ''}}" bindtap="switchTab" data-tab="sweet">
+      💕 撩人金句
+    </view>
+  </view>
+
+  <!-- 约会话题板块 -->
+  <view wx:if="{{activeTab === 'topics'}}">
+    <!-- AI 生成按钮 -->
+    <view class="ai-gen-section">
+      <view class="ai-gen-btn" bindtap="generateAITopics" wx:if="{{!generatingTopics}}">
+        <text class="ai-icon">✨</text>
+        <text class="ai-text">AI 智能生成话题</text>
+      </view>
+      <view class="ai-loading-btn" wx:if="{{generatingTopics}}">
+        <text class="ai-icon">⏳</text>
+        <text class="ai-text">AI 正在生成中...</text>
+      </view>
+    </view>
+
+    <!-- AI 生成的话题展示 -->
+    <view wx:if="{{aiTopics.length > 0}}" class="ai-result-section">
+      <view class="ai-result-header">
+        <text class="ai-badge">🤖 AI 生成</text>
+        <text class="ai-hint">点击话题即可复制</text>
+      </view>
+      <view class="ai-topics-list">
+        <view 
+          class="ai-topic-card card" 
+          wx:for="{{aiTopics}}" 
+          wx:key="id"
+          bindtap="copyAITopic"
+          data-q="{{item.questions[0]}}"
+        >
+          <view class="ai-topic-cat">{{item.category}}</view>
+          <view class="ai-topic-qs">
+            <view class="ai-q" wx:for="{{item.questions}}" wx:for-item="q" wx:key="*this" wx:if="{{index < 3}}">
+              {{q}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="cat-list">
+      <view
+        class="cat-card card"
+        wx:for="{{topics}}"
+        wx:key="id"
+        bindtap="openTopic"
+        data-idx="{{index}}"
+      >
+        <view class="cat-icon">{{item.icon}}</view>
+        <view class="cat-info">
+          <view class="cat-name">{{item.category}}</view>
+          <view class="cat-count">{{item.questions.length}}个话题</view>
+        </view>
+        <view class="cat-arrow">→</view>
+      </view>
+    </view>
+
+    <!-- 话题详情弹层 -->
+    <view class="topic-modal {{showTopicModal ? 'show' : ''}}">
+      <view class="modal-mask" bindtap="closeTopicModal"></view>
+      <view class="modal-content">
+        <view class="modal-header">
+          <view class="modal-title">{{currentTopic.icon}} {{currentTopic.category}}</view>
+          <view class="modal-close" bindtap="closeTopicModal">✕</view>
+        </view>
+        <scroll-view scroll-y class="modal-body">
+          <view
+            class="question-item"
+            wx:for="{{currentTopic.questions}}"
+            wx:key="*this"
+            bindtap="copyQuestion"
+            data-q="{{item}}"
+          >
+            <view class="question-text">{{item}}</view>
+            <view class="question-copy">复制</view>
+          </view>
+        </scroll-view>
+        <view class="modal-tip">点击话题可一键复制</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 撩人金句板块 -->
+  <view wx:if="{{activeTab === 'sweet'}}">
+
+    <!-- 场景筛选 -->
+    <scroll-view scroll-x class="scene-scroll">
+      <view class="scene-inner">
+        <view
+          wx:for="{{scenes}}"
+          wx:key="*this"
+          class="scene-tag {{activeScene === item ? 'active' : ''}}"
+          bindtap="setScene" data-scene="{{item}}"
+        >{{item}}</view>
+      </view>
+    </scroll-view>
+
+    <!-- 随机生成按钮 -->
+    <view class="random-btn-wrap">
+      <view class="random-btn" bindtap="randomWord">
+        🎲 随机获得一句
+      </view>
+      <view class="random-btn ai-random-btn" bindtap="generateAIWords" wx:if="{{!generatingWords}}">
+        ✨ AI 智能生成
+      </view>
+      <view class="random-btn ai-loading-btn" wx:if="{{generatingWords}}">
+        ⏳ AI 生成中...
+      </view>
+    </view>
+
+    <!-- AI 生成的金句展示 -->
+    <view wx:if="{{aiWords.length > 0}}" class="ai-result-section">
+      <view class="ai-result-header">
+        <text class="ai-badge">🤖 AI 生成</text>
+        <text class="ai-hint">点击金句即可复制</text>
+      </view>
+      <view class="sweet-list">
+        <view 
+          class="sweet-item card" 
+          wx:for="{{aiWords}}" 
+          wx:key="id"
+          bindtap="copyAIWord"
+          data-text="{{item.text}}"
+        >
+          <view class="sweet-scene-tag">
+            <text class="tag tag-purple">{{item.scene}}</text>
+          </view>
+          <view class="sweet-text">{{item.text}}</view>
+          <view class="sweet-footer">
+            <view class="sweet-copy-btn">📋 复制</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 金句列表 -->
+    <view class="sweet-list">
+      <view
+        class="sweet-item card"
+        wx:for="{{filteredWords}}"
+        wx:key="id"
+        bindtap="copyWord"
+        data-text="{{item.text}}"
+      >
+        <view class="sweet-scene-tag">
+          <text class="tag tag-pink">{{item.scene}}</text>
+        </view>
+        <view class="sweet-text">{{item.text}}</view>
+        <view class="sweet-footer">
+          <view class="sweet-copy-btn">📋 复制</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 随机金句弹层 -->
+    <view class="random-modal {{showRandomModal ? 'show' : ''}}">
+      <view class="modal-mask" bindtap="closeRandomModal"></view>
+      <view class="random-content">
+        <view class="random-title">💕 为你生成</view>
+        <view class="random-text">{{randomWordText}}</view>
+        <view class="random-actions">
+          <view class="btn-outline" bindtap="randomWord">再来一句</view>
+          <view class="btn-primary" bindtap="copyRandomWord">复制使用</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view style="height:40rpx"></view>
+</view>

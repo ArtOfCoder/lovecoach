@@ -1,0 +1,126 @@
+<!-- pages/roleplay/roleplay.wxml -->
+<view class="page-wrap">
+
+  <!-- 场景选择 -->
+  <view wx:if="{{phase === 'select'}}">
+    <view class="rp-header gradient-bg">
+      <view class="rp-back" bindtap="goBack">←</view>
+      <view class="rp-title">🎭 角色扮演练习</view>
+      <view class="rp-sub">选择场景，AI扮演对象，实战练习</view>
+    </view>
+    <view class="scene-list">
+      <view
+        class="scene-card"
+        wx:for="{{scenes}}"
+        wx:key="id"
+        bindtap="startScene"
+        data-id="{{item.id}}"
+      >
+        <view class="sc-icon-wrap" style="background:{{item.color}}">
+          <text class="sc-icon">{{item.icon}}</text>
+        </view>
+        <view class="sc-info">
+          <view class="sc-name">{{item.name}}</view>
+          <view class="sc-desc">{{item.desc}}</view>
+          <view class="sc-difficulty" style="color:{{item.levelColor}}">
+            {{item.level}}
+          </view>
+        </view>
+        <view class="sc-arrow">→</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 练习对话 -->
+  <view class="rp-chat-page" wx:if="{{phase === 'chat'}}">
+    <!-- 场景信息头部 -->
+    <view class="chat-header gradient-bg-purple">
+      <view class="ch-back" bindtap="exitScene">← 退出</view>
+      <view class="ch-info">
+        <view class="ch-scene">{{currentScene.name}}</view>
+        <view class="ch-context">{{currentScene.context}}</view>
+      </view>
+    </view>
+
+    <!-- AI角色说明 -->
+    <view class="role-bar">
+      <view class="role-avatar">{{currentScene.avatarEmoji}}</view>
+      <view class="role-info">
+        <view class="role-name">{{currentScene.roleName}}</view>
+        <view class="role-desc">{{currentScene.roleDesc}}</view>
+      </view>
+      <view class="role-tip">TIP</view>
+    </view>
+
+    <!-- 对话区域 -->
+    <scroll-view
+      scroll-y
+      class="rp-scroll"
+      scroll-into-view="{{scrollId}}"
+      scroll-with-animation
+    >
+      <view class="rp-chat-inner">
+        <view wx:for="{{messages}}" wx:key="id" id="rp-{{item.id}}">
+
+          <!-- AI说的话（角色扮演）-->
+          <view class="rp-row rp-ai-row" wx:if="{{item.role === 'char'}}">
+            <view class="rp-ai-ava">{{currentScene.avatarEmoji}}</view>
+            <view class="rp-col">
+              <view class="rp-ai-bubble">{{item.content}}</view>
+              <!-- 教练点评 -->
+              <view wx:if="{{item.coaching}}" class="coaching-card">
+                <view class="cc-title">💡 教练反馈</view>
+                <view class="cc-text">{{item.coaching}}</view>
+              </view>
+            </view>
+          </view>
+
+          <!-- 你说的话 -->
+          <view class="rp-row rp-user-row" wx:if="{{item.role === 'user'}}">
+            <view class="rp-user-bubble">{{item.content}}</view>
+          </view>
+
+          <!-- 系统提示 -->
+          <view class="rp-system" wx:if="{{item.role === 'system'}}">
+            {{item.content}}
+          </view>
+
+        </view>
+
+        <view id="rp-bottom" style="height:20rpx;"></view>
+      </view>
+    </scroll-view>
+
+    <!-- 建议回复 -->
+    <view class="suggest-bar" wx:if="{{suggestReplies.length > 0}}">
+      <scroll-view scroll-x class="suggest-scroll">
+        <view class="suggest-inner">
+          <view
+            class="suggest-pill"
+            wx:for="{{suggestReplies}}"
+            wx:key="*this"
+            bindtap="useSuggest"
+            data-t="{{item}}"
+          >{{item}}</view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 输入栏 -->
+    <view class="rp-input-bar">
+      <input
+        class="rp-input"
+        placeholder="输入你想说的..."
+        placeholder-style="color:#bbb;font-size:28rpx;"
+        value="{{inputText}}"
+        bindinput="onInput"
+        confirm-type="send"
+        bindconfirm="sendMsg"
+        adjust-position
+        cursor-spacing="20"
+      />
+      <view class="rp-send {{inputText ? 'active' : ''}}" bindtap="sendMsg">发送</view>
+    </view>
+  </view>
+
+</view>

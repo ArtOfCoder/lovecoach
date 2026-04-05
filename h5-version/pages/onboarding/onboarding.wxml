@@ -1,0 +1,78 @@
+<!-- pages/onboarding/onboarding.wxml - 用户资料设置页 -->
+<view class="ob-page">
+
+  <!-- 编辑模式返回按钮 -->
+  <view class="ob-back" wx:if="{{isEditMode}}" bindtap="goBack">
+    <text class="ob-back-icon">←</text>
+    <text>返回</text>
+  </view>
+
+  <!-- 步骤1：性别选择 -->
+  <view class="ob-wrap" wx:if="{{step === 1}}">
+    <view class="ob-logo">💕</view>
+    <view class="ob-title">{{isEditMode ? '修改性别' : '欢迎来到恋爱进化论'}}</view>
+    <view class="ob-sub">{{isEditMode ? '选择更适合你的视角' : '科学恋爱，感情更有温度'}}</view>
+
+    <view class="ob-section">
+      <view class="ob-section-title">你是</view>
+      <view class="ob-gender-row">
+        <view
+          class="ob-gender-card {{selectedGender === 'male' ? 'selected' : ''}}"
+          bindtap="selectGender"
+          data-gender="male"
+        >
+          <view class="ob-gender-emoji">👦</view>
+          <view class="ob-gender-text">男生</view>
+          <view class="ob-gender-desc">从男生视角<br/>给你专属建议</view>
+          <view class="ob-check" wx:if="{{selectedGender === 'male'}}">✓</view>
+        </view>
+        <view
+          class="ob-gender-card {{selectedGender === 'female' ? 'selected' : ''}}"
+          bindtap="selectGender"
+          data-gender="female"
+        >
+          <view class="ob-gender-emoji">👧</view>
+          <view class="ob-gender-text">女生</view>
+          <view class="ob-gender-desc">从女生视角<br/>给你专属建议</view>
+          <view class="ob-check" wx:if="{{selectedGender === 'female'}}">✓</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="ob-tips">
+      <view class="ob-tip-item">🤖 AI顾问会根据你的性别给出不同建议</view>
+      <view class="ob-tip-item">📚 课程内容会匹配你的需求</view>
+      <view class="ob-tip-item">🔒 数据仅保存在本地，保护隐私</view>
+    </view>
+
+    <button
+      class="ob-btn {{canProceed ? 'active' : 'disabled'}}"
+      bindtap="nextStep"
+    >下一步 →</button>
+  </view>
+
+  <!-- 步骤2：昵称设置（可选） -->
+  <view class="ob-wrap" wx:if="{{step === 2}}">
+    <view class="ob-logo">{{selectedGender === 'male' ? '👦' : '👧'}}</view>
+    <view class="ob-title">{{isEditMode ? '修改昵称' : '给自己起个称呼'}}</view>
+    <view class="ob-sub">{{isEditMode ? '换个新称呼吧' : '可以是昵称或随便一个代号<br/>（选填，可以跳过）'}}</view>
+
+    <view class="ob-input-wrap">
+      <input
+        class="ob-input"
+        placeholder="比如：小明、宝子、KING..."
+        placeholder-style="color:#bbb;font-size:26rpx;"
+        value="{{nickname}}"
+        bindinput="onNicknameInput"
+        maxlength="12"
+        confirm-type="done"
+      />
+    </view>
+
+    <button class="ob-btn active" bindtap="confirmNickname">
+      {{nickname ? '完成设置 🎉' : '进入小程序 →'}}
+    </button>
+    <view class="ob-skip" bindtap="skipNickname">跳过</view>
+  </view>
+
+</view>

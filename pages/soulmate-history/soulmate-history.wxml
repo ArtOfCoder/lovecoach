@@ -1,0 +1,100 @@
+<!-- pages/soulmate-history/soulmate-history.wxml -->
+<view class="history-page">
+  <!-- 顶部统计 -->
+  <view class="header-stats" wx:if="{{history.length > 0}}">
+    <view class="stat-item">
+      <text class="stat-num">{{history.length}}</text>
+      <text class="stat-label">已解锁</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{history.length > 0 ? history[0].formattedDate : '-'}}</text>
+      <text class="stat-label">最近一次</text>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-container" wx:elif="{{history.length === 0}}">
+    <view class="empty-icon">💕</view>
+    <text class="empty-title">{{emptyText}}</text>
+    <button class="empty-btn" bindtap="goToSoulmate">去生成</button>
+  </view>
+
+  <!-- 历史列表 -->
+  <view class="history-list" wx:else>
+    <view 
+      class="history-card" 
+      wx:for="{{history}}" 
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="viewDetail"
+    >
+      <!-- 图片区域 -->
+      <view class="card-image-wrap">
+        <image 
+          class="card-image" 
+          src="{{item.displayImage}}" 
+          mode="aspectFill"
+          data-url="{{item.displayImage}}"
+          catchtap="onLongPressImage"
+        />
+        <view class="card-tag">{{item.astroSummary.soulmateZodiac}}</view>
+      </view>
+      
+      <!-- 信息区域 -->
+      <view class="card-info">
+        <view class="card-header">
+          <text class="card-zodiac">{{item.astroSummary.zodiac.name}} {{item.astroSummary.zodiac.symbol}}</text>
+          <text class="card-arrow">›</text>
+          <text class="card-soulmate-zodiac">{{item.astroSummary.soulmateZodiac}}</text>
+        </view>
+        
+        <view class="card-date">
+          <text class="date-text">{{item.formattedDate}} {{item.formattedTime}}</text>
+          <text class="birth-info">{{item.birthYear}}.{{item.birthMonth}}.{{item.birthDay}} {{item.birthCity || ''}}</text>
+        </view>
+        
+        <view class="card-desc" wx:if="{{item.soulmate.desc}}">
+          <text class="desc-text">{{item.soulmate.desc}}</text>
+        </view>
+        
+        <view class="card-actions">
+          <button 
+            class="action-btn save-btn" 
+            data-url="{{item.displayImage}}"
+            catchtap="saveImage"
+            wx:if="{{item.displayImage}}"
+          >
+            <text class="btn-icon">💾</text>
+            <text>保存图片</text>
+          </button>
+          <button 
+            class="action-btn delete-btn" 
+            data-id="{{item.id}}"
+            catchtap="deleteRecord"
+          >
+            <text class="btn-icon">🗑️</text>
+            <text>删除</text>
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="footer-actions" wx:if="{{history.length > 0}}">
+    <button class="footer-btn clear-btn" bindtap="clearAll">
+      <text class="btn-icon">🗑️</text>
+      <text>清空记录</text>
+    </button>
+    <button class="footer-btn primary-btn" bindtap="goToSoulmate">
+      <text class="btn-icon">✨</text>
+      <text>重新测算</text>
+    </button>
+  </view>
+</view>

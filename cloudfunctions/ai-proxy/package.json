@@ -1,0 +1,11 @@
+{
+  "name": "ai-proxy",
+  "version": "1.0.0",
+  "description": "DeepSeek API 云函数代理",
+  "main": "index.js",
+  "engines": {
+    "node": ">=16.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
