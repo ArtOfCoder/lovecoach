@@ -83,7 +83,7 @@
         <view class="fc-icon-wrap" style="background: #667eea20; color: #667eea;">📈</view>
         <view class="fc-info">
           <view class="fc-title">使用统计</view>
-          <view class="fc-sub">查看使用记录、AI对话、付费历史</view>
+          <view class="fc-sub">查看使用记录、恋爱顾问对话、付费历史</view>
         </view>
       </view>
       <text class="fc-arrow">›</text>
@@ -120,7 +120,7 @@
         <view class="fc-icon-wrap">🔮</view>
         <view class="fc-info">
           <view class="fc-title">灵魂伴侣测算</view>
-          <view class="fc-sub">AI解析星盘命格，找命中注定的另一半</view>
+          <view class="fc-sub">星盘解析命格，找命中注定的另一半</view>
         </view>
       </view>
       <view class="fc-badge">¥9.9</view>
@@ -156,9 +156,9 @@
     <text class="version-text">版本 1.0.0</text>
   </view>
 
-  <!-- AI生成内容声明 -->
+  <!-- 免责声明 -->
   <view class="ai-notice">
-    <text class="ai-notice-text">内容由 AI 生成，请核实重要信息。</text>
+    <text class="ai-notice-text">内容由本地知识库生成，仅供学习参考</text>
   </view>
 
   <view style="height:60rpx"></view>

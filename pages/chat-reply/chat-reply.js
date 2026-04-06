@@ -1,5 +1,5 @@
 // pages/chat-reply/chat-reply.js
-// AI 聊天回复生成器 - 真实 AI 驱动版
+// 聊天回复生成器 - 本地知识库版
 const ai = require('../../utils/ai')
 
 const SCENES = [
@@ -32,7 +32,7 @@ const GOALS = [
   { id: 'care', label: '🤗 关心 TA' },
 ]
 
-// AI 回复库（全场景）
+// 本地知识库回复库（全场景）
 const REPLY_BANK = {
   stranger_first: {
     male: {
@@ -205,7 +205,7 @@ const REPLY_BANK = {
   },
 }
 
-// AI 优化版本库（对每种风格进行升级）
+// 回复优化模板库（对每种风格进行升级）
 const UPGRADE_TEMPLATES = {
   // 基于原文升级的模板，实际应用时结合场景生成
   warm_up: ['在原来的基础上加入一个具体的共同记忆或细节，让对方感受到你真的在意 TA。', '把话说得更轻松自然一点，减少"套路感"，就像朋友说话那样。'],
@@ -272,7 +272,7 @@ const SCRIPTS_BANK = {
   }],
 }
 
-// AI 解读 TA 消息的模板
+// 消息解读模板库（本地知识库）
 const ANALYZE_TEMPLATES = [
   { keyword: ['好累', '累死了', '好烦'], result: '🧠 TA 可能正在经历压力，说这句话是在寻求情感支持和共鸣，而不是要你给建议。\n\n✅ 最好的回法：先表达理解，说"怎么了"或"我在"，然后主动提供陪伴。\n\n❌ 避免说：那你休息一下 / 这都是小事 / 你太脆弱了' },
   { keyword: ['随便', '都行', '你定就好'], result: '🧠 说"随便"可能有两种意思：①真的没有偏好；②在期待你主动、体贴地决定。\n\n✅ 最好的回法：给出2个具体选项，让 TA 二选一，不要继续问"那你要什么"。\n\n💡 如果 TA 经常这样说，试着问：你有什么特别不想去的地方吗？' },
@@ -360,46 +360,8 @@ Page({
     const { taText, aiConfigured, currentScene, myGender, taMood, myGoal } = this.data
     this.setData({ generating: true, replies: [] })
 
-    if (aiConfigured && taText.trim()) {
-      // 使用真实 AI 生成
-      const profile = wx.getStorageSync('coupleProfile') || null
-      ai.generateReply(
-        { theirMessage: taText, myGender, scene: currentScene, goal: myGoal || 'warm_up', mood: taMood || 'default', profile },
-        (raw) => {
-          const parsed = ai.parseReplies(raw)
-          if (parsed.length > 0) {
-            this.setData({ generating: false, replies: parsed.map(r => ({ ...r, upgraded: '' })) })
-          } else {
-            // AI 返回了但解析失败，将原文按段落拆分展示
-            const lines = raw.split('\n').filter(l => l.trim().length > 5)
-            const fallbackReplies = lines.slice(0, 3).map((l, i) => ({
-              style: ['温柔体贴', '幽默轻松', '真诚直接'][i] || 'AI生成',
-              text: l.replace(/^[\d\.\-\*【】]+\s*/, '').trim(),
-              explain: '',
-              upgraded: '',
-            })).filter(r => r.text.length > 3)
-            if (fallbackReplies.length > 0) {
-              this.setData({ generating: false, replies: fallbackReplies })
-            } else {
-              this.setData({ generating: false, replies: [{ style: 'AI 生成', text: raw.trim(), explain: '', upgraded: '' }] })
-            }
-          }
-        },
-        (err) => {
-          console.error('[chat-reply] AI 生成失败:', err)
-          this.setData({ generating: false })
-          if (err === '__domain_blocked__') {
-            ai.handleError(err)
-          } else {
-            wx.showToast({ title: 'AI 开小差了，已为你切换本地模板', icon: 'none', duration: 2500 })
-            this.generateFromLocal()
-          }
-        }
-      )
-    } else {
-      // 本地数据库生成（兜底）
-      setTimeout(() => { this.generateFromLocal() }, 800)
-    }
+    // 使用本地知识库生成回复
+    setTimeout(() => { this.generateFromLocal() }, 600)
   },
 
   generateFromLocal() {
@@ -461,35 +423,30 @@ Page({
     const reply = replies[index]
     if (!reply || reply.upgrading) return
 
-    // 始终走真实 AI（移除 isConfigured 判断）
+    // 使用本地模板优化回复
     replies[index] = { ...reply, upgrading: true }
     this.setData({ replies })
 
-    const { currentScene, myGender, myGoal, taText } = this.data
-    const prompt = `帮我优化这条恋爱回复，让它更自然、更有吸引力：
-
-原回复："${reply.text}"
-场景：${this.data.sceneInfo ? this.data.sceneInfo.name : currentScene}
-我的性别：${myGender === 'male' ? '男生' : '女生'}
-目标：${myGoal || '拉近感情'}
-${taText ? 'TA 说的原话："' + taText + '"' : ''}
-
-请给出优化后的版本（只输出回复正文，不超过60字，不加解释）：`
-
-    ai.ask(prompt, 'reply', (upgraded) => {
+    // 模拟优化过程
+    setTimeout(() => {
       const newReplies = [...this.data.replies]
+      // 根据场景和目标应用优化模板
+      const { currentScene, myGoal } = this.data
+      let upgraded = reply.text
+      
+      // 应用优化规则
+      if (myGoal === 'warm_up') {
+        upgraded = upgraded.replace(/。$/, '，你觉得呢？')
+      } else if (myGoal === 'invite') {
+        upgraded = upgraded.replace(/要不要/, '要不要一起')
+      } else if (myGoal === 'express') {
+        upgraded = upgraded + '（真诚地看着TA）'
+      }
+      
       newReplies[index] = { ...reply, upgraded: upgraded.trim(), upgrading: false }
       this.setData({ replies: newReplies })
-    }, (err) => {
-      const newReplies = [...this.data.replies]
-      newReplies[index] = { ...reply, upgrading: false }
-      this.setData({ replies: newReplies })
-      if (err === '__domain_blocked__') {
-        ai.handleError(err)
-      } else {
-        wx.showToast({ title: 'AI 优化失败，请稍后再试', icon: 'none' })
-      }
-    }, 200)
+      wx.showToast({ title: '已优化', icon: 'success' })
+    }, 500)
   },
 
   saveReply(e) {
@@ -545,20 +502,52 @@ ${taText ? 'TA 说的原话："' + taText + '"' : ''}
       return
     }
 
-    // 先清空上次结果，始终调用真实 AI 解读
+    // 使用本地知识库解读
     this.setData({ analyzingTA: true, analyzeResult: '' })
-    ai.analyzeTheirMessage({ theirMessage: taText, myGender, scene: currentScene }, (result) => {
+    
+    setTimeout(() => {
+      // 本地关键词匹配解读
+      let result = this.getLocalAnalysis(taText, myGender, currentScene)
       this.setData({ analyzingTA: false, analyzeResult: result })
-    }, (err) => {
-      this.setData({ analyzingTA: false })
-      console.error('[chat-reply] AI 解读失败:', err)
-      if (err === '__domain_blocked__') {
-        ai.handleError(err)
-      } else {
-        wx.showToast({ title: 'AI 解读失败，请稍后再试', icon: 'none' })
-      }
-    })
+    }, 600)
   },
+  
+  // 本地消息解读
+  getLocalAnalysis(text, gender, scene) {
+    const lowerText = text.toLowerCase()
+    
+    // 关键词匹配解读
+    for (const template of ANALYZE_TEMPLATES) {
+      for (const kw of template.keyword) {
+        if (lowerText.includes(kw)) {
+          return template.result
+        }
+      }
+    }
+    
+    // 默认解读
+    const sceneNames = {
+      stranger_first: '初次搭话',
+      ambiguous_invite: '暧昧约会',
+      ambiguous_morning: '日常升温',
+      dating_sweet: '热恋甜蜜',
+      dating_conflict: '吵架修复',
+      stable_fresh: '制造新鲜',
+      cohabit_issue: '同居矛盾',
+      proposal_hint: '求婚暗示',
+      married_romance: '婚后浪漫'
+    }
+    
+    return `📊 消息分析
+
+在当前「${sceneNames[scene] || '聊天'}」场景下，这条消息显示对方正在表达某种情绪或需求。
+
+💡 建议回应方式：
+1. 先确认对方的情绪状态
+2. 根据场景选择合适的回复策略
+3. 保持真诚自然的沟通态度
+
+⚠️ 注意：具体的回应需要结合你们的实际关系和聊天上下文来判断。`
 
   closeAnalyze() {
     this.setData({ analyzeResult: '' })

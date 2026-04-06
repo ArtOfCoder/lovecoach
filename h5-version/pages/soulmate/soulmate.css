@@ -1,9 +1,9 @@
 /* H5版本 灵魂伴侣页面样式 */
 
 .soulmate-page {
-  min-height: 100vh;
+  min-height: 100%;
   background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  padding-bottom: 40px;
+  padding-bottom: 80px; /* 给TabBar留空间 */
 }
 
 .step-section {

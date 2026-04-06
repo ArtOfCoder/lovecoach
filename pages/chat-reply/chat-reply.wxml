@@ -2,8 +2,8 @@
 <view class="page-wrap">
   <!-- 顶部 -->
   <view class="top-bar">
-    <view class="top-title">💬 AI 聊天回复</view>
-    <view class="top-sub">粘贴 TA 的消息，3秒生成高情商回复</view>
+    <view class="top-title">💬 聊天回复助手</view>
+    <view class="top-sub">粘贴 TA 的消息，快速生成高情商回复</view>
   </view>
 
   <!-- 场景选择（横滑） -->
@@ -93,7 +93,7 @@
         <view class="gen-dot"></view>
         <view class="gen-dot"></view>
         <view class="gen-dot"></view>
-        <view class="gen-text">AI 生成中...</view>
+        <view class="gen-text">生成中...</view>
       </view>
       <view wx:else class="gen-text-row">
         <view class="gen-icon">✨</view>
@@ -129,13 +129,13 @@
             <view class="upgrade-dot"></view>
             <text style="font-size:22rpx;color:#A855F7;margin-left:6rpx;">优化中</text>
           </view>
-          <view wx:else>✨ AI 优化</view>
+          <view wx:else>✨ 优化回复</view>
         </view>
         <view class="reply-save" bindtap="saveReply" data-index="{{index}}">🔖 收藏</view>
       </view>
       <!-- 优化后的版本 -->
       <view class="upgraded-version" wx:if="{{item.upgraded}}">
-        <view class="upgraded-label">✨ AI 优化版：</view>
+        <view class="upgraded-label">✨ 优化版：</view>
         <view class="upgraded-text">{{item.upgraded}}</view>
         <view class="reply-copy" style="margin-top:12rpx" bindtap="copyReply" data-text="{{item.upgraded}}">📋 复制优化版</view>
       </view>
@@ -182,13 +182,13 @@
     </view>
   </view>
 
-  <!-- AI 解读 TA 的话 入口+结果 -->
+  <!-- 消息解读入口+结果 -->
   <view class="analyze-entry">
     <view class="analyze-card">
       <view class="analyze-left">
         <view class="analyze-icon">🔍</view>
         <view class="analyze-info">
-          <view class="analyze-title">AI 解读 TA 的话</view>
+          <view class="analyze-title">解读 TA 的话</view>
           <view class="analyze-desc">分析 TA 的真实意图、情绪信号和最佳应对策略</view>
         </view>
       </view>
@@ -202,10 +202,10 @@
       </view>
     </view>
 
-    <!-- AI 解读结果面板（页面内展示，不再用showModal截断） -->
+    <!-- 解读结果面板（页面内展示，不再用showModal截断） -->
     <view class="analyze-result-panel" wx:if="{{analyzeResult}}">
       <view class="analyze-result-header">
-        <view class="analyze-result-title">🧠 AI 解读结果</view>
+        <view class="analyze-result-title">🧠 解读结果</view>
         <view class="analyze-result-close" bindtap="closeAnalyze">✕</view>
       </view>
       <view class="analyze-result-body">
@@ -215,5 +215,10 @@
         <view class="analyze-copy-btn" bindtap="copyAnalyzeResult">📋 复制解读</view>
       </view>
     </view>
+  </view>
+  
+  <!-- 免责声明 -->
+  <view style="text-align:center;padding:30rpx 40rpx 60rpx;">
+    <text style="font-size:22rpx;color:#999;">内容由本地知识库生成，仅供学习参考</text>
   </view>
 </view>

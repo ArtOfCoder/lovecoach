@@ -1,5 +1,5 @@
 // pages/soulmate/soulmate.js
-// 灵魂伴侣 - 玄学+AI 生成命中注定的另一半
+// 灵魂伴侣 - 星盘测算生成命中注定的另一半
 
 const ai = require('../../utils/ai')
 const storage = require('../../utils/storage')
@@ -324,20 +324,79 @@ function generateAvatarColors(seed) {
   return colors[seed % colors.length]
 }
 
-// 用于生成AI描述的提示
-function buildAIPrompt(astro, userGender) {
+// 根据星盘信息生成本地描述
+function buildLocalDesc(astro, userGender) {
   const targetGender = userGender === 'male' ? '女生' : '男生'
-  return `你是一个精通星盘玄学的AI占星师。根据以下星盘信息，用温柔诗意的语言描述这个人命中注定的灵魂伴侣，字数控制在80字以内，语气要有玄学神秘感，让人觉得这是命运的安排：
-
-用户信息：
-- 太阳星座：${astro.zodiac.name}
-- 上升星座：${astro.ascendant}
-- 月亮星座：${astro.moonSign}
-- 出生地：${astro.birthCity}
-- 用户性别：${userGender === 'male' ? '男生' : '女生'}
-- 灵魂伴侣星座：${astro.soulmateZodiac}
-
-请直接输出对灵魂伴侣的描述，不要有"根据星盘分析"等开头语，直接从人物特征写起，例如"他温柔安静，会在你最脆弱的时候陪着你..."这样的风格。描述的是${targetGender}。`
+  const zodiacName = astro.zodiac.name
+  const soulmateZodiac = astro.soulmateZodiac
+  
+  // 基于星座配对的本地描述模板
+  const descTemplates = {
+    '白羊座': {
+      '天秤座': `她温和优雅，善于平衡。会在你冲动时给你冷静的建议，用温柔化解你的急躁，是你命中注定的互补之人。`,
+      '狮子座': `她热情自信，充满魅力。和你一样有活力，能跟上你的节奏，两人在一起永远充满激情与欢笑。`,
+      '射手座': `她乐观开朗，热爱自由。会陪你去冒险，探索世界的每一个角落，是你最好的旅伴和灵魂伴侣。`
+    },
+    '金牛座': {
+      '天蝎座': `她深情专一，洞察人心。能看穿你坚强外表下的柔软，用深沉的爱给你最踏实的依靠。`,
+      '处女座': `她细致认真，追求完美。会和你一样用心经营生活，在细节中体现对彼此的珍惜与爱意。`,
+      '摩羯座': `她稳重务实，有责任感。和你一样重视承诺，会和你一起慢慢构建属于你们的温暖小家。`
+    },
+    '双子座': {
+      '射手座': `她自由洒脱，充满智慧。能和你聊得来，也能给你空间，是既懂你又能让你成长的伴侣。`,
+      '天秤座': `她优雅迷人，善于沟通。和你有说不完的话题，能在思想上与你共鸣，是灵魂契合的伴侣。`,
+      '水瓶座': `她独立创新，思维超前。会给你带来新鲜的想法，让你们的感情永远充满惊喜与可能。`
+    },
+    '巨蟹座': {
+      '摩羯座': `他成熟稳重，有担当。虽然不善言辞，但会用行动证明对你的爱，给你最踏实的安全感。`,
+      '天蝎座': `他深情专一，保护欲强。能读懂你的情绪，在你脆弱时给你最温暖的怀抱和坚定的支持。`,
+      '双鱼座': `他温柔浪漫，富有同理心。和你一样重视感情，会用心经营你们之间的每一个美好瞬间。`
+    },
+    '狮子座': {
+      '水瓶座': `她独立聪慧，与众不同。不会被你的光芒掩盖，反而能激发你更好的一面，是势均力敌的伴侣。`,
+      '白羊座': `她热情直接，敢爱敢恨。和你一样充满活力，两人在一起火花四射，是彼此最好的搭档。`,
+      '射手座': `她乐观开朗，热爱自由。能陪你一起冒险，也能给你足够的空间，是最懂你的灵魂伴侣。`
+    },
+    '处女座': {
+      '双鱼座': `她温柔浪漫，富有想象力。能软化你的完美主义，教你学会放松，用感性平衡你的理性。`,
+      '金牛座': `她踏实可靠，注重细节。和你一样认真生活，会在日常小事中体现对彼此的关心与爱意。`,
+      '摩羯座': `她务实上进，有规划。和你志同道合，会和你一起为未来努力，是彼此最好的合作伙伴。`
+    },
+    '天秤座': {
+      '白羊座': `他勇敢直接，充满行动力。能帮你做决定，带你走出犹豫，用行动证明他对你的爱与决心。`,
+      '狮子座': `他自信大方，有领导力。会欣赏你的优雅，也会保护你的脆弱，给你最坚定的支持与依靠。`,
+      '双子座': `他机智幽默，善于交流。和你有说不完的话，能在精神上与你深度共鸣，是灵魂伴侣。`
+    },
+    '天蝎座': {
+      '金牛座': `她稳重踏实，值得信赖。能给你安全感，用细水长流的爱化解你的防备，走进你的内心深处。`,
+      '巨蟹座': `她温柔体贴，情感丰富。能读懂你的情绪，给你最细腻的理解与最温暖的爱，是命中注定的缘分。`,
+      '双鱼座': `她浪漫多情，富有灵性。和你一样重视灵魂契合，会在精神层面与你深度连接，是灵魂伴侣。`
+    },
+    '射手座': {
+      '双子座': `她聪明有趣，思维活跃。能和你聊得来，也能陪你探索世界，是最懂你的旅伴和灵魂伴侣。`,
+      '狮子座': `她热情自信，充满魅力。和你一样热爱生活，两人在一起永远充满欢笑与正能量。`,
+      '白羊座': `她勇敢直率，充满活力。能跟上你的节奏，陪你去冒险，是你最合拍的灵魂伴侣。`
+    },
+    '摩羯座': {
+      '巨蟹座': `她温柔顾家，情感细腻。会给你一个温暖的家，用细腻的爱融化你坚强外表下的孤独。`,
+      '金牛座': `她踏实可靠，重视承诺。和你一样认真，会和你一起为未来打拼，是最可靠的伴侣。`,
+      '处女座': `她细致认真，追求完美。和你志同道合，会在生活中与你互相扶持，共同进步。`
+    },
+    '水瓶座': {
+      '狮子座': `他自信阳光，充满魅力。能欣赏你的独特，也会给你足够的自由，是最懂你的灵魂伴侣。`,
+      '双子座': `他聪明幽默，思想开放。能和你进行深度的思想交流，是精神上最契合的伴侣。`,
+      '天秤座': `他优雅理性，善于沟通。能平衡你的独特想法，用智慧与你共建和谐的关系。`
+    },
+    '双鱼座': {
+      '处女座': `他细心体贴，务实可靠。能给你安全感，用行动证明对你的爱，是你最踏实的依靠。`,
+      '天蝎座': `他深情专一，洞察人心。能读懂你的情绪，给你最深沉的爱与最坚定的保护。`,
+      '巨蟹座': `他温柔顾家，情感丰富。和你一样重视感情，会用心经营你们之间的每一个美好瞬间。`
+    }
+  }
+  
+  // 获取对应描述，如果没有则使用默认
+  const zodiacDesc = descTemplates[zodiacName] || {}
+  return zodiacDesc[soulmateZodiac] || generateSoulmateDesc(zodiacName, astro.birthCity, userGender)
 }
 
 Page({
@@ -556,8 +615,8 @@ Page({
       const avatarIndex = (year + month * 31 + day) % BLUR_AVATAR_STYLES.length
       const avatarCfg = BLUR_AVATAR_STYLES[avatarIndex]
 
-      // 生成描述（使用本地预设模板，非AI合成）
-      const desc = generateSoulmateDesc(astroSummary.zodiac.name, birthCity, userGender)
+      // 生成描述（使用本地星盘知识库）
+      const desc = buildLocalDesc(astroSummary, userGender)
 
       clearInterval(timer)
 
@@ -1328,213 +1387,63 @@ Page({
     
     console.log('[支付] 当前数据:', { soulmate, astroSummary, birthYear, birthMonth, birthDay, userGender })
 
-    // 生成唯一的seed用于生图
+    // 生成唯一的seed用于选择头像
     const seed = parseInt(birthYear || 2000) * 10000 + parseInt(birthMonth || 1) * 100 + parseInt(birthDay || 1)
     const targetGender = userGender === 'male' ? 'female' : 'male'
     
-    console.log('[支付] 生图参数:', { seed, targetGender })
+    console.log('[支付] 头像参数:', { seed, targetGender })
 
-    wx.showLoading({ title: 'AI生成中...', mask: true })
+    wx.showLoading({ title: '生成中...', mask: true })
 
-    // 调用阿里通义万相生图 API
+    // 使用本地预设头像
     this.generateAndDownloadImage({
       zodiac: astroSummary ? astroSummary.zodiac.name : '未知',
       gender: targetGender,
-      desc: soulmate.desc || '年轻貌美',
+      desc: soulmate.desc || '命中注定',
       seed: seed,
-      onSuccess: (localPath) => {
-        console.log('[支付] 生图成功:', localPath)
+      onSuccess: (avatarStyle) => {
+        console.log('[支付] 头像生成成功:', avatarStyle)
         wx.hideLoading()
-        this.updateSoulmateWithImage(soulmate, localPath, true)
+        this.updateSoulmateWithImage(soulmate, avatarStyle, true)
         wx.showToast({ title: '解锁成功！', icon: 'success' })
       },
       onError: (err) => {
-        console.error('[支付] 生图失败:', err)
+        console.error('[支付] 头像生成失败:', err)
         wx.hideLoading()
-        // 使用备用图片也算解锁成功
-        const fallbackImage = this.getFallbackImage(targetGender, seed)
-        console.log('[支付] 使用备用图片:', fallbackImage)
-        this.updateSoulmateWithImage(soulmate, fallbackImage, true)
+        // 使用默认头像
+        const defaultAvatar = this.getLocalAvatar(targetGender, seed)
+        console.log('[支付] 使用默认头像:', defaultAvatar)
+        this.updateSoulmateWithImage(soulmate, defaultAvatar, true)
         wx.showToast({ title: '解锁成功！', icon: 'success' })
       },
     })
   },
 
-  // 直接调用 AI 生图 API 并下载到本地
+  // 生成本地头像图片（使用预设头像库）
   generateAndDownloadImage({ zodiac, gender, desc, seed, onSuccess, onError }) {
-    // 构建提示词
-    const targetGenderText = gender === 'male' ? '亚洲年轻帅哥' : '亚洲年轻美女'
-    const prompt = `${zodiac}星座的${targetGenderText}，${desc}，亚洲人面孔，中国面孔，黄种人，黑发黑眼，真人3D渲染风格，写实人像，精致五官，自然光影，柔和肤色，高质量肖像，8K超清，电影级质感，不要卡通不要动漫不要外国人`
-
-    this.callWanxiangAPI({
-      prompt,
-      seed,
-      onSuccess,
-      onError,
-    })
+    // 使用本地预设头像
+    const localImage = this.getLocalAvatar(gender, seed)
+    onSuccess && onSuccess(localImage)
   },
 
-  // 调用阿里通义万相文生图 API（异步模式）
-  // ⚠️ 注意：此API key为测试用途，生产环境建议：
-  // 1. 使用云函数转发（隐藏key）
-  // 2. 或接入自己的后端服务
-  callWanxiangAPI({ prompt, seed, onSuccess, onError }) {
-    // 检查是否在本地模式（域名被禁用）
-    const ai = require('../../utils/ai')
-    if (ai.USE_LOCAL_MODE) {
-      console.log('[万相] 本地模式，跳过API调用')
-      onError && onError()
-      return
-    }
-    
-    const DASHSCOPE_API_KEY = 'sk-d8f4569e360e46888ab126a1985ff2b0'
-
-    // 第一步：提交生图任务
-    wx.request({
-      url: 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis',
-      method: 'POST',
-      header: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DASHSCOPE_API_KEY}`,
-        'X-DashScope-Async': 'enable',
-      },
-      data: {
-        model: 'wanx2.1-t2i-turbo',
-        input: {
-          prompt: prompt,
-          negative_prompt: '卡通，动漫，二次元，低画质，模糊，扭曲，丑陋，变形，水印，文字，油画风格，素描风格',
-        },
-        parameters: {
-          size: '1024*1024',
-          n: 1,
-          seed: seed % 2147483647,
-          prompt_extend: true,
-        },
-      },
-      success: (res) => {
-        console.log('[万相] 提交任务返回:', res.data)
-        const taskId = res.data && res.data.output && res.data.output.task_id
-        if (!taskId) {
-          console.error('[万相] 提交任务失败:', res.data)
-          onError && onError()
-          return
-        }
-        // 第二步：轮询任务结果
-        this.pollWanxiangTask({ taskId, DASHSCOPE_API_KEY, onSuccess, onError, retries: 0 })
-      },
-      fail: (err) => {
-        console.error('[万相] 提交请求失败:', err)
-        onError && onError()
-      },
-    })
-  },
-
-  // 轮询万相生图任务结果
-  pollWanxiangTask({ taskId, DASHSCOPE_API_KEY, onSuccess, onError, retries }) {
-    const MAX_RETRIES = 20   // 最多等待 20 * 3s = 60秒
-    if (retries >= MAX_RETRIES) {
-      console.error('[万相] 轮询超时')
-      onError && onError()
-      return
-    }
-
-    setTimeout(() => {
-      wx.request({
-        url: `https://dashscope.aliyuncs.com/api/v1/tasks/${taskId}`,
-        method: 'GET',
-        header: {
-          'Authorization': `Bearer ${DASHSCOPE_API_KEY}`,
-        },
-        success: (res) => {
-          const output = res.data && res.data.output
-          const status = output && output.task_status
-          console.log('[万相] 轮询状态:', status, '次数:', retries + 1)
-
-          if (status === 'SUCCEEDED') {
-            // 生图成功，获取图片 URL
-            const results = output.results
-            if (results && results[0] && results[0].url) {
-              const imageUrl = results[0].url
-              console.log('[万相] 生图成功:', imageUrl)
-              // 下载图片保存到本地
-              this.downloadAndSaveImage({ imageUrl, seed: taskId, onSuccess, onError })
-            } else {
-              console.error('[万相] 无图片URL')
-              onError && onError()
-            }
-          } else if (status === 'FAILED') {
-            console.error('[万相] 生图失败:', output)
-            onError && onError()
-          } else {
-            // PENDING 或 RUNNING，继续轮询
-            this.pollWanxiangTask({ taskId, DASHSCOPE_API_KEY, onSuccess, onError, retries: retries + 1 })
-          }
-        },
-        fail: (err) => {
-          console.error('[万相] 轮询请求失败:', err)
-          // 网络失败继续重试
-          this.pollWanxiangTask({ taskId, DASHSCOPE_API_KEY, onSuccess, onError, retries: retries + 1 })
-        },
-      })
-    }, 3000)  // 每3秒轮询一次
-  },
-
-  // 下载图片并保存到本地永久存储
-  downloadAndSaveImage({ imageUrl, seed, onSuccess, onError }) {
-    wx.downloadFile({
-      url: imageUrl,
-      success: (res) => {
-        if (res.statusCode === 200) {
-          const fs = wx.getFileSystemManager()
-          const destPath = wx.env.USER_DATA_PATH + '/soulmate_' + String(seed) + '.png'
-          // 先检查文件是否存在，存在才删除（避免 unlinkSync 在文件不存在时产生错误日志）
-          try {
-            fs.accessSync(destPath)
-            // 能走到这里说明文件存在，安全删除
-            fs.unlinkSync(destPath)
-          } catch (e) {
-            // accessSync 抛出表示文件不存在，无需处理
-          }
-          try {
-            const savedPath = fs.saveFileSync(res.tempFilePath, destPath)
-            console.log('[万相] 图片保存到本地:', savedPath)
-            onSuccess && onSuccess(savedPath)
-          } catch (e) {
-            console.error('[万相] saveFileSync 失败，回退使用临时路径:', e)
-            // tempFilePath 本次会话内有效，可用于保存到相册
-            onSuccess && onSuccess(res.tempFilePath)
-          }
-        } else {
-          console.error('[万相] 下载图片失败，状态码:', res.statusCode)
-          onError && onError()
-        }
-      },
-      fail: (err) => {
-        console.error('[万相] 下载图片失败:', err)
-        onError && onError()
-      },
-    })
-  },
-
-  // 获取备用图片（当 API 不可用时）
-  getFallbackImage(gender, seed) {
-    // 使用 picsum.photos 作为备用（需要配置域名白名单）
-    // 正式上线时应替换为真实的 AI 生图服务
-    const images = {
+  // 获取本地预设头像
+  getLocalAvatar(gender, seed) {
+    // 使用本地渐变头像，根据星座和性别生成不同风格
+    const avatarStyles = {
       male: [
-        'https://picsum.photos/seed/soulm1/400/400',
-        'https://picsum.photos/seed/soulm2/400/400',
-        'https://picsum.photos/seed/soulm3/400/400',
-        'https://picsum.photos/seed/soulm4/400/400',
+        { bg: 'linear-gradient(160deg, #e8d5f5 0%, #c4a0e8 50%, #9b6fc7 100%)', hair: 'rgba(40, 20, 60, 0.85)', skin: 'rgba(255, 220, 195, 0.95)' },
+        { bg: 'linear-gradient(160deg, #dbeafe 0%, #93c5fd 50%, #60a5fa 100%)', hair: 'rgba(30, 20, 60, 0.88)', skin: 'rgba(245, 222, 200, 0.95)' },
+        { bg: 'linear-gradient(160deg, #fef9c3 0%, #fde047 50%, #facc15 100%)', hair: 'rgba(100, 55, 10, 0.9)', skin: 'rgba(255, 228, 196, 0.95)' },
+        { bg: 'linear-gradient(160deg, #d4f8e8 0%, #6ee7b7 50%, #34d399 100%)', hair: 'rgba(20, 50, 30, 0.85)', skin: 'rgba(250, 225, 200, 0.95)' },
       ],
       female: [
-        'https://picsum.photos/seed/soulf1/400/400',
-        'https://picsum.photos/seed/soulf2/400/400',
-        'https://picsum.photos/seed/soulf3/400/400',
-        'https://picsum.photos/seed/soulf4/400/400',
+        { bg: 'linear-gradient(160deg, #ffecd2 0%, #fcb69f 50%, #e8956d 100%)', hair: 'rgba(80, 40, 10, 0.9)', skin: 'rgba(255, 210, 180, 0.95)' },
+        { bg: 'linear-gradient(160deg, #ffd6e7 0%, #ffb3c6 50%, #ff85a1 100%)', hair: 'rgba(120, 60, 20, 0.88)', skin: 'rgba(255, 218, 198, 0.95)' },
+        { bg: 'linear-gradient(160deg, #ede9fe 0%, #c4b5fd 50%, #a78bfa 100%)', hair: 'rgba(60, 30, 80, 0.88)', skin: 'rgba(255, 215, 190, 0.95)' },
+        { bg: 'linear-gradient(160deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%)', hair: 'rgba(90, 45, 30, 0.9)', skin: 'rgba(255, 220, 195, 0.95)' },
       ],
     }
-    const list = images[gender] || images['female']
+    const list = avatarStyles[gender] || avatarStyles['female']
     return list[seed % list.length]
   },
 
@@ -1695,7 +1604,7 @@ Page({
     const { soulmate, astroSummary } = this.data
     const zodiacName = astroSummary ? astroSummary.zodiac.name : ''
     return {
-      title: `AI星盘测出了我的灵魂伴侣，${zodiacName}的人快来看看 💕`,
+      title: `星盘测出了我的灵魂伴侣，${zodiacName}的人快来看看 💕`,
       path: '/pages/soulmate/soulmate',
       imageUrl: soulmate.unlocked ? soulmate.imageUrl : '',
     }

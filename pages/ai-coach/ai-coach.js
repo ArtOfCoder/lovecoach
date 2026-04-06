@@ -1,36 +1,117 @@
-// pages/ai-coach/ai-coach.js - AI 顾问（真实 AI 驱动版）
+// pages/ai-coach/ai-coach.js - 恋爱顾问（本地知识库版）
 const ai = require('../../utils/ai')
 const storage = require('../../utils/storage')
 
-// 练习模式的 AI 角色扮演提示词
-const PRACTICE_SYSTEM = `你现在是用户喜欢的异性，正在一个咖啡馆里偶遇用户。
-你的角色设定：
-- 名字：小陈（如果用户是男生你是女生，反之亦然）
-- 性格：温柔但有点内敛，喜欢读书，偶尔会有点俏皮
-- 当前情绪：轻松愉快，对用户有一点好感但没有表露
-- 场景：咖啡馆，你在看书
+// 本地知识库 - 恋爱建议回复库
+const ADVICE_LIBRARY = {
+  // 搭讪相关
+  搭讪: [
+    "搭讪最重要的是自然，不要背台词。观察对方的当下状态，从环境切入话题，比如她正在看的书、喝的咖啡。",
+    "3秒法则：看到想认识的人，3秒内开口。想太久会给自己太多压力，反而说不出口。",
+    "被拒绝很正常，不要把它当作个人价值的否定。保持礼貌离开，留下好印象，说不定下次还有机会。"
+  ],
+  // 暧昧期
+  暧昧: [
+    "暧昧期最大的任务是创造线下见面的机会。线上聊得再好，不如一次真实的约会。",
+    "制造专属感：记住她随口说过的小事，下次提起时她会觉得很特别。",
+    "适当保持神秘感，不要一次性把自己全部展示完。留一些让对方慢慢发现的空间。"
+  ],
+  // 约会
+  约会: [
+    "第一次约会不要选电影院，要选能聊天的地方。咖啡馆、文创园区、展览都是不错的选择。",
+    "约会结束时给下一次埋下伏笔：'下次带你去我发现的一家店'，而不是'今天很开心'就结束。",
+    "约会质量 > 约会花费。用心设计的简单约会，比昂贵的餐厅更能打动人。"
+  ],
+  // 表白
+  表白: [
+    "表白的时机比方式更重要。确认对方也对你有好感（3个以上积极信号）再表白。",
+    "好的表白要具体：说出你喜欢对方哪里，而不是泛泛的'我喜欢你'。",
+    "给对方选择权，不要施压。'我想和你在一起，你怎么看？'比'做我女朋友吧'更好。"
+  ],
+  // 分手挽回
+  分手: [
+    "刚分手不要急着挽回。给彼此冷静期，情绪平复后再沟通。",
+    "挽回的核心是改变，不是承诺。让对方看到你真的在改变，而不只是说说。",
+    "如果对方已经明确拒绝，尊重对方的选择。有时候放手也是爱的方式。"
+  ],
+  // 婚后
+  婚后: [
+    "婚后要持续表达爱，'她知道'不是不说的理由。每天一句'我爱你'永远不嫌多。",
+    "定期创造二人世界，不要让生活完全被孩子和工作填满。",
+    "学会说谢谢。即使是小事，也要感谢对方的付出。"
+  ],
+  // 通用
+  通用: [
+    "恋爱没有标准答案，最重要的是真诚。套路可以学，但真心是装不出来的。",
+    "沟通是关键。很多矛盾不是因为不爱，而是因为没说清楚。",
+    "爱自己才能爱别人。不要为了迎合对方而失去自我。"
+  ]
+}
 
-规则：
-1. 回复简短自然（1-3句话），模拟真实对话
-2. 先给出角色的对话回复
-3. 然后另起一行用【教练建议】给出搭讪/约会技巧点评（这是给用户的指导，脱离角色）
-4. 根据用户说话的质量给出1-10的评分和改进建议`
+// 根据关键词匹配本地回复
+function getLocalAdvice(input) {
+  const lowerInput = input.toLowerCase()
+  
+  // 关键词匹配
+  if (/搭讪|认识|开场|陌生人/.test(lowerInput)) {
+    return getRandomResponse(ADVICE_LIBRARY.搭讪)
+  }
+  if (/暧昧|约出来|约会|见面/.test(lowerInput)) {
+    return getRandomResponse(ADVICE_LIBRARY.暧昧)
+  }
+  if (/表白|告白|喜欢|在一起/.test(lowerInput)) {
+    return getRandomResponse(ADVICE_LIBRARY.表白)
+  }
+  if (/分手|挽回|前任|复合/.test(lowerInput)) {
+    return getRandomResponse(ADVICE_LIBRARY.分手)
+  }
+  if (/婚后|结婚|夫妻|老公|老婆/.test(lowerInput)) {
+    return getRandomResponse(ADVICE_LIBRARY.婚后)
+  }
+  if (/约会|吃饭|看电影|出去玩/.test(lowerInput)) {
+    return getRandomResponse(ADVICE_LIBRARY.约会)
+  }
+  
+  // 默认回复
+  return getRandomResponse(ADVICE_LIBRARY.通用)
+}
 
-const CONSOLE_SYSTEM = `你是一个温暖、有同理心的倾听者。你的职责是：
-1. 认真倾听用户说的话，表达理解和共情
-2. 不急于给建议，先让用户感到被理解
-3. 通过提问帮助用户梳理情绪
-4. 偶尔分享一些温暖的洞见，但不说教
-5. 语气像一个真正在乎对方的好友，简短、真实、有温度
-回复控制在100字以内。`
+function getRandomResponse(arr) {
+  return arr[Math.floor(Math.random() * arr.length)]
+}
 
-const ANALYSIS_SYSTEM = `你是一位读心术高手，专门分析恋爱场景中对方的心理和信号。
-分析要求：
-1. 先说TA的信号强度（🟢强/🟡中/🔴弱）
-2. 解读TA行为背后的真实意图
-3. 给出最优应对策略
-4. 指出容易犯的错误
-分析要精准到位，有理有据，不说废话。`
+// 练习模式的本地角色扮演回复
+const PRACTICE_RESPONSES = [
+  "（抬头看了你一眼，微微一笑）你好，有什么事吗？\n\n【教练建议】她给了你一个友好的信号，继续保持自然，不要紧张。",
+  "嗯，这本书挺有意思的，你也喜欢看书吗？\n\n【教练建议】她接话了！说明对你不排斥。可以顺着书的话题深入。",
+  "哈哈，你说得挺有意思的。\n\n【教练建议】她在笑，氛围不错。可以尝试要联系方式了。"
+]
+
+// 倾诉模式的本地回复
+const CONSOLE_RESPONSES = [
+  "听起来你最近挺不容易的，愿意多说一些吗？",
+  "我理解你的感受，这种时候确实会让人难过。",
+  "你已经很努力了，不要太苛责自己。",
+  "想聊聊是什么让你这么想的吗？"
+]
+
+// 信号分析的本地回复模板
+function getAnalysisResponse(input) {
+  return `📊 信号分析
+
+根据你描述的情况，我注意到几个关键点：
+
+🟡 信号强度：中等
+对方的反应显示有一定兴趣，但还在观察阶段。
+
+💡 建议策略：
+1. 继续保持当前的互动频率
+2. 尝试创造更多线下见面的机会
+3. 注意观察对方是否主动找你聊天
+
+⚠️ 注意事项：
+不要过度解读，给对方一些空间，让关系自然发展。`
+}
 
 // 模式欢迎语（动态注入性别）
 function getModeWelcome(mode, profile, userGender) {
@@ -43,7 +124,7 @@ function getModeWelcome(mode, profile, userGender) {
     : (genderHint ? '\n\n（已识别：' + genderHint + '，我会从你的视角给建议）' : '')
 
   const welcomes = {
-    normal: `你好！我是你的专属 AI 恋爱顾问小爱 💕\n\n有什么恋爱烦恼，随时说来听听～${genderPrompt}`,
+    normal: `你好！我是你的专属恋爱顾问小爱 💕\n\n有什么恋爱烦恼，随时说来听听～${genderPrompt}`,
     analysis: `📊 信号分析模式已开启\n\n把 TA 的行为、消息、或者你们的互动细节告诉我，我来帮你解读 TA 的真实想法。\n\n分析越详细，结论越准确。`,
     practice: `🎭 角色扮演练习开始！\n\n我现在扮演你喜欢的人，正坐在咖啡馆里看书。\n\n场景：你走进来，发现了我，想来搭讪...\n\n来吧，先开口！（我会给你实时的技巧反馈）`,
     console: `🤗 倾诉模式已开启\n\n今天有什么想说的吗？\n\n不用有逻辑，不用有结论，就是说说心里的话。我在这里。`,
@@ -455,30 +536,28 @@ ${scene.description}
     // 检查模式：本地模式 vs 真实 AI
     console.log('[ai-coach] sendMessage - usingLocalMode:', this.data.usingLocalMode, 'aiConfigured:', this.data.aiConfigured)
 
-    if (this.data.usingLocalMode) {
-      console.log('[ai-coach] 使用本地模式')
-      // 本地模式：直接使用本地知识库
-      const delay = Math.min(600 + text.length * 20, 1800)
-      setTimeout(() => {
-        this.setData({ isTyping: false, aiStatus: 'typing' })
-        const response = ai.getLocalAIResponse(chatHistory, ai.SYSTEM_PROMPTS.coach)
-        const suggestions = this.extractSuggestions(response, this.data.currentMode)
-        this.typewriterAdd('assistant', response, suggestions, null)
-      }, delay)
-    } else if (this.data.aiConfigured) {
-      console.log('[ai-coach] 使用真实 AI 模式，调用 ai.chat()')
-      // 真实 AI 模式
-      this.callRealAI(text, chatHistory)
-    } else {
-      console.log('[ai-coach] 使用演示模式（未配置 AI）')
-      // 未配置时使用演示回复
-      const delay = Math.min(600 + text.length * 20, 1800)
-      setTimeout(() => {
-        const response = this.getMockResponse(text, chatHistory)
-        this.setData({ isTyping: false, aiStatus: 'typing' })
-        this.typewriterAdd('assistant', response.answer, response.suggestions, response.emotion)
-      }, delay)
-    }
+    // 使用本地知识库模式
+    console.log('[ai-coach] 使用本地知识库')
+    const delay = Math.min(600 + text.length * 20, 1800)
+    setTimeout(() => {
+      this.setData({ isTyping: false, aiStatus: 'typing' })
+      let response = ''
+      
+      // 根据模式选择回复来源
+      const mode = this.data.currentMode
+      if (mode === 'analysis') {
+        response = getAnalysisResponse(text)
+      } else if (mode === 'practice') {
+        response = PRACTICE_RESPONSES[Math.floor(Math.random() * PRACTICE_RESPONSES.length)]
+      } else if (mode === 'console') {
+        response = CONSOLE_RESPONSES[Math.floor(Math.random() * CONSOLE_RESPONSES.length)]
+      } else {
+        response = getLocalAdvice(text)
+      }
+      
+      const suggestions = this.extractSuggestions(response, mode)
+      this.typewriterAdd('assistant', response, suggestions, null)
+    }, delay)
   },
 
   callRealAI(text, chatHistory) {

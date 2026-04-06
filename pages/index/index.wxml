@@ -1,10 +1,10 @@
 <!-- pages/index/index.wxml - 全面升级版 -->
 <view class="page-wrap">
 
-  <!-- AI 配置提示（未配置时显示） -->
-  <view wx:if="{{!aiConfigured}}" class="ai-config-tip" bindtap="goToAI">
+  <!-- 功能提示 -->
+  <view class="ai-config-tip" bindtap="goToAI">
     <view class="act-icon">⚡</view>
-    <view class="act-text">配置 AI API Key 解锁全部智能功能 →</view>
+    <view class="act-text">恋爱顾问在线，随时为你解答疑惑 →</view>
   </view>
 
   <!-- 顶部 Hero -->
@@ -37,7 +37,7 @@
     <view class="nug-icon">🌱</view>
     <view class="nug-content">
       <view class="nug-title">欢迎来到恋爱进化论！</view>
-      <view class="nug-sub">创建情侣档案，解锁专属 AI 建议和里程碑追踪</view>
+      <view class="nug-sub">创建情侣档案，解锁专属恋爱建议和里程碑追踪</view>
     </view>
     <view class="nug-btn" bindtap="goToCouple">立即创建 →</view>
   </view>
@@ -71,16 +71,16 @@
     </view>
   </view>
 
-  <!-- 核心 AI 能力 Banner -->
+  <!-- 核心功能 Banner -->
   <view class="section-wrap">
     <!-- 聊天回复生成器 - 主入口大卡 -->
     <view class="hero-feature-card" bindtap="goToChatReply">
       <view class="hfc-badge">🔥 最受欢迎功能</view>
-      <view class="hfc-title">AI 聊天回复生成</view>
-      <view class="hfc-sub">粘贴 TA 的消息，3秒生成3种高情商回复</view>
+      <view class="hfc-title">聊天回复生成</view>
+      <view class="hfc-sub">粘贴 TA 的消息，快速生成高情商回复</view>
       <view class="hfc-demo">
         <view class="demo-bubble-ta">你最近怎么样？</view>
-        <view class="demo-arrow">→ AI 生成</view>
+        <view class="demo-arrow">→ 智能生成</view>
         <view class="demo-bubble-me">还在忙那个项目，不过每天都在期待跟你聊天，这算不算一种动力 😄</view>
       </view>
       <view class="hfc-btn">立即试用 →</view>
@@ -93,12 +93,12 @@
       <view class="dual-card" bindtap="goToCouple" style="background:linear-gradient(135deg,#fff5f9,#f5f0ff)">
         <view class="dc-icon">💑</view>
         <view class="dc-title">情侣档案</view>
-        <view class="dc-sub">创建档案<br/>获取专属AI建议</view>
+        <view class="dc-sub">创建档案<br/>获取专属恋爱建议</view>
         <view class="dc-badge">NEW</view>
       </view>
       <view class="dual-card" bindtap="goToAI" style="background:linear-gradient(135deg,#f0f9ff,#f0f4ff)">
-        <view class="dc-icon">🤖</view>
-        <view class="dc-title">AI 顾问</view>
+        <view class="dc-icon">💕</view>
+        <view class="dc-title">恋爱顾问</view>
         <view class="dc-sub">24小时在线<br/>倾诉、提问、求建议</view>
       </view>
     </view>
@@ -108,9 +108,9 @@
   <view class="section-wrap">
     <view class="soulmate-banner" bindtap="goToSoulmate">
       <view class="smb-left">
-        <view class="smb-tag">🔮 玄学 + AI</view>
+        <view class="smb-tag">🔮 星盘测算</view>
         <view class="smb-title">测算你的灵魂伴侣</view>
-        <view class="smb-sub">输入出生日期，AI解析星盘命格，找到命中注定的另一半</view>
+        <view class="smb-sub">输入出生日期，解析星盘命格，找到命中注定的另一半</view>
       </view>
       <view class="smb-right">
         <view class="smb-avatar-demo">
@@ -224,5 +224,10 @@
     </view>
   </view>
 
+  <!-- 免责声明 -->
+  <view style="text-align:center;padding:20rpx 40rpx 80rpx;">
+    <text style="font-size:22rpx;color:#999;">内容由本地知识库生成，仅供学习参考</text>
+  </view>
+  
   <view style="height:120rpx;"></view>
 </view>
