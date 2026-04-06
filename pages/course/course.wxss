@@ -3,6 +3,7 @@
 .container {
   min-height: 100vh;
   background: var(--bg);
+  padding-bottom: 120rpx; /* 为 tabBar 留出空间 */
 }
 
 .header {

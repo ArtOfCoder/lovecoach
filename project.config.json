@@ -3,7 +3,15 @@
   "compileType": "miniprogram",
   "libVersion": "3.3.4",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      { "type": "folder", "value": "h5-version" },
+      { "type": "folder", "value": "cloudfunctions" },
+      { "type": "file", "value": "*.md" },
+      { "type": "file", "value": "*.bat" },
+      { "type": "file", "value": "*.py" },
+      { "type": "file", "value": "gen_icons.py" },
+      { "type": "file", "value": "task-progress.html" }
+    ],
     "include": []
   },
   "setting": {

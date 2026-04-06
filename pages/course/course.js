@@ -53,7 +53,11 @@ Page({
       totalCount: COURSES.length,
       courseStats: stats,
     })
-    this.filterCourses()
+    
+    // 延迟加载课程列表，避免阻塞页面渲染
+    setTimeout(() => {
+      this.filterCourses()
+    }, 50)
   },
 
   onShow() {
