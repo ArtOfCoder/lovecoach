@@ -123,7 +123,7 @@
       <!-- 操作按钮 -->
       <view class="result-actions">
         <view class="btn-outline" bindtap="retakeQuiz">重新测评</view>
-        <view class="btn-primary" bindtap="askAboutResult">问AI顾问</view>
+        <view class="btn-primary" bindtap="askAboutResult">问恋爱顾问</view>
       </view>
     </view>
   </view>

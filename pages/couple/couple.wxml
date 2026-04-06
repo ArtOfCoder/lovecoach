@@ -284,7 +284,7 @@
 
     <!-- 快速聊天回复入口 -->
     <view class="section-card">
-      <view class="section-ttl" style="margin-bottom:20rpx">💬 智能回复助手</view>
+      <view class="section-ttl" style="margin-bottom:20rpx">💬 聊天回复助手</view>
       <view class="scene-grid">
         <view
           wx:for="{{replyScenarios}}"

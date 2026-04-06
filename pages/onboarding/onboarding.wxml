@@ -40,7 +40,7 @@
     </view>
 
     <view class="ob-tips">
-      <view class="ob-tip-item">🤖 AI顾问会根据你的性别给出不同建议</view>
+      <view class="ob-tip-item">💕 恋爱顾问会根据你的性别给出不同建议</view>
       <view class="ob-tip-item">📚 课程内容会匹配你的需求</view>
       <view class="ob-tip-item">🔒 数据仅保存在本地，保护隐私</view>
     </view>

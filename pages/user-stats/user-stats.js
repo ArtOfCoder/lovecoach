@@ -26,7 +26,7 @@ Page({
     // 处理模块数据
     const moduleMap = {
       soulmate: { name: '灵魂伴侣', icon: '💕', color: '#FF6B8A' },
-      aiCoach: { name: 'AI顾问', icon: '🤖', color: '#7B68EE' },
+      aiCoach: { name: '恋爱顾问', icon: '💕', color: '#7B68EE' },
       course: { name: '课程学习', icon: '📚', color: '#4CAF50' },
       couple: { name: '情侣档案', icon: '💑', color: '#FF8E9B' },
       chatReply: { name: '聊天回复', icon: '💬', color: '#2196F3' },

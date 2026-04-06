@@ -87,7 +87,7 @@
     </view>
   </view>
 
-  <!-- 第二行：情侣档案 + AI顾问双入口 -->
+  <!-- 第二行：情侣档案 + 恋爱顾问双入口 -->
   <view class="section-wrap">
     <view class="dual-card-row">
       <view class="dual-card" bindtap="goToCouple" style="background:linear-gradient(135deg,#fff5f9,#f5f0ff)">

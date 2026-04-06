@@ -548,6 +548,7 @@ Page({
 3. 保持真诚自然的沟通态度
 
 ⚠️ 注意：具体的回应需要结合你们的实际关系和聊天上下文来判断。`
+  },
 
   closeAnalyze() {
     this.setData({ analyzeResult: '' })
