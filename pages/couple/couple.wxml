@@ -3,7 +3,7 @@
   <!-- 顶部渐变头 -->
   <view class="hero-header">
     <view class="hero-title">💑 我的情侣档案</view>
-    <view class="hero-sub">AI 为你们的关系定制专属建议</view>
+    <view class="hero-sub">为你量身定制专属恋爱建议</view>
   </view>
 
   <!-- ===== 无档案 ===== -->
@@ -11,11 +11,11 @@
     <view class="onboard-card">
       <view class="onboard-emoji">💝</view>
       <view class="onboard-title">建立你的情侣档案</view>
-      <view class="onboard-desc">填写几个关键信息，AI 马上为你生成个性化恋爱攻略，比如：小明应该带外向型的小红去哪、现在可以亲吻了吗、如何制造惊喜</view>
+      <view class="onboard-desc">填写几个关键信息，马上为你生成个性化恋爱攻略，比如：小明应该带外向型的小红去哪、现在可以亲吻了吗、如何制造惊喜</view>
       <view class="features-row">
         <view class="feature-chip">📊 关系阶段判断</view>
         <view class="feature-chip">🎁 专属惊喜方案</view>
-        <view class="feature-chip">💬 AI 回复生成</view>
+        <view class="feature-chip">💬 聊天回复生成</view>
         <view class="feature-chip">💋 时机评估</view>
       </view>
       <view class="btn-create-big" bindtap="showCreateStep">立即创建档案</view>
@@ -26,17 +26,17 @@
       <view class="preview-title">🌟 创建后你能获得</view>
       <view class="preview-list">
         <view class="preview-item">
-          <view class="preview-icon-wrap" style="background:#fff0f3">🤖</view>
+          <view class="preview-icon-wrap" style="background:#fff0f3">💕</view>
           <view class="preview-info">
-            <view class="preview-item-title">每日 AI 专属建议</view>
+            <view class="preview-item-title">每日专属建议</view>
             <view class="preview-item-desc">基于你的阶段和TA的性格，生成今日行动方案</view>
           </view>
         </view>
         <view class="preview-item">
           <view class="preview-icon-wrap" style="background:#eff6ff">💬</view>
           <view class="preview-info">
-            <view class="preview-item-title">智能聊天回复生成</view>
-            <view class="preview-item-desc">输入TA发的消息，AI 给你3种高情商回法</view>
+            <view class="preview-item-title">聊天回复生成</view>
+            <view class="preview-item-desc">输入TA发的消息，给你3种高情商回法</view>
           </view>
         </view>
         <view class="preview-item">
@@ -116,10 +116,10 @@
       </scroll-view>
     </view>
 
-    <!-- AI 今日建议卡 -->
+    <!-- 今日建议卡 -->
     <view class="section-card advice-section">
       <view class="section-head">
-        <view class="section-ttl">🤖 今日 AI 专属建议</view>
+        <view class="section-ttl">💕 今日专属建议</view>
         <view class="refresh-btn" bindtap="generateAdvice">🔄 换一条</view>
       </view>
       <view class="advice-body">
@@ -127,7 +127,7 @@
           <view class="loading-dot"></view>
           <view class="loading-dot"></view>
           <view class="loading-dot"></view>
-          <view class="loading-text">AI 分析中...</view>
+          <view class="loading-text">分析中...</view>
         </view>
         <view wx:else>
           <view class="advice-meta-row">
@@ -150,11 +150,11 @@
     <view class="section-card cases-section">
       <view class="section-head">
         <view class="section-ttl">📖 {{stageInfo.name}}案例库</view>
-        <view class="refresh-btn" bindtap="generateCase">🎨 AI 生成案例</view>
+        <view class="refresh-btn" bindtap="generateCase">🎨 生成案例</view>
       </view>
       <view class="cases-body">
         <view wx:if="{{caseLoading}}" class="case-loading">
-          <view class="loading-text">AI 生成案例中...</view>
+          <view class="loading-text">生成案例中...</view>
         </view>
         <view wx:else>
           <view class="case-card" wx:if="{{currentCase}}">
@@ -227,17 +227,17 @@
         </view>
       </view>
       <view class="health-tip-bar">{{healthTip}}</view>
-      <!-- AI 健康诊断 -->
+      <!-- 关系诊断 -->
       <view class="health-ai-row">
         <view class="health-ai-btn {{healthDiagLoading?'health-ai-loading':''}}" bindtap="aiDiagnoseHealth">
           <view wx:if="{{healthDiagLoading}}" class="health-diag-dots">
             <view class="hd-dot"></view><view class="hd-dot"></view><view class="hd-dot"></view>
           </view>
-          <view wx:else>🤖 AI 关系诊断</view>
+          <view wx:else>💕 关系诊断</view>
         </view>
       </view>
       <view wx:if="{{healthDiagnosis}}" class="health-diag-result">
-        <view class="health-diag-title">🩺 AI 诊断结果</view>
+        <view class="health-diag-title">🩺 诊断结果</view>
         <view class="health-diag-text">{{healthDiagnosis}}</view>
       </view>
     </view>
@@ -246,7 +246,7 @@
     <view class="section-card surprise-section">
       <view class="section-head">
         <view class="section-ttl">🎁 专属惊喜方案</view>
-        <view class="refresh-btn" bindtap="refreshSurprise">🔄 AI 重新生成</view>
+        <view class="refresh-btn" bindtap="refreshSurprise">🔄 重新生成</view>
       </view>
       <view class="surprise-body">
         <view class="surprise-tag">根据 {{profile.taName}} 的 {{personalityLabel}} 性格 × {{stageInfo.name}} 定制</view>

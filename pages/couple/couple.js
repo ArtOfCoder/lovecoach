@@ -286,7 +286,7 @@ Page({
       return
     }
 
-    // 使用真实 AI 生成
+    // 使用真实生成
     ai.generateCoupleAdvice({ profile, stageInfo: this.data.stageInfo }, (raw) => {
       const parsed = ai.parseCoupleAdvice(raw)
       this.setData({ adviceLoading: false, todayAdvice: parsed })
