@@ -276,7 +276,7 @@ Page({
 
     if (!ai.isConfigured()) {
       // 未配置 API 时使用本地数据兜底
-      const pool = AI_ADVICE_POOL[profile.stage] || AI_ADVICE_POOL.dating
+      const pool = ADVICE_POOL[profile.stage] || ADVICE_POOL.dating
       const genderPool = pool[profile.myGender] || pool.male || []
       const fallback = genderPool.length > 0 ? genderPool[Math.floor(Math.random() * genderPool.length)] : {
         main: `${profile.myName}，今天记住：真诚是最好的吸引力。做一件让 ${profile.taName} 感受到你在意 TA 的事。`,
@@ -291,7 +291,7 @@ Page({
       const parsed = ai.parseCoupleAdvice(raw)
       this.setData({ adviceLoading: false, todayAdvice: parsed })
     }, (err) => {
-      console.error('[couple] AI 建议生成失败:', err)
+      console.error('[couple] 建议生成失败:', err)
       this.setData({ adviceLoading: false })
       if (err === '__domain_blocked__') {
         ai.handleError(err)

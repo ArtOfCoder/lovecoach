@@ -405,10 +405,10 @@
           </view>
         </view>
 
-        <!-- AI 分析提示 -->
+        <!-- 分析提示 -->
         <view class="ai-hint-bar">
-          <view class="ai-hint-icon">🤖</view>
-          <view class="ai-hint-text">填写后，AI 将实时分析你们的情况，生成专属建议</view>
+          <view class="ai-hint-icon">💕</view>
+          <view class="ai-hint-text">填写后，将根据你们的情况生成专属建议</view>
         </view>
 
         <view class="modal-bottom-space"></view>
