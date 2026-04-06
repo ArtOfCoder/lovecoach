@@ -62,7 +62,7 @@
       <view class="rp-chat-inner">
         <view wx:for="{{messages}}" wx:key="id" id="rp-{{item.id}}">
 
-          <!-- AI说的话（角色扮演）-->
+          <!-- 对方说的话（角色扮演）-->
           <view class="rp-row rp-ai-row" wx:if="{{item.role === 'char'}}">
             <view class="rp-ai-ava">{{currentScene.avatarEmoji}}</view>
             <view class="rp-col">

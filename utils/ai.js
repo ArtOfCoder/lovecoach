@@ -194,7 +194,7 @@ function chat({ messages, systemPrompt, onSuccess, onError, maxTokens, _retry })
             chat({ messages: messages, systemPrompt: systemPrompt, onSuccess: onSuccess, onError: onError, maxTokens: maxTokens, _retry: retryCount + 1 })
           }, RETRY_DELAY * (retryCount + 1))
         } else {
-          onError && onError('AI 请求频繁，请稍等片刻再试')
+          onError && onError('请求频繁，请稍等片刻再试')
         }
       } else if (res.statusCode === 401) {
         onError && onError('AI 密钥无效，请联系开发者')
@@ -206,7 +206,7 @@ function chat({ messages, systemPrompt, onSuccess, onError, maxTokens, _retry })
             chat({ messages: messages, systemPrompt: systemPrompt, onSuccess: onSuccess, onError: onError, maxTokens: maxTokens, _retry: retryCount + 1 })
           }, RETRY_DELAY)
         } else {
-          onError && onError('AI 服务暂时不可用，请稍后再试')
+          onError && onError('服务暂时不可用，请稍后再试')
         }
       } else {
         var errMsg = (res.data && res.data.error && res.data.error.message) || ('服务异常(' + res.statusCode + ')')
@@ -635,7 +635,7 @@ function getMockReply(type) {
 }
 
 /**
- * 本地模式：基于关键词匹配的智能回复（无需网络）
+ * 本地模式：基于关键词匹配的回复（无需网络）
  * @param {Array} messages - 用户消息历史
  * @param {string} systemPrompt - 系统提示词类型
  * @returns {string} 本地生成的回复

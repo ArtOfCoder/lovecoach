@@ -102,7 +102,7 @@
     </view>
   </view>
 
-  <!-- AI 生成结果 -->
+  <!-- 生成结果 -->
   <view class="result-section" wx:if="{{replies.length > 0}}">
     <view class="result-header">
       <view class="result-title">🎯 {{sceneInfo.name}} · {{myGender==='male'?'男生版':'女生版'}}</view>

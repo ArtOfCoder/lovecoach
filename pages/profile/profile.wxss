@@ -307,13 +307,13 @@
   padding: 20rpx 40rpx;
 }
 
-/* AI生成内容声明 */
-.ai-notice {
+/* 生成内容声明 */
+.content-notice {
   text-align: center;
   padding: 20rpx 40rpx 40rpx;
 }
 
-.ai-notice-text {
+.content-notice-text {
   font-size: 24rpx;
   color: #000000;
   font-weight: 500;

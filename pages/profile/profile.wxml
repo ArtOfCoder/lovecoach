@@ -157,8 +157,8 @@
   </view>
 
   <!-- 免责声明 -->
-  <view class="ai-notice">
-    <text class="ai-notice-text">内容由本地知识库生成，仅供学习参考</text>
+  <view class="content-notice">
+    <text class="content-notice-text">内容由本地知识库生成，仅供学习参考</text>
   </view>
 
   <view style="height:60rpx"></view>

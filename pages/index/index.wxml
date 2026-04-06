@@ -80,7 +80,7 @@
       <view class="hfc-sub">粘贴 TA 的消息，快速生成高情商回复</view>
       <view class="hfc-demo">
         <view class="demo-bubble-ta">你最近怎么样？</view>
-        <view class="demo-arrow">→ 智能生成</view>
+        <view class="demo-arrow">→ 快速生成</view>
         <view class="demo-bubble-me">还在忙那个项目，不过每天都在期待跟你聊天，这算不算一种动力 😄</view>
       </view>
       <view class="hfc-btn">立即试用 →</view>

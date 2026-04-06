@@ -83,7 +83,7 @@
 }
 
 /* AI 配置提示横幅 */
-.ai-config-tip {
+.feature-tip {
   background: linear-gradient(135deg, #f59e0b, #FF6B8A);
   padding: 16rpx 28rpx;
   display: flex;
