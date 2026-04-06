@@ -35,6 +35,28 @@ App({
     
     // 获取用户登录凭证（用于获取唯一标识）
     this.getUserLoginCode()
+
+    // 检查是否需要跳转到引导页（在 onLaunch 结束后执行）
+    this.checkOnboardingRedirect()
+  },
+
+  // 检查是否需要跳转到引导页
+  checkOnboardingRedirect() {
+    const onboardingDone = wx.getStorageSync('onboardingDone')
+    const userGender = wx.getStorageSync('userGender')
+    
+    // 如果没有完成引导或没有性别设置，跳转到引导页
+    if (!onboardingDone || !userGender) {
+      // 延迟执行，确保页面栈初始化完成
+      setTimeout(() => {
+        wx.navigateTo({
+          url: '/pages/onboarding/onboarding',
+          fail: (err) => {
+            console.error('[App] 跳转引导页失败:', err)
+          }
+        })
+      }, 100)
+    }
   },
   
   // 获取用户登录 code，用于生成唯一用户标识

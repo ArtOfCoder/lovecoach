@@ -67,8 +67,8 @@ Page({
       // 编辑模式：返回上一页
       wx.navigateBack()
     } else {
-      // 首次引导：跳转到首页
-      wx.switchTab({ url: '/pages/index/index' })
+      // 首次引导：使用 reLaunch 跳转到首页（避免页面栈问题）
+      wx.reLaunch({ url: '/pages/index/index' })
     }
   },
 

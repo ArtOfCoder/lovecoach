@@ -43,7 +43,7 @@
           <view class="preview-icon-wrap" style="background:#f0fdf4">🎯</view>
           <view class="preview-info">
             <view class="preview-item-title">关系进度评估</view>
-            <view class="preview-item-desc">亲吻/同居/求婚时机，AI 根据你们情况评估</view>
+            <view class="preview-item-desc">亲吻/同居/求婚时机，根据你们情况评估</view>
           </view>
         </view>
         <view class="preview-item">
@@ -188,7 +188,7 @@
           </view>
           <view wx:else class="case-empty">
             <view class="empty-icon">📚</view>
-            <view class="empty-text">点击"AI 生成案例"获取具体实例</view>
+            <view class="empty-text">点击"生成案例"获取具体实例</view>
           </view>
         </view>
       </view>
@@ -250,7 +250,7 @@
       </view>
       <view class="surprise-body">
         <view class="surprise-tag">根据 {{profile.taName}} 的 {{personalityLabel}} 性格 × {{stageInfo.name}} 定制</view>
-        <view wx:if="{{surpriseLoading}}" class="surprise-loading">🤖 AI 正在为你定制惊喜方案...</view>
+        <view wx:if="{{surpriseLoading}}" class="surprise-loading">💕 正在为你定制惊喜方案...</view>
         <view wx:else class="surprise-text">{{currentSurprise}}</view>
         <view class="surprise-actions" wx:if="{{!surpriseLoading}}">
           <view class="surprise-action-btn" bindtap="copySurprise">📋 复制这个方案</view>

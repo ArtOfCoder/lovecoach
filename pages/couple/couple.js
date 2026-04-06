@@ -12,7 +12,7 @@ const HEALTH_ITEMS = [
 const HEALTH_TIPS = {
   high: '🌟 你们的关系非常健康！继续保持，享受彼此。',
   mid: '💡 关系整体良好，在低分项目上多花一点心思。',
-  low: '💬 建议打开 AI 顾问聊聊，找到当前关系的突破口。',
+  low: '💬 建议打开恋爱顾问聊聊，找到当前关系的突破口。',
 }
 
 const READINESS_LIST = [
@@ -30,8 +30,8 @@ const REPLY_SCENARIOS = [
   { id: 'cohabit_issue', icon: '🏡', title: '同居矛盾', tag: '同居期' },
 ]
 
-// AI 建议库（按阶段+性别）
-const AI_ADVICE_POOL = {
+// 建议库（按阶段+性别）
+const ADVICE_POOL = {
   stranger: {
     male: [
       { main: '今天的任务只有一个：找到一个自然搭话的机会，不追求结果，只练习开口。', actions: ['在咖啡馆/书店观察她，找一个场景化切入点', '用"观察+感受+问题"公式开口', '不管结果如何，开口本身就是胜利'] },
@@ -296,8 +296,8 @@ Page({
       if (err === '__domain_blocked__') {
         ai.handleError(err)
       } else {
-        // 域名OK但AI失败 → 降级到本地数据，静默处理
-        const pool = AI_ADVICE_POOL[profile.stage] || AI_ADVICE_POOL.dating
+        // 域名OK但生成失败 → 降级到本地数据，静默处理
+        const pool = ADVICE_POOL[profile.stage] || ADVICE_POOL.dating
         const genderPool = pool[profile.myGender] || pool.male || [{ main: '今天主动关心一下 TA 吧', actions: ['发一条问候', '记住TA的烦恼', '策划约会'] }]
         const fallback = genderPool[Math.floor(Math.random() * genderPool.length)]
         this.setData({ todayAdvice: fallback })
@@ -368,7 +368,7 @@ Page({
       return
     }
 
-    // 使用 AI 生成
+    // 使用生成
     if (ai.isConfigured()) {
       ai.ask(prompt, 'advice', (content) => {
         const parsed = this.parseCase(content)
@@ -455,7 +455,7 @@ Page({
     ai.generateSurprise({ profile, stageInfo: this.data.stageInfo }, (text) => {
       this.setData({ currentSurprise: text.trim(), surpriseLoading: false })
     }, (err) => {
-      console.error('[couple] AI 惊喜生成失败:', err)
+      console.error('[couple] 惊喜生成失败:', err)
       this.setData({ surpriseLoading: false })
       if (err === '__domain_blocked__') {
         ai.handleError(err)

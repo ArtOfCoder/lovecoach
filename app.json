@@ -6,8 +6,8 @@
     "downloadFile": 30000
   },
   "pages": [
-    "pages/onboarding/onboarding",
     "pages/index/index",
+    "pages/onboarding/onboarding",
     "pages/couple/couple",
     "pages/chat-reply/chat-reply",
     "pages/course/course",
