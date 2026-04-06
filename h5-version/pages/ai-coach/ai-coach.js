@@ -10,19 +10,52 @@ let userGender = null;
 
 // 初始化页面
 function initAICoach() {
+  // ⚠️ AI顾问页采用内部滚动，需要让父容器不滚动
+  const pageContainer = document.getElementById('page-container');
+  if (pageContainer) {
+    pageContainer.style.overflow = 'hidden';
+  }
+
   // 加载历史消息
   const saved = localStorage.getItem('ai_chat_history');
   if (saved) {
-    messages = JSON.parse(saved);
-    renderMessages();
-  } else {
-    // 显示欢迎消息
-    addMessage('assistant', '你好呀！我是你的 AI 恋爱顾问小爱 🤖💕\n\n无论是搭讪技巧、暧昧推进、约会设计还是感情维系，都可以问我！\n\n先告诉我你是男生还是女生？这样我能给你更有针对性的建议～');
+    try {
+      messages = JSON.parse(saved);
+      renderMessages();
+      // 隐藏快捷面板
+      if (messages.length > 0) {
+        const qp = document.getElementById('quickPanel');
+        if (qp) qp.style.display = 'none';
+      }
+    } catch(e) {
+      messages = [];
+    }
   }
-  
+
+  if (messages.length === 0) {
+    // 显示欢迎消息
+    addMessage('assistant', '你好呀！我是你的 AI 恋爱顾问小爱 💕\n\n无论是搭讪技巧、暧昧推进、约会设计还是感情维系，都可以问我！\n\n先告诉我你是男生还是女生？这样我能给你更有针对性的建议～');
+  }
+
   // 绑定输入框事件
   const input = document.getElementById('chatInput');
-  input.addEventListener('input', updateSendBtn);
+  if (input) {
+    input.addEventListener('input', updateSendBtn);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  }
+}
+
+// 页面销毁时恢复容器滚动（切换tab时调用）
+function destroyAICoach() {
+  const pageContainer = document.getElementById('page-container');
+  if (pageContainer) {
+    pageContainer.style.overflow = '';
+  }
 }
 
 // 切换模式
@@ -55,6 +88,10 @@ function sendMessage() {
   
   if (!text || isTyping) return;
   
+  // 隐藏快捷面板
+  const qp = document.getElementById('quickPanel');
+  if (qp) qp.style.display = 'none';
+
   // 添加用户消息
   addMessage('user', text);
   input.value = '';
@@ -208,6 +245,10 @@ function clearChat() {
     document.getElementById('messageList').innerHTML = '';
     localStorage.removeItem('ai_chat_history');
     
+    // 恢复快捷面板
+    const qp = document.getElementById('quickPanel');
+    if (qp) qp.style.display = 'block';
+    
     // 重新显示欢迎消息
     addMessage('assistant', '对话已清空。我是你的 AI 恋爱顾问小爱，有什么可以帮你的吗？');
   }
@@ -235,6 +276,7 @@ function escapeHtml(text) {
 // 导出页面配置
 window.AICoachPage = {
   init: initAICoach,
+  destroy: destroyAICoach,
   switchMode,
   sendMessage,
   sendQuick,
@@ -243,5 +285,7 @@ window.AICoachPage = {
   clearChat
 };
 
-// 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', initAICoach);
+// 页面加载完成后初始化（直接访问时）
+if (typeof switchTab === 'undefined') {
+  document.addEventListener('DOMContentLoaded', initAICoach);
+}

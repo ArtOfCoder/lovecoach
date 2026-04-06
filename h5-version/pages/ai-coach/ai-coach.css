@@ -3,8 +3,12 @@
 .ai-coach-page {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
+  min-height: 0;
   background: #f8f8fc;
+  /* 撑满父容器 #page-container 的 flex:1 空间，不溢出 */
+  flex: 1;
+  overflow: hidden;
 }
 
 /* 顶部 */

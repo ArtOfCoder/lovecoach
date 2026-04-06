@@ -34,6 +34,8 @@
     <div class="category-item" data-cat="chat">聊天</div>
     <div class="category-item" data-cat="date">约会</div>
     <div class="category-item" data-cat="relationship">关系</div>
+    <div class="category-item" data-cat="psychology">心理</div>
+    <div class="category-item" data-cat="breakup">分手</div>
   </div>
 
   <!-- 课程列表 -->
@@ -77,7 +79,7 @@
             <span class="meta-icon">⏱️</span>
             <span id="modalDuration">2.5小时</span>
           </div>
-          <div class="meta-item">
+          <div class="meta-item" id="modalPriceWrap">
             <span class="meta-icon">💰</span>
             <span id="modalPrice">免费</span>
           </div>
@@ -88,7 +90,85 @@
             <!-- 动态大纲 -->
           </ul>
         </div>
-        <button class="modal-btn" onclick="startLearning()">立即学习</button>
+        <!-- 免费课程按钮 -->
+        <button class="modal-btn" id="btnStartFree" onclick="startLearning()" style="display:none;">
+          🎓 免费开始学习
+        </button>
+        <!-- 付费课程按钮 -->
+        <button class="modal-btn modal-btn-paid" id="btnBuyPaid" onclick="showPayModal()" style="display:none;">
+          💳 立即购买学习
+        </button>
+        <!-- 已购买：继续学习 -->
+        <button class="modal-btn modal-btn-continue" id="btnContinue" onclick="startLearning()" style="display:none;">
+          ✅ 继续学习
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 支付弹窗 ===== -->
+  <div class="pay-modal-overlay" id="payModal" style="display:none;" onclick="closePayModal(event)">
+    <div class="pay-modal-box" onclick="event.stopPropagation()">
+      <button class="pay-modal-close" onclick="closePayModal()">×</button>
+      <div class="pay-modal-header">
+        <div class="pay-modal-icon">💎</div>
+        <div class="pay-modal-title" id="payModalTitle">解锁课程</div>
+        <div class="pay-modal-price"><span class="pay-currency">¥</span><span id="payModalPrice" class="pay-amount">19.9</span></div>
+      </div>
+
+      <div class="pay-benefits-list">
+        <div class="pay-benefit">✅ 永久解锁该课程全部内容</div>
+        <div class="pay-benefit">✅ 包含课程讲义和实践练习</div>
+        <div class="pay-benefit">✅ 随时回看，终身有效</div>
+      </div>
+
+      <!-- 收款二维码 -->
+      <div class="pay-qr-wrap">
+        <div class="pay-qr-tip">长按识别二维码付款</div>
+        <div class="pay-qr-container">
+          <img class="pay-qr-img" src="../../images/pay-qr-code.jpg" alt="收款码">
+          <div class="pay-qr-shine"></div>
+        </div>
+        <div class="pay-qr-amount">转账金额：<strong id="payQrAmount">¥19.9</strong></div>
+      </div>
+
+      <!-- 用户ID -->
+      <div class="pay-userid-section" onclick="copyPayUserId()">
+        <div class="pay-userid-label">你的用户ID（点击复制）</div>
+        <div class="pay-userid-value" id="payUserIdDisplay">加载中...</div>
+      </div>
+
+      <!-- 提交凭证 -->
+      <div class="pay-steps">
+        <div class="pay-step">① 长按二维码完成付款</div>
+        <div class="pay-step">② 添加客服微信：<strong>news-tomato</strong></div>
+        <div class="pay-step">③ 发送用户ID，客服手动解锁</div>
+      </div>
+
+      <div class="pay-notice">付款后退出重新进入即可查看解锁内容</div>
+    </div>
+  </div>
+
+  <!-- ===== 课程阅读弹窗 ===== -->
+  <div class="lesson-modal-overlay" id="lessonModal" style="display:none;" onclick="closeLessonModal(event)">
+    <div class="lesson-modal-box" onclick="event.stopPropagation()">
+      <div class="lesson-modal-header">
+        <button class="lesson-modal-close" onclick="closeLessonModal()">←</button>
+        <div class="lesson-modal-title" id="lessonTitle">课程标题</div>
+        <div class="lesson-progress-text" id="lessonProgressText">1 / 4</div>
+      </div>
+      <!-- 进度条 -->
+      <div class="lesson-progress-bar">
+        <div class="lesson-progress-fill" id="lessonProgressFill" style="width:25%"></div>
+      </div>
+      <!-- 内容 -->
+      <div class="lesson-body" id="lessonBody">
+        <!-- 动态内容 -->
+      </div>
+      <!-- 底部导航 -->
+      <div class="lesson-footer">
+        <button class="lesson-nav-btn" id="btnPrevLesson" onclick="prevLesson()">‹ 上一节</button>
+        <button class="lesson-nav-btn lesson-nav-next" id="btnNextLesson" onclick="nextLesson()">下一节 ›</button>
       </div>
     </div>
   </div>

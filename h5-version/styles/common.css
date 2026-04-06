@@ -28,6 +28,10 @@ html, body {
 /* 页面容器 */
 #page-container {
   flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  /* 默认允许滚动（普通页面）；AI顾问页会自己设置 overflow:hidden */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }

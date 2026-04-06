@@ -106,6 +106,13 @@ function loadPage(pageName) {
 
 // 切换Tab
 function switchTab(pageName) {
+  // 切离当前页时，恢复page-container的滚动（AI顾问页会锁住它）
+  const pageContainer = document.getElementById('page-container');
+  if (pageContainer) {
+    pageContainer.style.overflow = '';
+    pageContainer.style.overflowY = 'auto';
+  }
+
   // 更新TabBar状态
   document.querySelectorAll('.tab-item').forEach(item => {
     item.classList.remove('active');

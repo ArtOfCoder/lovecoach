@@ -456,3 +456,324 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
+
+/* 付费按钮 */
+.modal-btn-paid {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+.modal-btn-continue {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
+}
+
+/* 价格样式 */
+.meta-price-free { color: #52c41a; font-weight: bold; }
+.meta-price-paid { color: #ff6b6b; font-weight: bold; }
+.meta-price-bought { color: #52c41a; font-weight: bold; }
+
+/* 课程锁图标 */
+.course-lock-icon {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  font-size: 18px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.course-bought-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(82, 196, 26, 0.9);
+  color: white;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* ========== 支付弹窗 ========== */
+.pay-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1100;
+  animation: fadeIn 0.2s;
+}
+
+.pay-modal-box {
+  background: white;
+  width: 100%;
+  max-height: 90vh;
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s;
+}
+
+.pay-modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  border: none;
+  background: #f5f5f5;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.pay-modal-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.pay-modal-icon { font-size: 48px; margin-bottom: 8px; }
+.pay-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.pay-modal-price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+}
+.pay-currency { font-size: 20px; color: #f5576c; font-weight: 700; }
+.pay-amount { font-size: 40px; color: #f5576c; font-weight: 800; line-height: 1; }
+
+/* 权益列表 */
+.pay-benefits-list {
+  background: #f9f9fb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.pay-benefit {
+  font-size: 14px;
+  color: #333;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.pay-benefit:last-child { border-bottom: none; }
+
+/* 二维码区域 */
+.pay-qr-wrap {
+  text-align: center;
+  margin-bottom: 16px;
+}
+.pay-qr-tip {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 12px;
+}
+.pay-qr-container {
+  position: relative;
+  display: inline-block;
+  padding: 12px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+.pay-qr-img {
+  width: 160px;
+  height: 160px;
+  display: block;
+  border-radius: 4px;
+}
+.pay-qr-shine {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(255, 107, 138, 0.8), transparent);
+  animation: scanLine 2s linear infinite;
+  border-radius: 12px 12px 0 0;
+}
+@keyframes scanLine {
+  0% { top: 0; opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+.pay-qr-amount {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+}
+.pay-qr-amount strong { color: #f5576c; }
+
+/* 用户ID */
+.pay-userid-section {
+  background: #f9f9fb;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  border: 1px dashed #ddd;
+  text-align: center;
+  transition: all 0.2s;
+}
+.pay-userid-section:active { background: #f0f0f5; }
+.pay-userid-label { font-size: 12px; color: #999; margin-bottom: 6px; }
+.pay-userid-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #667eea;
+  letter-spacing: 1px;
+}
+
+/* 步骤说明 */
+.pay-steps {
+  margin-bottom: 16px;
+}
+.pay-step {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #555;
+  padding: 6px 0;
+  gap: 8px;
+}
+.pay-step strong { color: #333; }
+.pay-notice {
+  text-align: center;
+  font-size: 12px;
+  color: #bbb;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* ========== 课程阅读弹窗 ========== */
+.lesson-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  z-index: 1200;
+  animation: fadeIn 0.2s;
+}
+
+.lesson-modal-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.lesson-modal-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  background: white;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.lesson-modal-close {
+  width: 36px; height: 36px;
+  border: none;
+  background: #f5f5f5;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.lesson-modal-title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lesson-progress-text {
+  font-size: 12px;
+  color: #999;
+  flex-shrink: 0;
+}
+
+/* 进度条 */
+.lesson-progress-bar {
+  height: 3px;
+  background: #f0f0f0;
+  flex-shrink: 0;
+}
+.lesson-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.3s;
+}
+
+/* 正文区域 */
+.lesson-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lesson-p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 12px;
+}
+.lesson-h4 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 20px 0 10px;
+}
+.lesson-li {
+  font-size: 14px;
+  color: #555;
+  padding: 4px 0;
+  padding-left: 4px;
+  line-height: 1.7;
+}
+
+/* 底部导航 */
+.lesson-footer {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid #f0f0f0;
+  background: white;
+  flex-shrink: 0;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+
+.lesson-nav-btn {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 24px;
+  background: white;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lesson-nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.lesson-nav-next {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  font-weight: 600;
+}
