@@ -2,6 +2,12 @@
  * H5版本 灵魂伴侣页面逻辑 - 保留完整AI功能
  */
 
+// 防止重复加载
+if (window.SoulmatePageLoaded) {
+  console.log('Soulmate page already loaded, skipping...');
+} else {
+  window.SoulmatePageLoaded = true;
+
 // 页面状态
 let currentStep = 'input';
 let userGender = null;
@@ -334,4 +340,11 @@ window.SoulmatePage = {
 };
 
 // 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', initSoulmate);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSoulmate);
+} else {
+  // DOM已加载，直接初始化
+  initSoulmate();
+}
+
+} // 结束防止重复加载的if块

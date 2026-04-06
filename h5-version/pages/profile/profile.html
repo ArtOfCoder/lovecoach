@@ -27,19 +27,29 @@
     </div>
 
     <div class="menu-group">
-      <div class="menu-item" onclick="goToPage('settings')">
+      <div class="menu-item" onclick="switchTab('chat-reply')">
+        <div class="menu-icon">💬</div>
+        <div class="menu-text">聊天回复助手</div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="switchTab('settings')">
         <div class="menu-icon">⚙️</div>
         <div class="menu-text">设置</div>
         <div class="menu-arrow">›</div>
       </div>
-      <div class="menu-item" onclick="goToPage('help')">
+      <div class="menu-item" onclick="switchTab('help')">
         <div class="menu-icon">❓</div>
         <div class="menu-text">帮助与反馈</div>
         <div class="menu-arrow">›</div>
       </div>
-      <div class="menu-item" onclick="goToPage('about')">
+      <div class="menu-item" onclick="switchTab('about')">
         <div class="menu-icon">ℹ️</div>
         <div class="menu-text">关于我们</div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="switchTab('admin')" style="opacity: 0.6;">
+        <div class="menu-icon">🔐</div>
+        <div class="menu-text">管理后台</div>
         <div class="menu-arrow">›</div>
       </div>
     </div>

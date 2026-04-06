@@ -9,6 +9,14 @@
   padding: 48rpx 32rpx 40rpx;
 }
 
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left { flex: 1; }
+
 .header-title {
   font-size: 40rpx;
   font-weight: 800;
@@ -19,6 +27,47 @@
 .header-sub {
   font-size: 26rpx;
   color: rgba(255,255,255,0.85);
+}
+
+.header-search-btn {
+  width: 72rpx;
+  height: 72rpx;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* 搜索栏 */
+.search-bar {
+  background: #fff;
+  padding: 16rpx 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.search-input {
+  flex: 1;
+  height: 70rpx;
+  background: #f5f5f8;
+  border-radius: 35rpx;
+  padding: 0 28rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.search-clear {
+  font-size: 36rpx;
+  color: #999;
+  width: 50rpx;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 /* 筛选栏 */
@@ -239,11 +288,40 @@
   font-size: 28rpx;
   font-weight: 700;
   color: #1a1a2e;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.count-badge {
+  display: inline-block;
+  background: var(--primary-light, #ffe4ec);
+  color: var(--primary, #FF6B8A);
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 2rpx 14rpx;
+  border-radius: 20rpx;
 }
 
 .empty {
   text-align: center;
-  color: #999;
-  padding: 60rpx;
+  padding: 80rpx 40rpx;
+}
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+.empty-text {
   font-size: 28rpx;
+  color: #999;
+  display: block;
+  margin-bottom: 20rpx;
+}
+.empty-hint {
+  display: inline-block;
+  background: var(--primary-light, #ffe4ec);
+  color: var(--primary, #FF6B8A);
+  font-size: 26rpx;
+  padding: 12rpx 32rpx;
+  border-radius: 30rpx;
 }

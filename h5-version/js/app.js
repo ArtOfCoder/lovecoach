@@ -25,11 +25,29 @@ const pageConfigs = {
     css: ['./pages/soulmate/soulmate.css'],
     js: './pages/soulmate/soulmate.js'
   },
+  'course': {
+    title: '恋爱课程',
+    html: './pages/course/course.html',
+    css: ['./pages/course/course.css'],
+    js: './pages/course/course.js'
+  },
+  'chat-reply': {
+    title: '聊天回复',
+    html: './pages/chat-reply/chat-reply.html',
+    css: ['./pages/chat-reply/chat-reply.css'],
+    js: './pages/chat-reply/chat-reply.js'
+  },
   'profile': {
     title: '我的',
     html: './pages/profile/profile.html',
     css: ['./pages/profile/profile.css'],
     js: './pages/profile/profile.js'
+  },
+  'admin': {
+    title: '管理后台',
+    html: './pages/admin/admin.html',
+    css: ['./pages/admin/admin.css'],
+    js: './pages/admin/admin.js'
   }
 };
 
@@ -110,18 +128,25 @@ function loadCSS(url) {
   document.head.appendChild(link);
 }
 
+// 已加载的脚本缓存
+const loadedScripts = new Set();
+
 // 加载JS
 function loadScript(url) {
   return new Promise((resolve, reject) => {
-    // 检查是否已经加载
-    if (document.querySelector(`script[src="${url}"]`)) {
+    // 检查是否已经加载（使用缓存和DOM查询）
+    if (loadedScripts.has(url) || document.querySelector(`script[src="${url}"]`)) {
+      loadedScripts.add(url);
       resolve();
       return;
     }
     
     const script = document.createElement('script');
-    script.src = url;
-    script.onload = resolve;
+    script.src = url + '?v=' + Date.now(); // 添加时间戳防止缓存
+    script.onload = () => {
+      loadedScripts.add(url);
+      resolve();
+    };
     script.onerror = reject;
     document.body.appendChild(script);
   });

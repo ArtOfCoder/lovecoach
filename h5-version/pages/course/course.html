@@ -1,0 +1,95 @@
+<div class="course-page">
+  <!-- 头部 -->
+  <div class="page-header">
+    <div class="header-title">恋爱课程</div>
+    <div class="header-subtitle">系统学习，提升恋爱能力</div>
+    <div class="course-stats">
+      <span class="stat-item">
+        <span class="stat-num" id="totalCourses">120</span>
+        <span class="stat-label">门课程</span>
+      </span>
+      <span class="stat-item">
+        <span class="stat-num" id="totalHours">200+</span>
+        <span class="stat-label">小时内容</span>
+      </span>
+      <span class="stat-item">
+        <span class="stat-num" id="freeCourses">30</span>
+        <span class="stat-label">免费课程</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- 搜索栏 -->
+  <div class="course-search">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="courseSearch" placeholder="搜索课程..." oninput="searchCourses(this.value)">
+    </div>
+  </div>
+
+  <!-- 课程分类 -->
+  <div class="course-categories" id="courseCategories">
+    <div class="category-item active" data-cat="all">全部</div>
+    <div class="category-item" data-cat="beginner">入门</div>
+    <div class="category-item" data-cat="chat">聊天</div>
+    <div class="category-item" data-cat="date">约会</div>
+    <div class="category-item" data-cat="relationship">关系</div>
+  </div>
+
+  <!-- 课程列表 -->
+  <div class="course-list" id="courseList">
+    <!-- 动态渲染课程卡片 -->
+  </div>
+
+  <!-- 加载更多 -->
+  <div class="load-more" id="loadMore" onclick="loadMoreCourses()">
+    <span>加载更多</span>
+    <span class="load-icon">↓</span>
+  </div>
+
+  <!-- 空状态 -->
+  <div class="course-empty" id="courseEmpty" style="display: none;">
+    <div class="empty-icon">📚</div>
+    <div class="empty-text">暂无相关课程</div>
+    <div class="empty-tip">试试其他关键词或分类</div>
+  </div>
+
+  <!-- 课程详情弹窗 -->
+  <div class="course-modal" id="courseModal" style="display: none;" onclick="closeCourseModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header" id="modalHeader">
+        <div class="modal-icon" id="modalIcon">💝</div>
+        <div class="modal-badge" id="modalBadge">热门</div>
+        <button class="modal-close" onclick="closeCourseModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <h3 class="modal-title" id="modalTitle">课程标题</h3>
+        <p class="modal-desc" id="modalDesc">课程描述</p>
+        <div class="modal-tags" id="modalTags">
+          <!-- 动态标签 -->
+        </div>
+        <div class="modal-meta">
+          <div class="meta-item">
+            <span class="meta-icon">📖</span>
+            <span id="modalLessons">12节课</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">⏱️</span>
+            <span id="modalDuration">2.5小时</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">💰</span>
+            <span id="modalPrice">免费</span>
+          </div>
+        </div>
+        <div class="modal-outline">
+          <h4>课程大纲</h4>
+          <ul id="modalOutline">
+            <!-- 动态大纲 -->
+          </ul>
+        </div>
+        <button class="modal-btn" onclick="startLearning()">立即学习</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,373 +1,375 @@
-// pages/admin/admin.js
-// 管理后台 - 手动解锁用户 & 黑名单管理 & OCR记录查看 & 支付记录 & 统计数据（本地存储模式）
+/**
+ * 管理后台页面逻辑
+ */
 
-const storage = require('../../utils/storage')
+// 防止重复加载
+if (window.AdminPageLoaded) {
+  console.log('Admin page already loaded, skipping...');
+} else {
+  window.AdminPageLoaded = true;
 
-Page({
-  data: {
-    isLogin: false,
-    password: '',
-    activeTab: 'unlock',  // 'unlock' | 'banned' | 'ocr' | 'payments' | 'stats'
-    bannedUsers: [],      // 黑名单
-    unlockUserId: '',     // 输入的要解锁的用户ID
-    recentUnlocks: [],    // 最近解锁记录
-    ocrRecords: [],       // OCR识别记录
-    soulmateUnlocks: [],  // 灵魂伴侣解锁记录（生图解锁）
-    paymentRecords: [],   // 支付记录
-    adminStats: null,     // 统计数据
-    behaviorLogs: [],     // 用户行为日志
-    showBanInput: false,  // 是否显示封禁输入弹窗
-    banInputValue: '',    // 封禁输入值
-    totalRevenue: '0.0',  // 总收入
-  },
+const ADMIN_PASSWORD = 'love2026';
+let isLoggedIn = false;
 
-  onLoad() {
-    const isLogin = wx.getStorageSync('adminLogin') || false
-    this.setData({ isLogin })
+// 初始化页面
+function initAdmin() {
+  // 检查登录状态
+  const loginTime = sessionStorage.getItem('admin_login_time');
+  if (loginTime && (Date.now() - parseInt(loginTime)) < 3600000) {
+    // 1小时内自动登录
+    showAdminPanel();
+  }
+  
+  // 绑定回车登录
+  document.getElementById('adminPassword')?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') adminLogin();
+  });
+}
 
-    if (isLogin) {
-      this.loadData()
-    }
-  },
+// 管理员登录
+function adminLogin() {
+  const password = document.getElementById('adminPassword').value;
+  
+  if (password === ADMIN_PASSWORD) {
+    sessionStorage.setItem('admin_login_time', Date.now().toString());
+    showAdminPanel();
+  } else {
+    alert('密码错误');
+  }
+}
 
-  // 输入密码
-  onPasswordInput(e) {
-    this.setData({ password: e.detail.value })
-  },
-
-  // 登录
-  login() {
-    if (this.data.password === 'love2026') {
-      wx.setStorageSync('adminLogin', true)
-      this.setData({ isLogin: true })
-      this.loadData()
-    } else {
-      wx.showToast({ title: '密码错误', icon: 'none' })
-    }
-  },
-
-  // 退出登录
-  logout() {
-    wx.setStorageSync('adminLogin', false)
-    this.setData({ isLogin: false, password: '' })
-  },
-
-  // 切换标签页
-  switchTab(e) {
-    const tab = e.currentTarget.dataset.tab
-    this.setData({ activeTab: tab })
-    this.loadData()
-  },
-
-  // 加载数据
-  loadData() {
-    this.loadBannedUsers()
-    this.loadRecentUnlocks()
-    this.loadOcrRecords()
-    this.loadSoulmateUnlocks()
-    this.loadPaymentRecords()
-    this.loadAdminStats()
-    this.loadBehaviorLogs()
-  },
-
-  // 加载支付记录
-  loadPaymentRecords() {
-    const paymentRecords = wx.getStorageSync('paymentRecords') || []
-    // 格式化记录
-    const formattedRecords = paymentRecords.map(r => ({
-      ...r,
-      formattedTime: this.formatDate(new Date(r.time)),
-      statusText: r.status === 'success' ? '成功' : r.status === 'pending' ? '待审核' : '失败'
-    })).reverse() // 最新的在前
-    
-    // 计算总收入
-    const totalRevenue = paymentRecords
-      .filter(r => r.status === 'success')
-      .reduce((sum, r) => sum + (r.amount || 0), 0)
-      .toFixed(1)
-    
-    this.setData({ 
-      paymentRecords: formattedRecords.slice(0, 50),
-      totalRevenue
-    })
-  },
-
+// 显示管理面板
+function showAdminPanel() {
+  isLoggedIn = true;
+  document.getElementById('adminLogin').style.display = 'none';
+  document.getElementById('adminContent').style.display = 'block';
+  
   // 加载统计数据
-  loadAdminStats() {
-    const stats = storage.getAdminStats()
-    this.setData({ adminStats: stats })
-  },
-
-  // 加载用户行为日志
-  loadBehaviorLogs() {
-    const logs = storage.getUserBehaviorLogs({ limit: 50 })
-    const formattedLogs = logs.map(l => ({
-      ...l,
-      formattedTime: this.formatDate(new Date(l.timestamp))
-    }))
-    this.setData({ behaviorLogs: formattedLogs })
-  },
-
-  // 加载OCR识别记录
-  loadOcrRecords() {
-    const ocrRecords = wx.getStorageSync('ocr_records') || []
-    this.setData({ ocrRecords: ocrRecords.slice(0, 20) }) // 只显示最近20条
-  },
-
-  // 加载灵魂伴侣解锁记录
-  loadSoulmateUnlocks() {
-    const soulmateUnlocks = wx.getStorageSync('soulmate_unlocks') || []
-    this.setData({ soulmateUnlocks: soulmateUnlocks.slice(0, 20) })
-  },
-
-  // 输入要解锁的用户ID
-  onUnlockUserIdInput(e) {
-    this.setData({ unlockUserId: e.detail.value.trim() })
-  },
-
-  // ✅ 手动解锁用户（通过 userId）- 真正解锁灵魂伴侣生图功能
-  unlockByUserId() {
-    const userId = this.data.unlockUserId
-    if (!userId) {
-      wx.showToast({ title: '请输入用户ID', icon: 'none' })
-      return
-    }
-
-    wx.showModal({
-      title: '确认解锁',
-      content: `用户ID：${userId}\n\n确认解锁该用户的灵魂伴侣生图功能？\n\n解锁后用户可以：\n• 查看高清无模糊图片\n• 保存图片到相册\n• 分享图片`,
-      confirmText: '✅ 确认解锁',
-      confirmColor: '#4CAF50',
-      cancelText: '取消',
-      success: (res) => {
-        if (!res.confirm) return
-
-        // 1. 保存到灵魂伴侣解锁记录（用于识别已解锁用户）
-        const soulmateUnlocks = wx.getStorageSync('soulmate_unlocks') || []
-        
-        // 检查是否已解锁
-        const existingIndex = soulmateUnlocks.findIndex(u => u.userId === userId)
-        if (existingIndex >= 0) {
-          // 更新解锁时间
-          soulmateUnlocks[existingIndex].unlockTime = Date.now()
-          soulmateUnlocks[existingIndex].formattedTime = this.formatDate(new Date())
-          soulmateUnlocks[existingIndex].unlockType = 'manual'
-        } else {
-          // 新增解锁记录
-          soulmateUnlocks.unshift({
-            userId,
-            unlockTime: Date.now(),
-            formattedTime: this.formatDate(new Date()),
-            unlockType: 'manual',  // manual | auto
-            source: 'admin_manual'
-          })
-        }
-        
-        // 只保留最近50条
-        if (soulmateUnlocks.length > 50) soulmateUnlocks.pop()
-        wx.setStorageSync('soulmate_unlocks', soulmateUnlocks)
-
-        // 2. 同时保存到最近解锁记录（用于显示）
-        const recentUnlocks = wx.getStorageSync('recentUnlocks') || []
-        recentUnlocks.unshift({
-          userId,
-          unlockTime: Date.now(),
-          formattedTime: this.formatDate(new Date()),
-          type: 'soulmate'
-        })
-        if (recentUnlocks.length > 20) recentUnlocks.pop()
-        wx.setStorageSync('recentUnlocks', recentUnlocks)
-
-        this.setData({ 
-          unlockUserId: '', 
-          recentUnlocks,
-          soulmateUnlocks: soulmateUnlocks.slice(0, 20)
-        })
-        
-        wx.showModal({
-          title: '✅ 解锁成功',
-          content: `用户 ${userId} 的灵魂伴侣功能已解锁！\n\n请告诉用户：\n"已为您解锁，请退出小程序重新进入即可查看高清图片"`,
-          showCancel: false,
-        })
-      }
-    })
-  },
-
-  // 🔍 查看用户解锁状态
-  checkUserUnlockStatus() {
-    const userId = this.data.unlockUserId
-    if (!userId) {
-      wx.showToast({ title: '请输入用户ID', icon: 'none' })
-      return
-    }
-
-    const soulmateUnlocks = wx.getStorageSync('soulmateUnlocks') || []
-    const isUnlocked = soulmateUnlocks.some(u => u.userId === userId)
-    
-    const bannedUsers = wx.getStorageSync('bannedUsers') || []
-    const isBanned = bannedUsers.some(u => u.userId === userId)
-
-    let content = `用户ID：${userId}\n\n`
-    content += `灵魂伴侣解锁状态：${isUnlocked ? '✅ 已解锁' : '❌ 未解锁'}\n`
-    content += `黑名单状态：${isBanned ? '🚫 已封禁' : '✅ 正常'}\n\n`
-    
-    if (isUnlocked) {
-      const record = soulmateUnlocks.find(u => u.userId === userId)
-      content += `解锁时间：${record.formattedTime || this.formatDate(new Date(record.unlockTime))}\n`
-      content += `解锁方式：${record.unlockType === 'manual' ? '人工解锁' : '自动解锁'}`
-    }
-
-    wx.showModal({
-      title: '用户状态查询',
-      content: content,
-      showCancel: false,
-      confirmText: '知道了'
-    })
-  },
-
-  // ❌ 取消用户解锁（撤销解锁）
-  revokeUnlock(e) {
-    const userId = e.currentTarget.dataset.userid
-    
-    wx.showModal({
-      title: '确认取消解锁',
-      content: `确定要取消用户 ${userId} 的灵魂伴侣解锁状态吗？\n\n取消后用户将无法查看高清图片。`,
-      confirmText: '确认取消',
-      confirmColor: '#f44336',
-      cancelText: '保留',
-      success: (res) => {
-        if (!res.confirm) return
-        
-        let soulmateUnlocks = wx.getStorageSync('soulmateUnlocks') || []
-        soulmateUnlocks = soulmateUnlocks.filter(u => u.userId !== userId)
-        wx.setStorageSync('soulmateUnlocks', soulmateUnlocks)
-        
-        this.setData({ soulmateUnlocks: soulmateUnlocks.slice(0, 20) })
-        wx.showToast({ title: '已取消解锁', icon: 'success' })
-      }
-    })
-  },
-
-  // 加载最近解锁记录
-  loadRecentUnlocks() {
-    const recentUnlocks = wx.getStorageSync('recentUnlocks') || []
-    this.setData({ recentUnlocks })
-  },
-
+  loadStats();
+  // 加载用户列表
+  loadUserList();
   // 加载黑名单
-  loadBannedUsers() {
-    const bannedUsers = wx.getStorageSync('bannedUsers') || []
-    this.setData({ bannedUsers })
-  },
+  loadBlacklist();
+}
 
-  // 手动添加黑名单
-  addToBanned() {
-    // 使用 input 对话框代替 editable modal（兼容性更好）
-    wx.showModal({
-      title: '添加黑名单',
-      content: '请输入要封禁的用户ID：',
-      confirmText: '🚫 确认封禁',
-      confirmColor: '#f44336',
-      cancelText: '取消',
-      success: (res) => {
-        if (!res.confirm) return
-        // 使用 prompt 方式获取输入
-        this.showBanInputDialog()
-      }
-    })
-  },
+// 退出登录
+function adminLogout() {
+  sessionStorage.removeItem('admin_login_time');
+  isLoggedIn = false;
+  document.getElementById('adminLogin').style.display = 'flex';
+  document.getElementById('adminContent').style.display = 'none';
+  document.getElementById('adminPassword').value = '';
+}
 
-  // 显示封禁输入对话框
-  showBanInputDialog() {
-    // 尝试使用 editable modal（高版本基础库支持）
-    if (wx.canIUse('showModal.editable')) {
-      wx.showModal({
-        title: '输入用户ID',
-        editable: true,
-        placeholderText: '请输入用户ID',
-        confirmText: '确认',
-        cancelText: '取消',
-        success: (res) => {
-          if (res.confirm && res.content) {
-            this.doBanUser(res.content.trim())
-          }
+// 加载统计数据
+function loadStats() {
+  // 统计用户数
+  let totalUsers = 0;
+  let totalCalculations = 0;
+  let totalUnlocked = 0;
+  
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('soulmate_data_')) {
+      totalCalculations++;
+      try {
+        const data = JSON.parse(localStorage.getItem(key));
+        if (data && data.unlocked) {
+          totalUnlocked++;
         }
-      })
-    } else {
-      // 低版本使用页面内输入框方式
-      this.setData({ showBanInput: true, banInputValue: '' })
+      } catch (e) {}
     }
-  },
-
-  // 执行封禁用户
-  doBanUser(userId) {
-    if (!userId) {
-      wx.showToast({ title: '用户ID不能为空', icon: 'none' })
-      return
+    if (key && key.startsWith('soulmate_user_id')) {
+      totalUsers++;
     }
-    
-    const reason = '手动封禁'
-    const bannedUsers = wx.getStorageSync('bannedUsers') || []
-    
-    // 检查是否已存在
-    if (bannedUsers.some(u => u.userId === userId)) {
-      wx.showToast({ title: '该用户已在黑名单', icon: 'none' })
-      return
+  }
+  
+  document.getElementById('totalUsers').textContent = totalUsers || Math.floor(totalCalculations * 0.8);
+  document.getElementById('totalCalculations').textContent = totalCalculations;
+  document.getElementById('totalUnlocked').textContent = totalUnlocked;
+  document.getElementById('totalRevenue').textContent = '¥' + (totalUnlocked * 9.9).toFixed(1);
+}
+
+// 加载用户列表
+function loadUserList() {
+  const listEl = document.getElementById('userList');
+  const users = [];
+  
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('soulmate_data_')) {
+      const userId = key.replace('soulmate_data_', '');
+      try {
+        const data = JSON.parse(localStorage.getItem(key));
+        users.push({
+          id: userId,
+          unlocked: data.unlocked || false,
+          time: localStorage.getItem(`soulmate_unlocked_${userId}`) ? 
+                new Date(parseInt(localStorage.getItem(`soulmate_time_${userId}`) || Date.now())).toLocaleString() :
+                '未解锁'
+        });
+      } catch (e) {}
     }
+  }
+  
+  // 按时间倒序
+  users.reverse();
+  
+  if (users.length === 0) {
+    listEl.innerHTML = '<div class="empty-state"><div class="empty-icon">👤</div>暂无用户数据</div>';
+    return;
+  }
+  
+  listEl.innerHTML = users.map(user => `
+    <div class="user-item">
+      <div class="user-info">
+        <div class="user-id">${user.id}</div>
+        <div class="user-time">${user.time}</div>
+      </div>
+      <span class="user-status ${user.unlocked ? 'unlocked' : 'locked'}">
+        ${user.unlocked ? '已解锁' : '未解锁'}
+      </span>
+      <div class="user-actions">
+        ${!user.unlocked ? `<button class="user-btn unlock" onclick="unlockUserById('${user.id}')">解锁</button>` : ''}
+        <button class="user-btn blacklist" onclick="addToBlacklistById('${user.id}')">封禁</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// 搜索用户
+function searchUser() {
+  const searchId = document.getElementById('searchUserId').value.trim();
+  if (!searchId) {
+    loadUserList();
+    return;
+  }
+  
+  const listEl = document.getElementById('userList');
+  const data = localStorage.getItem(`soulmate_data_${searchId}`);
+  
+  if (!data) {
+    listEl.innerHTML = '<div class="empty-state">未找到该用户</div>';
+    return;
+  }
+  
+  try {
+    const userData = JSON.parse(data);
+    const unlocked = localStorage.getItem(`soulmate_unlocked_${searchId}`) === 'true';
     
-    bannedUsers.push({
-      userId,
-      nickName: '未知用户',
-      banReason: reason,
-      banTime: Date.now(),
-      formattedTime: this.formatDate(new Date())
-    })
-    
-    wx.setStorageSync('bannedUsers', bannedUsers)
-    this.loadBannedUsers()
-    wx.showToast({ title: '已封禁', icon: 'success' })
-  },
+    listEl.innerHTML = `
+      <div class="user-item">
+        <div class="user-info">
+          <div class="user-id">${searchId}</div>
+          <div class="user-time">${userData.zodiac?.name || '未知'} | ${unlocked ? '已解锁' : '未解锁'}</div>
+        </div>
+        <span class="user-status ${unlocked ? 'unlocked' : 'locked'}">
+          ${unlocked ? '已解锁' : '未解锁'}
+        </span>
+        <div class="user-actions">
+          ${!unlocked ? `<button class="user-btn unlock" onclick="unlockUserById('${searchId}')">解锁</button>` : ''}
+          <button class="user-btn blacklist" onclick="addToBlacklistById('${searchId}')">封禁</button>
+        </div>
+      </div>
+    `;
+  } catch (e) {
+    listEl.innerHTML = '<div class="empty-state">用户数据错误</div>';
+  }
+}
 
-  // 输入封禁用户ID
-  onBanInputChange(e) {
-    this.setData({ banInputValue: e.detail.value })
-  },
+// 解锁用户
+function unlockUser() {
+  const userId = document.getElementById('unlockUserId').value.trim();
+  const note = document.getElementById('unlockNote').value.trim();
+  
+  if (!userId) {
+    alert('请输入用户ID');
+    return;
+  }
+  
+  unlockUserById(userId, note);
+}
 
-  // 确认封禁（页面内输入框方式）
-  confirmBan() {
-    const { banInputValue } = this.data
-    this.setData({ showBanInput: false })
-    this.doBanUser(banInputValue.trim())
-  },
+// 通过ID解锁用户
+function unlockUserById(userId, note = '') {
+  // 检查用户是否存在
+  const data = localStorage.getItem(`soulmate_data_${userId}`);
+  if (!data) {
+    alert('用户不存在');
+    return;
+  }
+  
+  // 执行解锁
+  localStorage.setItem(`soulmate_unlocked_${userId}`, 'true');
+  localStorage.setItem(`soulmate_time_${userId}`, Date.now().toString());
+  if (note) {
+    localStorage.setItem(`soulmate_note_${userId}`, note);
+  }
+  
+  // 更新数据中的解锁状态
+  try {
+    const userData = JSON.parse(data);
+    userData.unlocked = true;
+    localStorage.setItem(`soulmate_data_${userId}`, JSON.stringify(userData));
+  } catch (e) {}
+  
+  alert(`用户 ${userId} 已解锁`);
+  loadStats();
+  loadUserList();
+}
 
-  // 取消封禁输入
-  cancelBan() {
-    this.setData({ showBanInput: false, banInputValue: '' })
-  },
+// 加载黑名单
+function loadBlacklist() {
+  const listEl = document.getElementById('blacklistList');
+  const blacklist = JSON.parse(localStorage.getItem('soulmate_blacklist') || '[]');
+  
+  if (blacklist.length === 0) {
+    listEl.innerHTML = '<div class="empty-state"><div class="empty-icon">🛡️</div>黑名单为空</div>';
+    return;
+  }
+  
+  listEl.innerHTML = blacklist.map(item => `
+    <div class="blacklist-item">
+      <div class="blacklist-info">
+        <div class="blacklist-id">${item.userId}</div>
+        <div class="blacklist-reason">${item.reason || '无原因'} | ${new Date(item.time).toLocaleString()}</div>
+      </div>
+      <button class="user-btn unlock" onclick="removeFromBlacklist('${item.userId}')">移除</button>
+    </div>
+  `).join('');
+}
 
-  // 解封用户
-  unbanUser(e) {
-    const userId = e.currentTarget.dataset.userid
-    wx.showModal({
-      title: '解封用户',
-      content: '确定要解封该用户吗？',
-      confirmText: '确认解封',
-      success: (res) => {
-        if (!res.confirm) return
-        const bannedUsers = wx.getStorageSync('bannedUsers') || []
-        const updated = bannedUsers.filter(u => u.userId !== userId)
-        wx.setStorageSync('bannedUsers', updated)
-        this.loadBannedUsers()
-        wx.showToast({ title: '已解封', icon: 'success' })
-      }
-    })
-  },
+// 添加到黑名单
+function addToBlacklist() {
+  const userId = document.getElementById('blacklistUserId').value.trim();
+  const reason = document.getElementById('blacklistReason').value.trim();
+  
+  if (!userId) {
+    alert('请输入用户ID');
+    return;
+  }
+  
+  addToBlacklistById(userId, reason);
+}
 
-  // 格式化时间
-  formatDate(date) {
-    if (!date) return '-'
-    const d = new Date(date)
-    const pad = n => String(n).padStart(2, '0')
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
-  },
-})
+// 通过ID添加到黑名单
+function addToBlacklistById(userId, reason = '') {
+  let blacklist = JSON.parse(localStorage.getItem('soulmate_blacklist') || '[]');
+  
+  // 检查是否已在黑名单
+  if (blacklist.some(item => item.userId === userId)) {
+    alert('该用户已在黑名单');
+    return;
+  }
+  
+  blacklist.push({
+    userId: userId,
+    reason: reason,
+    time: Date.now()
+  });
+  
+  localStorage.setItem('soulmate_blacklist', JSON.stringify(blacklist));
+  alert(`用户 ${userId} 已添加到黑名单`);
+  loadBlacklist();
+}
+
+// 从黑名单移除
+function removeFromBlacklist(userId) {
+  let blacklist = JSON.parse(localStorage.getItem('soulmate_blacklist') || '[]');
+  blacklist = blacklist.filter(item => item.userId !== userId);
+  localStorage.setItem('soulmate_blacklist', JSON.stringify(blacklist));
+  loadBlacklist();
+}
+
+// 保存设置
+function saveSettings() {
+  const price = document.getElementById('unlockPrice').value;
+  const wechat = document.getElementById('wechatId').value;
+  
+  localStorage.setItem('soulmate_settings', JSON.stringify({
+    price: price,
+    wechat: wechat
+  }));
+  
+  alert('设置已保存');
+}
+
+// 导出数据
+function exportData() {
+  const data = {
+    exportTime: new Date().toISOString(),
+    users: [],
+    blacklist: JSON.parse(localStorage.getItem('soulmate_blacklist') || '[]')
+  };
+  
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('soulmate_')) {
+      data.users.push({
+        key: key,
+        value: localStorage.getItem(key)
+      });
+    }
+  }
+  
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `lovecoach_backup_${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  
+  alert('数据已导出');
+}
+
+// 清空所有数据
+function clearAllData() {
+  if (!confirm('⚠️ 确定要清空所有数据吗？此操作不可恢复！')) {
+    return;
+  }
+  
+  if (!confirm('再次确认：真的要清空所有用户数据吗？')) {
+    return;
+  }
+  
+  const keysToRemove = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('soulmate_')) {
+      keysToRemove.push(key);
+    }
+  }
+  
+  keysToRemove.forEach(key => localStorage.removeItem(key));
+  
+  alert('所有数据已清空');
+  loadStats();
+  loadUserList();
+  loadBlacklist();
+}
+
+// 导出页面配置
+window.AdminPage = {
+  init: initAdmin,
+  adminLogin,
+  adminLogout,
+  searchUser,
+  unlockUser,
+  unlockUserById,
+  addToBlacklist,
+  addToBlacklistById,
+  removeFromBlacklist,
+  saveSettings,
+  exportData,
+  clearAllData
+};
+
+// 页面加载完成后初始化
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAdmin);
+} else {
+  initAdmin();
+}
+
+} // 结束防止重复加载的if块

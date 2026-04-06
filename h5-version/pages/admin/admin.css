@@ -1,0 +1,426 @@
+/* 管理后台样式 */
+.admin-page {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+/* 登录界面 */
+.admin-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.login-box {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  text-align: center;
+  width: 320px;
+}
+
+.login-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.login-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+}
+
+.login-hint {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #999;
+}
+
+/* 管理界面 */
+.admin-content {
+  padding-bottom: 40px;
+}
+
+.admin-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.admin-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.logout-btn {
+  padding: 8px 16px;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 6px;
+  background: transparent;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* 统计卡片 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+
+.stat-card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.stat-icon {
+  font-size: 28px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f2ff;
+  border-radius: 12px;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+
+/* 管理区块 */
+.admin-section {
+  background: white;
+  margin: 16px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+}
+
+.section-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 13px;
+  width: 150px;
+}
+
+.action-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #667eea;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* 表单 */
+.unlock-form,
+.blacklist-form {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.form-row label {
+  font-size: 13px;
+  color: #666;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.form-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.unlock-btn,
+.blacklist-btn,
+.save-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.unlock-btn {
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  color: white;
+}
+
+.blacklist-btn {
+  background: linear-gradient(135deg, #ff4d4f 0%, #cf1322 100%);
+  color: white;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-top: 16px;
+}
+
+/* 用户列表 */
+.user-list,
+.blacklist-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.user-item,
+.blacklist-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.user-item:last-child,
+.blacklist-item:last-child {
+  border-bottom: none;
+}
+
+.user-info,
+.blacklist-info {
+  flex: 1;
+}
+
+.user-id,
+.blacklist-id {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+}
+
+.user-time,
+.blacklist-reason {
+  font-size: 11px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.user-status {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.user-status.unlocked {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.user-status.locked {
+  background: #fff2f0;
+  color: #ff4d4f;
+}
+
+.user-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.user-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.user-btn.unlock {
+  background: #667eea;
+  color: white;
+}
+
+.user-btn.blacklist {
+  background: #ff4d4f;
+  color: white;
+}
+
+/* 设置 */
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.setting-item span:first-child {
+  font-size: 14px;
+  color: #333;
+}
+
+.setting-value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.price-input {
+  width: 60px;
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: right;
+}
+
+/* 数据管理 */
+.data-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.data-btn {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.data-btn:hover {
+  background: #f5f5f5;
+}
+
+.export-btn {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.clear-btn {
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-size: 13px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}

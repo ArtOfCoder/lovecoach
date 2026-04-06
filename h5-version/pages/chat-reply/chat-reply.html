@@ -1,0 +1,74 @@
+<div class="chat-reply-page">
+  <!-- 头部 -->
+  <div class="page-header gradient-bg">
+    <div class="header-title">💬 聊天回复助手</div>
+    <div class="header-subtitle">AI帮你生成高情商回复</div>
+  </div>
+
+  <!-- 输入区域 -->
+  <div class="input-section">
+    <div class="input-label">对方说了什么？</div>
+    <textarea 
+      id="chatInput" 
+      class="chat-textarea" 
+      placeholder="粘贴对方的聊天记录，例如：&#10;在干嘛呢？&#10;今天好累啊&#10;你觉得我怎么样"
+      rows="4"
+    ></textarea>
+    
+    <div class="input-label">你们的关系阶段</div>
+    <div class="relation-tags">
+      <div class="relation-tag" data-value="stranger">刚认识</div>
+      <div class="relation-tag active" data-value="friend">朋友</div>
+      <div class="relation-tag" data-value="crush">暧昧中</div>
+      <div class="relation-tag" data-value="couple">恋爱中</div>
+      <div class="relation-tag" data-value="ex">前任</div>
+    </div>
+    
+    <div class="input-label">回复风格</div>
+    <div class="style-tags">
+      <div class="style-tag active" data-value="funny">幽默风趣</div>
+      <div class="style-tag" data-value="gentle">温柔体贴</div>
+      <div class="style-tag" data-value="teasing">调皮挑逗</div>
+      <div class="style-tag" data-value="sincere">真诚走心</div>
+    </div>
+    
+    <button class="generate-btn" onclick="generateReply()">
+      <span class="btn-icon">✨</span>
+      <span>生成回复</span>
+    </button>
+  </div>
+
+  <!-- 加载状态 -->
+  <div class="loading-section" id="loadingSection" style="display: none;">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">AI正在思考高情商回复...</div>
+  </div>
+
+  <!-- 结果区域 -->
+  <div class="result-section" id="resultSection" style="display: none;">
+    <div class="result-header">
+      <span class="result-icon">💡</span>
+      <span>AI建议回复</span>
+    </div>
+    
+    <div class="reply-list" id="replyList">
+      <!-- 回复卡片会在这里生成 -->
+    </div>
+    
+    <div class="result-tip">
+      <span class="tip-icon">💝</span>
+      <span>点击回复卡片可复制内容</span>
+    </div>
+  </div>
+
+  <!-- 历史记录 -->
+  <div class="history-section" id="historySection">
+    <div class="history-header">
+      <span>历史记录</span>
+      <span class="clear-btn" onclick="clearHistory()">清空</span>
+    </div>
+    <div class="history-list" id="historyList">
+      <!-- 历史记录会在这里显示 -->
+    </div>
+  </div>
+</div>

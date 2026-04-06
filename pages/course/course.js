@@ -1,18 +1,34 @@
-// pages/course/course.js - AI 动态课程版
+// pages/course/course.js - 课程列表页（含搜索/分类）
 const { COURSES } = require('../../data/courses')
 const ai = require('../../utils/ai')
+
+// 分类映射：将数据中的 category 值映射到显示名
+const CATEGORY_MAP = {
+  '全部': null,
+  '入门': ['初阶', '入门', 'beginner'],
+  '聊天': ['聊天', 'chat', '进阶'],
+  '约会': ['约会', 'date'],
+  '关系': ['关系', 'relationship', '高级', '深度'],
+  '心理': ['心理', '心法', '特别'],
+  '分手': ['分手', '高阶'],
+}
 
 Page({
   data: {
     genderFilter: 'all',
     activeCategory: '全部',
-    categories: ['全部', '初阶', '进阶', '高级', '特别'],
+    categories: ['全部', '入门', '聊天', '约会', '关系', '心理', '分手'],
     filteredCourses: [],
     learnedMap: {},
+    searchKeyword: '',
+    showSearch: false,
+    totalCount: 0,
+    // 课程统计
+    courseStats: {},
     // AI 动态生成
     aiConfigured: false,
     generatingNew: false,
-    aiCourses: [], // AI 动态生成的课程
+    aiCourses: [],
     showAISection: false,
   },
 
@@ -22,11 +38,20 @@ Page({
     const aiCourses = wx.getStorageSync('aiGeneratedCourses') || {}
     const aiCourseList = Object.values(aiCourses)
 
+    // 统计各分类数量
+    const stats = {}
+    COURSES.forEach(c => {
+      const cat = this._mapCategory(c.category)
+      stats[cat] = (stats[cat] || 0) + 1
+    })
+
     this.setData({
       genderFilter: gender === '' ? 'all' : gender,
       aiConfigured,
       aiCourses: aiCourseList,
       showAISection: aiCourseList.length > 0,
+      totalCount: COURSES.length,
+      courseStats: stats,
     })
     this.filterCourses()
   },
@@ -37,16 +62,61 @@ Page({
     this.filterCourses()
   },
 
+  // 将数据中的 category 映射到页面分类
+  _mapCategory(dataCategory) {
+    for (const [key, vals] of Object.entries(CATEGORY_MAP)) {
+      if (key === '全部') continue
+      if (vals && vals.includes(dataCategory)) return key
+    }
+    return '关系' // 默认归到关系类
+  },
+
   filterCourses() {
     let list = [...COURSES]
-    const { genderFilter, activeCategory } = this.data
+    const { genderFilter, activeCategory, searchKeyword } = this.data
+
+    // 性别筛选
     if (genderFilter !== 'all') {
       list = list.filter(c => c.gender === genderFilter || c.gender === 'both')
     }
+
+    // 分类筛选
     if (activeCategory !== '全部') {
-      list = list.filter(c => c.category === activeCategory)
+      const validCats = CATEGORY_MAP[activeCategory] || []
+      list = list.filter(c => validCats.includes(c.category))
     }
+
+    // 关键词搜索
+    if (searchKeyword && searchKeyword.trim()) {
+      const kw = searchKeyword.trim().toLowerCase()
+      list = list.filter(c =>
+        c.title.toLowerCase().includes(kw) ||
+        c.desc.toLowerCase().includes(kw) ||
+        (c.tags && c.tags.some(t => t.toLowerCase().includes(kw)))
+      )
+    }
+
     this.setData({ filteredCourses: list })
+  },
+
+  toggleSearch() {
+    this.setData({
+      showSearch: !this.data.showSearch,
+      searchKeyword: '',
+    })
+    if (!this.data.showSearch) {
+      this.filterCourses()
+    }
+  },
+
+  onSearchInput(e) {
+    this.setData({ searchKeyword: e.detail.value })
+    this.filterCourses()
+  },
+
+  clearSearch() {
+    this.setData({ searchKeyword: '' })
+    this.filterCourses()
   },
 
   setFilter(e) {
@@ -60,6 +130,10 @@ Page({
     this.setData({ activeCategory: e.currentTarget.dataset.cat }, () => {
       this.filterCourses()
     })
+  },
+
+  goToSearch() {
+    this.setData({ showSearch: true })
   },
 
   goToDetail(e) {

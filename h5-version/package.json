@@ -1,0 +1,17 @@
+{
+  "name": "lovecoach-h5",
+  "version": "1.0.0",
+  "description": "恋爱进化论 - H5版本（完整AI功能）",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "echo 'Static site - no build needed'"
+  },
+  "keywords": [
+    "lovecoach",
+    "ai",
+    "dating",
+    "relationship"
+  ],
+  "author": "ArtOfCoder",
+  "license": "MIT"
+}
