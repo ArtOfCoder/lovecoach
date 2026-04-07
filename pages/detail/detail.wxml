@@ -40,7 +40,7 @@
     </view>
   </view>
 
-  <!-- 弹出的章节内容（AI 动态加载版） -->
+  <!-- 弹出的章节内容（动态加载版） -->
   <view class="chapter-modal {{showModal ? 'show' : ''}}">
     <view class="modal-mask" bindtap="closeModal"></view>
     <view class="modal-content">
@@ -49,10 +49,10 @@
         <view class="modal-close" bindtap="closeModal">✕</view>
       </view>
       <scroll-view scroll-y class="modal-body">
-        <!-- AI 加载中 -->
+        <!-- 加载中 -->
         <view wx:if="{{aiLoading}}" class="ai-loading-wrap">
-          <view class="ai-loading-icon">🤖</view>
-          <view class="ai-loading-text">AI 正在为你生成课程内容...</view>
+          <view class="ai-loading-icon">💕</view>
+          <view class="ai-loading-text">正在为你生成课程内容...</view>
           <view class="ai-dots">
             <view class="ai-dot"></view>
             <view class="ai-dot"></view>
@@ -60,9 +60,9 @@
           </view>
         </view>
 
-        <!-- AI 生成的内容 -->
+        <!-- 生成的内容 -->
         <view wx:elif="{{useAIContent && aiContent}}" class="ai-content-wrap">
-          <view class="ai-content-badge">🤖 AI 实时生成</view>
+          <view class="ai-content-badge">✨ 个性化内容</view>
           <view class="chapter-text">{{aiContent}}</view>
           <view class="regen-btn" bindtap="reGenerateContent">🔄 重新生成</view>
         </view>

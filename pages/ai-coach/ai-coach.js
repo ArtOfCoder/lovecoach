@@ -608,15 +608,15 @@ ${scene.description}
         })
       },
       onError: (err) => {
-        console.error('[ai-coach] AI 调用失败:', err)
+        console.error('[ai-coach] 调用失败:', err)
         this.setData({ isTyping: false, aiStatus: 'idle' })
         if (err === '__domain_blocked__') {
           ai.handleError(err)
           this.typewriterAdd('assistant', '⚠️ 请先配置网络权限后再试（详见弹窗提示）', ['重新提问'], null)
         } else {
-          // 显示真实错误方便调试（上线前可改回通用提示）
-          const displayErr = err || 'AI 开小差了，请稍后再试 😅'
-          this.typewriterAdd('assistant', '⚠️ ' + displayErr, ['重新提问', '换个话题'], null)
+          // 将错误统一转换为字符串，避免 [object Object]
+          const errStr = (typeof err === 'string') ? err : (err && err.errMsg) ? err.errMsg : '网络开小差了，请稍后再试 😅'
+          this.typewriterAdd('assistant', '⚠️ ' + errStr, ['重新提问', '换个话题'], null)
         }
       },
     })

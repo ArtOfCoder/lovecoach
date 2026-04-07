@@ -19,22 +19,22 @@
 
   <!-- 约会话题板块 -->
   <view wx:if="{{activeTab === 'topics'}}">
-    <!-- AI 生成按钮 -->
+    <!-- 智能生成按钮 -->
     <view class="ai-gen-section">
       <view class="ai-gen-btn" bindtap="generateAITopics" wx:if="{{!generatingTopics}}">
         <text class="ai-icon">✨</text>
-        <text class="ai-text">AI 智能生成话题</text>
+        <text class="ai-text">智能生成话题</text>
       </view>
       <view class="ai-loading-btn" wx:if="{{generatingTopics}}">
         <text class="ai-icon">⏳</text>
-        <text class="ai-text">AI 正在生成中...</text>
+        <text class="ai-text">正在生成中...</text>
       </view>
     </view>
 
-    <!-- AI 生成的话题展示 -->
+    <!-- 生成的话题展示 -->
     <view wx:if="{{aiTopics.length > 0}}" class="ai-result-section">
       <view class="ai-result-header">
-        <text class="ai-badge">🤖 AI 生成</text>
+        <text class="ai-badge">✨ 为你生成</text>
         <text class="ai-hint">点击话题即可复制</text>
       </view>
       <view class="ai-topics-list">
@@ -118,17 +118,17 @@
         🎲 随机获得一句
       </view>
       <view class="random-btn ai-random-btn" bindtap="generateAIWords" wx:if="{{!generatingWords}}">
-        ✨ AI 智能生成
+        ✨ 智能生成金句
       </view>
       <view class="random-btn ai-loading-btn" wx:if="{{generatingWords}}">
-        ⏳ AI 生成中...
+        ⏳ 生成中...
       </view>
     </view>
 
-    <!-- AI 生成的金句展示 -->
+    <!-- 生成的金句展示 -->
     <view wx:if="{{aiWords.length > 0}}" class="ai-result-section">
       <view class="ai-result-header">
-        <text class="ai-badge">🤖 AI 生成</text>
+        <text class="ai-badge">✨ 为你生成</text>
         <text class="ai-hint">点击金句即可复制</text>
       </view>
       <view class="sweet-list">

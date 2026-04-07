@@ -2,7 +2,7 @@
 <view class="page-wrap">
 
   <!-- 功能提示 -->
-  <view class="ai-config-tip" bindtap="goToAI">
+  <view class="feature-tip" bindtap="goToAI">
     <view class="act-icon">⚡</view>
     <view class="act-text">恋爱顾问在线，随时为你解答疑惑 →</view>
   </view>

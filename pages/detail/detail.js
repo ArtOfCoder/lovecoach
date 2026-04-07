@@ -1,4 +1,4 @@
-// pages/detail/detail.js - AI 动态内容生成版
+// pages/detail/detail.js - 课程内容动态生成版
 const { COURSES } = require('../../data/courses')
 const ai = require('../../utils/ai')
 
@@ -10,10 +10,10 @@ Page({
     currentChapter: {},
     currentIdx: 0,
     isCompleted: false,
-    // AI 章节内容生成
-    aiContent: '',     // AI 生成的章节内容
-    aiLoading: false,  // AI 生成中
-    useAIContent: false, // 当前章节使用AI内容
+    // 章节内容生成
+    aiContent: '',     // 生成的章节内容
+    aiLoading: false,  // 生成中
+    useAIContent: false, // 当前章节使用动态内容
     aiConfigured: false,
   },
 
@@ -22,7 +22,7 @@ Page({
     const aiConfigured = ai.isConfigured()
     this.setData({ aiConfigured })
 
-    // 检查是否是 AI 动态生成课程（id 以 ai_ 开头）
+    // 检查是否是动态生成课程（id 以 ai_ 开头）
     if (id && id.startsWith('ai_')) {
       this.loadAICourse(id)
       return
@@ -39,7 +39,7 @@ Page({
   },
 
   loadAICourse(id) {
-    // 从 storage 加载 AI 生成的课程
+    // 从 storage 加载动态生成的课程
     const aiCourses = wx.getStorageSync('aiGeneratedCourses') || {}
     const course = aiCourses[id]
     if (course) {
@@ -48,7 +48,7 @@ Page({
         return !!(progress[id] && progress[id].includes(i))
       }) : []
       this.setData({ course, chapterDone })
-      wx.setNavigationBarTitle({ title: course.title || 'AI 生成课程' })
+      wx.setNavigationBarTitle({ title: course.title || '课程详情' })
     } else {
       wx.showToast({ title: '课程不存在', icon: 'none' })
       setTimeout(() => wx.navigateBack(), 1500)
@@ -66,7 +66,7 @@ Page({
       useAIContent: false,
     })
 
-    // 如果章节内容为空或者 AI 已配置，自动使用 AI 生成内容
+    // 如果章节内容为空，自动生成内容
     if (!chapter.content && this.data.aiConfigured) {
       this.generateChapterContent(chapter)
     }
@@ -84,7 +84,7 @@ Page({
     }, (content) => {
       this.setData({ aiContent: content, aiLoading: false })
     }, (err) => {
-      console.error('[detail] AI 生成章节内容失败:', err)
+      console.error('[detail] 生成章节内容失败:', err)
       this.setData({
         aiContent: chapter.content || '内容加载失败，请检查网络后重试。',
         aiLoading: false,

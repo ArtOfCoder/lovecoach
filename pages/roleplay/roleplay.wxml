@@ -6,7 +6,7 @@
     <view class="rp-header gradient-bg">
       <view class="rp-back" bindtap="goBack">←</view>
       <view class="rp-title">🎭 角色扮演练习</view>
-      <view class="rp-sub">选择场景，AI扮演对象，实战练习</view>
+      <view class="rp-sub">选择场景，模拟练习，实战提升</view>
     </view>
     <view class="scene-list">
       <view
@@ -42,7 +42,7 @@
       </view>
     </view>
 
-    <!-- AI角色说明 -->
+    <!-- 角色说明 -->
     <view class="role-bar">
       <view class="role-avatar">{{currentScene.avatarEmoji}}</view>
       <view class="role-info">

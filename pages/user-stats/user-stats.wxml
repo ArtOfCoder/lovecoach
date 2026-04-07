@@ -51,7 +51,7 @@
         data-tab="ai"
         bindtap="switchTab"
       >
-        <text>AI对话</text>
+        <text>顾问对话</text>
       </view>
     </view>
 
@@ -117,9 +117,9 @@
       </view>
     </view>
 
-    <!-- AI对话 Tab -->
+    <!-- 顾问对话 Tab -->
     <view class="tab-content" wx:if="{{activeTab === 'ai'}}">
-      <view class="section-title">最近AI对话 ({{aiChats.length}}条)</view>
+      <view class="section-title">最近顾问对话 ({{aiChats.length}}条)</view>
       
       <view class="chat-list" wx:if="{{aiChats.length > 0}}">
         <view 
@@ -145,7 +145,7 @@
       </view>
       
       <view class="empty-tip" wx:else>
-        <text>还没有AI对话记录</text>
+        <text>还没有顾问对话记录</text>
       </view>
     </view>
 

@@ -50,17 +50,17 @@
       </view>
     </view>
 
-    <!-- AI 综合评估（动态） -->
+    <!-- 个性化评估（动态） -->
     <view class="ai-summary-section" wx:if="{{aiLoading || aiSummary}}">
       <view class="ai-summary-header">
-        <text class="ai-summary-icon">🤖</text>
-        <text class="ai-summary-title">AI 个性化解读</text>
+        <text class="ai-summary-icon">💡</text>
+        <text class="ai-summary-title">个性化解读</text>
       </view>
       <view wx:if="{{aiLoading}}" class="ai-loading-row">
         <view class="ai-dot"></view>
         <view class="ai-dot"></view>
         <view class="ai-dot"></view>
-        <text class="ai-loading-text">AI 正在结合你的情况分析...</text>
+        <text class="ai-loading-text">正在结合你的情况分析...</text>
       </view>
       <view wx:else class="ai-summary-body">
         <text class="ai-summary-text">{{aiSummary}}</text>
@@ -71,7 +71,7 @@
     <view class="next-section">
       <view class="next-header-row">
         <text class="next-title">📋 下一步建议</text>
-        <text wx:if="{{!aiLoading && aiSummary}}" class="next-ai-tag">🤖 AI 定制</text>
+        <text wx:if="{{!aiLoading && aiSummary}}" class="next-ai-tag">✨ 个性定制</text>
         <text wx:elif="{{!aiLoading && !aiSummary}}" class="next-ai-tag next-local-tag">📚 参考建议</text>
       </view>
       <view wx:for="{{nextSteps}}" wx:key="index" class="next-item">
@@ -80,7 +80,7 @@
       </view>
     </view>
 
-    <!-- AI 注意事项 -->
+    <!-- 注意事项 -->
     <view class="ai-note-section" wx:if="{{aiNote}}">
       <view class="ai-note-bar">
         <text class="ai-note-icon">⚡</text>
