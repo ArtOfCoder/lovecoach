@@ -205,7 +205,23 @@ function getSoulmateZodiac(zodiacName) {
   return pairs[zodiacName] || '天秤座'
 }
 
-// ===== 基于星盘生成灵魂伴侣描述（本地版）=====
+// ===== 星座中文名 → 英文key 映射（对应本地图片目录）=====
+const ZODIAC_TO_KEY = {
+  '白羊座': 'aries',
+  '金牛座': 'taurus',
+  '双子座': 'gemini',
+  '巨蟹座': 'cancer',
+  '狮子座': 'leo',
+  '处女座': 'virgo',
+  '天秤座': 'libra',
+  '天蝎座': 'scorpio',
+  '射手座': 'sagittarius',
+  '摩羯座': 'capricorn',
+  '水瓶座': 'aquarius',
+  '双鱼座': 'pisces',
+}
+
+// ===== 根据星盘生成灵魂伴侣描述（本地版）=====
 function generateSoulmateDesc(zodiacName, birthCity, userGender) {
   const soulmateZodiac = getSoulmateZodiac(zodiacName)
   const isForMale = userGender === 'male'
@@ -1391,27 +1407,31 @@ Page({
     const seed = parseInt(birthYear || 2000) * 10000 + parseInt(birthMonth || 1) * 100 + parseInt(birthDay || 1)
     const targetGender = userGender === 'male' ? 'female' : 'male'
     
-    console.log('[支付] 头像参数:', { seed, targetGender })
+    // 灵魂伴侣星座
+    const soulmateZodiac = astroSummary ? astroSummary.soulmateZodiac : null
+    
+    console.log('[支付] 头像参数:', { seed, targetGender, soulmateZodiac })
 
     wx.showLoading({ title: '生成中...', mask: true })
 
-    // 使用本地预设头像
+    // 使用本地星座图片
     this.generateAndDownloadImage({
       zodiac: astroSummary ? astroSummary.zodiac.name : '未知',
+      soulmateZodiac: soulmateZodiac,
       gender: targetGender,
       desc: soulmate.desc || '命中注定',
       seed: seed,
-      onSuccess: (avatarStyle) => {
-        console.log('[支付] 头像生成成功:', avatarStyle)
+      onSuccess: (avatarData) => {
+        console.log('[支付] 头像生成成功:', avatarData)
         wx.hideLoading()
-        this.updateSoulmateWithImage(soulmate, avatarStyle, true)
+        this.updateSoulmateWithImage(soulmate, avatarData, true)
         wx.showToast({ title: '解锁成功！', icon: 'success' })
       },
       onError: (err) => {
         console.error('[支付] 头像生成失败:', err)
         wx.hideLoading()
         // 使用默认头像
-        const defaultAvatar = this.getLocalAvatar(targetGender, seed)
+        const defaultAvatar = this.getLocalAvatar(targetGender, seed, soulmateZodiac)
         console.log('[支付] 使用默认头像:', defaultAvatar)
         this.updateSoulmateWithImage(soulmate, defaultAvatar, true)
         wx.showToast({ title: '解锁成功！', icon: 'success' })
@@ -1419,16 +1439,24 @@ Page({
     })
   },
 
-  // 生成本地头像图片（使用预设头像库）
-  generateAndDownloadImage({ zodiac, gender, desc, seed, onSuccess, onError }) {
-    // 使用本地预设头像
-    const localImage = this.getLocalAvatar(gender, seed)
+  // 生成本地头像图片（使用星座图片库）
+  generateAndDownloadImage({ zodiac, soulmateZodiac, gender, desc, seed, onSuccess, onError }) {
+    // 使用本地星座图片
+    const localImage = this.getLocalAvatar(gender, seed, soulmateZodiac)
     onSuccess && onSuccess(localImage)
   },
 
-  // 获取本地预设头像
-  getLocalAvatar(gender, seed) {
-    // 使用本地渐变头像，根据星座和性别生成不同风格
+  // 获取本地预设头像（优先使用星座图片，降级到渐变色）
+  getLocalAvatar(gender, seed, soulmateZodiac) {
+    // 优先：根据灵魂伴侣星座选择对应图片
+    if (soulmateZodiac) {
+      const zodiacKey = ZODIAC_TO_KEY[soulmateZodiac]
+      if (zodiacKey) {
+        const imgPath = `/images/soulmate/${zodiacKey}_${gender}.png`
+        return { type: 'image', path: imgPath, zodiacKey }
+      }
+    }
+    // 降级：使用渐变色方案（兜底）
     const avatarStyles = {
       male: [
         { bg: 'linear-gradient(160deg, #e8d5f5 0%, #c4a0e8 50%, #9b6fc7 100%)', hair: 'rgba(40, 20, 60, 0.85)', skin: 'rgba(255, 220, 195, 0.95)' },
@@ -1444,16 +1472,34 @@ Page({
       ],
     }
     const list = avatarStyles[gender] || avatarStyles['female']
-    return list[seed % list.length]
+    return { type: 'gradient', ...list[seed % list.length] }
   },
 
   // 更新 soulmate 数据并显示清晰图片
-  updateSoulmateWithImage(soulmate, imageUrl, removeBlur) {
-    const newSoulmate = {
-      ...soulmate,
-      blurred: !removeBlur,  // 移除模糊效果，显示清晰图片
-      imageUrl: imageUrl,     // 设置生成的图片URL
-      unlocked: true,         // 已解锁
+  updateSoulmateWithImage(soulmate, avatarData, removeBlur) {
+    // avatarData 可能是 { type: 'image', path: '...' } 或 { type: 'gradient', bg: '...' }
+    let newSoulmate
+    if (avatarData && avatarData.type === 'image') {
+      // 本地星座图片
+      newSoulmate = {
+        ...soulmate,
+        blurred: !removeBlur,
+        imageUrl: avatarData.path,   // 本地图片路径
+        avatarType: 'image',         // 标记为图片类型
+        unlocked: true,
+      }
+    } else {
+      // 渐变色头像（降级方案）
+      newSoulmate = {
+        ...soulmate,
+        blurred: !removeBlur,
+        imageUrl: '',                // 无图片URL，使用渐变
+        avatarType: 'gradient',
+        avatarStyle: avatarData ? avatarData.bg : soulmate.avatarStyle,
+        hairColor: avatarData ? avatarData.hair : soulmate.hairColor,
+        skinColor: avatarData ? avatarData.skin : soulmate.skinColor,
+        unlocked: true,
+      }
     }
 
     // 持久化存储（避免重复付费）

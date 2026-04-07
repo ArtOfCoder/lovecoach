@@ -222,8 +222,8 @@
 
         <!-- 已解锁状态 - 显示生成的人物画像 -->
         <view wx:if="{{soulmate.unlocked}}" class="avatar-unlocked-wrap">
-          <!-- 显示生成的人物画像 -->
-          <block wx:if="{{soulmate.imageUrl}}">
+          <!-- 优先：显示本地星座头像图片 -->
+          <block wx:if="{{soulmate.avatarType === 'image' && soulmate.imageUrl}}">
             <image
               class="unlocked-image"
               src="{{soulmate.imageUrl}}"
@@ -231,7 +231,7 @@
               bindlongpress="onLongPressImage"
             />
           </block>
-          <!-- 否则显示清晰的渐变头像 -->
+          <!-- 降级：显示清晰的渐变头像 -->
           <block wx:else>
             <view 
               class="unlocked-avatar"
