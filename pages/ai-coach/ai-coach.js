@@ -543,7 +543,7 @@ Page({
 
 要求：
 1. 生成一个开场场景描述（50字以内）
-2. 生成AI角色的台词（作为第一句回复）
+2. 生成角色的台词（作为第一句回复）
 3. 给出用户的3个开场白选项（适合的话术）
 4. 给出1条教练建议（该场景的注意事项）
 
@@ -551,7 +551,7 @@ Page({
 【场景】
 （场景描述）
 
-【AI角色台词】
+【角色台词】
 （第一句回复，自然真实）
 
 【你的开场白选项】
@@ -563,7 +563,7 @@ Page({
 （该场景的注意事项和技巧）`
 
     if (this.data.aiConfigured) {
-      // 使用 AI 生成
+      // 调用知识库生成
       ai.ask(prompt, 'coach', (content) => {
         this.setData({ isTyping: false, aiStatus: 'typing' })
         this.typewriterAdd('assistant', content, ['开始练习', '换一个场景'], null)
@@ -577,7 +577,7 @@ Page({
       const template = `【场景】
 ${scene.description}
 
-【AI角色台词】
+【角色台词】
 （微笑着看过来）你好，有什么我可以帮你的吗？
 
 【你的开场白选项】
@@ -594,7 +594,7 @@ ${scene.description}
       const template = `【场景】
 ${scene.description}
 
-【AI角色台词】
+【角色台词】
 （微笑着看过来）你好，有什么我可以帮你的吗？
 
 【你的开场白选项】

@@ -19,41 +19,6 @@
 
   <!-- 约会话题板块 -->
   <view wx:if="{{activeTab === 'topics'}}">
-    <!-- 智能生成按钮 -->
-    <view class="ai-gen-section">
-      <view class="ai-gen-btn" bindtap="generateAITopics" wx:if="{{!generatingTopics}}">
-        <text class="ai-icon">✨</text>
-        <text class="ai-text">智能生成话题</text>
-      </view>
-      <view class="ai-loading-btn" wx:if="{{generatingTopics}}">
-        <text class="ai-icon">⏳</text>
-        <text class="ai-text">正在生成中...</text>
-      </view>
-    </view>
-
-    <!-- 生成的话题展示 -->
-    <view wx:if="{{aiTopics.length > 0}}" class="ai-result-section">
-      <view class="ai-result-header">
-        <text class="ai-badge">✨ 为你生成</text>
-        <text class="ai-hint">点击话题即可复制</text>
-      </view>
-      <view class="ai-topics-list">
-        <view 
-          class="ai-topic-card card" 
-          wx:for="{{aiTopics}}" 
-          wx:key="id"
-          bindtap="copyAITopic"
-          data-q="{{item.questions[0]}}"
-        >
-          <view class="ai-topic-cat">{{item.category}}</view>
-          <view class="ai-topic-qs">
-            <view class="ai-q" wx:for="{{item.questions}}" wx:for-item="q" wx:key="*this" wx:if="{{index < 3}}">
-              {{q}}
-            </view>
-          </view>
-        </view>
-      </view>
-    </view>
 
     <view class="cat-list">
       <view
@@ -116,37 +81,6 @@
     <view class="random-btn-wrap">
       <view class="random-btn" bindtap="randomWord">
         🎲 随机获得一句
-      </view>
-      <view class="random-btn ai-random-btn" bindtap="generateAIWords" wx:if="{{!generatingWords}}">
-        ✨ 智能生成金句
-      </view>
-      <view class="random-btn ai-loading-btn" wx:if="{{generatingWords}}">
-        ⏳ 生成中...
-      </view>
-    </view>
-
-    <!-- 生成的金句展示 -->
-    <view wx:if="{{aiWords.length > 0}}" class="ai-result-section">
-      <view class="ai-result-header">
-        <text class="ai-badge">✨ 为你生成</text>
-        <text class="ai-hint">点击金句即可复制</text>
-      </view>
-      <view class="sweet-list">
-        <view 
-          class="sweet-item card" 
-          wx:for="{{aiWords}}" 
-          wx:key="id"
-          bindtap="copyAIWord"
-          data-text="{{item.text}}"
-        >
-          <view class="sweet-scene-tag">
-            <text class="tag tag-purple">{{item.scene}}</text>
-          </view>
-          <view class="sweet-text">{{item.text}}</view>
-          <view class="sweet-footer">
-            <view class="sweet-copy-btn">📋 复制</view>
-          </view>
-        </view>
       </view>
     </view>
 
