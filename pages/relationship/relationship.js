@@ -20,7 +20,7 @@ const TYPE_INFO = {
   },
 }
 
-// 本地兜底建议（AI失败时使用）
+// 本地兜底建议（网络失败时使用）
 const FALLBACK_STEPS = {
   kiss: {
     high: ['选一个气氛好的时刻，比如分别时或看完夕阳后', '眼神停留2秒，微笑，然后自然靠近', '如果对方没有后退，那就是时机到了'],
@@ -54,7 +54,7 @@ Page({
     resultDesc: '',
     resultDetails: [],
     nextSteps: [],
-    // AI 动态结果
+    // 动态结果
     aiSummary: '',
     aiNote: '',
     aiLoading: false,
@@ -147,7 +147,7 @@ Page({
         this.setData(updates)
       },
       (err) => {
-        console.error('[relationship] AI 评估失败:', err)
+        console.error('[relationship] 评估失败:', err)
         this.setData({ aiLoading: false })
         // 保留本地兜底数据，不额外提示
       }

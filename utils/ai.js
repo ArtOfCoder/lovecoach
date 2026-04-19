@@ -1,5 +1,5 @@
 /**
- * utils/ai.js - AI 统一调用层
+ * utils/ai.js - 知识库统一调用层
  *
  * 接入方式：使用 DeepSeek API（或替换为腾讯混元等其他 LLM）
  *
@@ -24,13 +24,13 @@ const USE_CLOUD_FUNCTION = false   // 关闭云函数
 const CLOUD_FUNCTION_NAME = 'ai-proxy'  // 云函数名称
 
 // 方案B：完全本地模式（无需网络，使用内置规则库）
-// 个人主体小程序审核要求：必须使用本地模式，禁止调用外部AI API
-const USE_LOCAL_MODE = true  // 强制启用纯本地模式，不调用任何外部AI服务
+// 个人主体小程序审核要求：必须使用本地模式，禁止调用外部网络接口
+const USE_LOCAL_MODE = true  // 强制启用纯本地模式，不调用任何外部接口
 
-// 方案C：混合模式（优先使用API，失败时降级到本地模式）
+// 方案C：混合模式（优先使用网络，失败时降级到本地模式）
 const USE_HYBRID_MODE = false   // 关闭混合模式
 
-// 真实 AI 配置（当 USE_LOCAL_MODE = false 时生效）
+// 网络接口配置（当 USE_LOCAL_MODE = false 时生效）
 const API_CONFIG = {
   // DeepSeek API（推荐：性价比最高）
   // 申请地址：https://platform.deepseek.com/
@@ -53,7 +53,7 @@ const API_CONFIG = {
 // ============================================================
 const SYSTEM_PROMPTS = {
   // 恋爱顾问
-  coach: `你是"小爱"，一位专业、温暖、接地气的AI恋爱顾问。你的特点：
+  coach: `你是"小爱"，一位专业、温暖、接地气的恋爱顾问。你的特点：
 1. 基于用户的具体情况给出有针对性的建议，绝对不给空话
 2. 语气亲切自然，像闺蜜/好兄弟倾谈，而不是机械的说教
 3. 每个建议都带具体可执行的行动步骤
@@ -91,7 +91,7 @@ const SYSTEM_PROMPTS = {
 5. 长度控制在400-600字`,
 
   // 灵魂伴侣测算
-  soulmate: `你是一位精通西方占星学和东方玄学的AI占星师，能用诗意而神秘的语言描述一个人命中注定的灵魂伴侣。
+  soulmate: `你是一位精通西方占星学和东方玄学的占星师，能用诗意而神秘的语言描述一个人命中注定的灵魂伴侣。
 要求：
 1. 根据用户的太阳星座、月亮星座、上升星座和出生地，描述其灵魂伴侣的特质
 2. 语言要温柔、诗意、有玄学神秘感，让人觉得这是命运安排
@@ -140,7 +140,7 @@ function chat({ messages, systemPrompt, onSuccess, onError, maxTokens, _retry })
 
   // 检查是否使用本地模式
   if (USE_LOCAL_MODE) {
-    console.log('[AI] 使用本地模式（无需网络）')
+    console.log('[coach] 使用本地模式（无需网络）')
     var response = getLocalAIResponse(messages, systemPrompt)
     setTimeout(function() {
       onSuccess && onSuccess(response)
@@ -163,7 +163,7 @@ function chat({ messages, systemPrompt, onSuccess, onError, maxTokens, _retry })
     { role: 'system', content: sys }
   ].concat(messages)
 
-  console.log('[AI] 发起请求:', API_CONFIG.baseUrl, 'Model:', API_CONFIG.model)
+  console.log('[coach] 发起请求:', API_CONFIG.baseUrl, 'Model:', API_CONFIG.model)
 
   wx.request({
     url: API_CONFIG.baseUrl,
@@ -181,15 +181,15 @@ function chat({ messages, systemPrompt, onSuccess, onError, maxTokens, _retry })
       stream: false,
     },
     success: function(res) {
-      console.log('[AI] 收到响应:', res.statusCode, res.data)
+      console.log('[coach] 收到响应:', res.statusCode, res.data)
       if (res.statusCode === 200 && res.data && res.data.choices && res.data.choices[0]) {
         var content = res.data.choices[0].message.content || ''
-        console.log('[AI] 解析成功，内容长度:', content.length)
+        console.log('[coach] 解析成功，内容长度:', content.length)
         onSuccess && onSuccess(content.trim())
       } else if (res.statusCode === 429) {
         // 限流 → 重试
         if (retryCount < MAX_RETRY) {
-          console.warn('[AI] 限流，稍后重试...')
+          console.warn('[coach] 限流，稍后重试...')
           setTimeout(function() {
             chat({ messages: messages, systemPrompt: systemPrompt, onSuccess: onSuccess, onError: onError, maxTokens: maxTokens, _retry: retryCount + 1 })
           }, RETRY_DELAY * (retryCount + 1))
@@ -197,11 +197,11 @@ function chat({ messages, systemPrompt, onSuccess, onError, maxTokens, _retry })
           onError && onError('请求频繁，请稍等片刻再试')
         }
       } else if (res.statusCode === 401) {
-        onError && onError('AI 密钥无效，请联系开发者')
+        onError && onError('服务配置异常，请联系开发者')
       } else if (res.statusCode === 500 || res.statusCode === 503) {
         // 服务端错误 → 重试
         if (retryCount < MAX_RETRY) {
-          console.warn('[AI] 服务端错误 ' + res.statusCode + '，重试中...')
+          console.warn('[coach] 服务端错误 ' + res.statusCode + '，重试中...')
           setTimeout(function() {
             chat({ messages: messages, systemPrompt: systemPrompt, onSuccess: onSuccess, onError: onError, maxTokens: maxTokens, _retry: retryCount + 1 })
           }, RETRY_DELAY)
@@ -210,13 +210,13 @@ function chat({ messages, systemPrompt, onSuccess, onError, maxTokens, _retry })
         }
       } else {
         var errMsg = (res.data && res.data.error && res.data.error.message) || ('服务异常(' + res.statusCode + ')')
-        console.error('[AI] 请求失败:', errMsg, res.data)
+        console.error('[coach] 请求失败:', errMsg, res.data)
         onError && onError(errMsg)
       }
     },
     fail: function(err) {
       var errStr = (err && err.errMsg) ? err.errMsg : JSON.stringify(err)
-      console.error('[AI] 网络错误:', errStr)
+      console.error('[coach] 网络错误:', errStr)
 
       var isDomainBlock = errStr.indexOf('url not in domain list') !== -1
         || errStr.indexOf('not allowed') !== -1
@@ -226,7 +226,7 @@ function chat({ messages, systemPrompt, onSuccess, onError, maxTokens, _retry })
 
       // 混合模式：网络错误时降级到本地模式
       if (USE_HYBRID_MODE) {
-        console.log('[AI] 混合模式：API请求失败，降级到本地模式')
+        console.log('[coach] 混合模式：网络请求失败，降级到本地模式')
         var response = getLocalAIResponse(messages, systemPrompt)
         setTimeout(function() {
           onSuccess && onSuccess(response)
@@ -235,18 +235,18 @@ function chat({ messages, systemPrompt, onSuccess, onError, maxTokens, _retry })
       }
 
       if (isDomainBlock) {
-        console.error('[AI] 域名未加白名单！请在微信开发者工具中勾选"不校验合法域名"，或在小程序后台添加 api.deepseek.com')
+        console.error('[coach] 域名未加白名单！请在微信开发者工具中勾选"不校验合法域名"，或在小程序后台添加 api.deepseek.com')
         onError && onError('__domain_blocked__')
       } else if (isTimeout && retryCount < MAX_RETRY) {
-        console.warn('[AI] 请求超时，第' + (retryCount + 1) + '次重试...')
+        console.warn('[coach] 请求超时，第' + (retryCount + 1) + '次重试...')
         setTimeout(function() {
           chat({ messages: messages, systemPrompt: systemPrompt, onSuccess: onSuccess, onError: onError, maxTokens: maxTokens, _retry: retryCount + 1 })
         }, RETRY_DELAY * (retryCount + 1))
       } else if (isTimeout) {
-        console.error('[AI] 重试次数用尽，请求超时')
+        console.error('[coach] 重试次数用尽，请求超时')
         onError && onError('网络超时，请检查网络连接后重试')
       } else if (retryCount < 1) {
-        console.warn('[AI] 网络错误，1次重试...')
+        console.warn('[coach] 网络错误，1次重试...')
         setTimeout(function() {
           chat({ messages: messages, systemPrompt: systemPrompt, onSuccess: onSuccess, onError: onError, maxTokens: maxTokens, _retry: retryCount + 1 })
         }, 1000)
@@ -389,7 +389,7 @@ function parseReplies(rawText) {
 }
 
 /**
- * 生成情侣档案 AI 建议（专用）
+ * 生成情侣档案建议（专用）
  */
 function generateCoupleAdvice({ profile, stageInfo }, onSuccess, onError) {
   const stageMap = {
@@ -519,7 +519,7 @@ function coachChat({ userMessage, history, userGender, profile }, onSuccess, onE
 }
 
 /**
- * AI 解读 TA 的消息（分析意图）
+ * 解读 TA 的消息（分析意图）
  */
 function analyzeTheirMessage({ theirMessage, myGender, scene }, onSuccess, onError) {
   const genderStr = myGender === 'male' ? '男生' : '女生'
@@ -537,7 +537,7 @@ function analyzeTheirMessage({ theirMessage, myGender, scene }, onSuccess, onErr
 }
 
 /**
- * AI 动态生成课程章节内容
+ * 动态生成课程章节内容
  */
 function generateCourseContent({ title, gender, category, chapterTitle }, onSuccess, onError) {
   const genderStr = gender === 'male' ? '男生' : (gender === 'female' ? '女生' : '通用')
@@ -558,7 +558,7 @@ function generateCourseContent({ title, gender, category, chapterTitle }, onSucc
 }
 
 /**
- * AI 生成新课程列表（动态扩充）
+ * 动态生成课程列表（动态扩充）
  */
 function generateCourseList({ gender, category, count = 3 }, onSuccess, onError) {
   const genderStr = gender === 'male' ? '男生' : (gender === 'female' ? '女生' : '通用')
@@ -583,7 +583,7 @@ function generateCourseList({ gender, category, count = 3 }, onSuccess, onError)
 }
 
 /**
- * 解析 AI 生成的课程列表
+ * 解析课程列表
  */
 function parseCourseList(rawText) {
   const courses = []
@@ -620,9 +620,9 @@ function isConfigured() {
   return API_CONFIG.apiKey && API_CONFIG.apiKey !== 'YOUR_DEEPSEEK_API_KEY'
 }
 
-/** 获取 API 未配置时的 mock 回复（开发调试用） */
+/** 获取未配置时的 mock 回复（开发调试用） */
 function getMockReply(type) {
-  var mockCoach = '[演示模式] 你好！我是 AI 恋爱顾问小爱。\n\n关于你的问题，我的建议是：\n1. 先了解对方的兴趣爱好\n2. 寻找共同话题建立连接\n3. 适时表达真诚的赞美\n\n配置 AI API Key 后可获得真实的个性化建议！'
+  var mockCoach = '[演示模式] 你好！我是恋爱顾问小爱。\n\n关于你的问题，我的建议是：\n1. 先了解对方的兴趣爱好\n2. 寻找共同话题建立连接\n3. 适时表达真诚的赞美\n\n完成配置后可获得真实的个性化建议！'
   var mockReply = '[演示模式] 为你生成3条回复示例：\n\n【回复1】\n风格：温柔体贴\n内容：你说的对，我之前没有想到这个角度，谢谢你告诉我\n说明：表达认同和感谢，让对方感到被重视\n\n【回复2】\n风格：幽默轻松\n内容：哈哈你这个角度太有意思了，下次我也用这招\n说明：轻松回应，制造欢乐气氛\n\n【回复3】\n风格：真诚直接\n内容：我很喜欢你说这些，能多讲讲吗？\n说明：表达兴趣，引导对方继续分享'
   var mockAdvice = '[演示模式]\n【主要建议】\n今天记住：真诚和细心是最好的爱意表达，做一件让 TA 感受到你在意的小事。\n\n【今日行动】\n1. 主动联系TA，先开口\n2. 提起TA说过的一件小事\n3. 策划一次约会'
   var mockSurprise = '[演示模式] 惊喜创意：\n今天下班后，去TA最喜欢的奶茶店买一杯TA的常规口味，然后直接出现在TA面前——不需要任何理由，就是"路过想到你"。这个惊喜不在于花钱多少，而是出现得恰到好处。'
@@ -669,7 +669,7 @@ function getLocalAIResponse(messages, systemPrompt) {
     return lowerMessage.indexOf(k) !== -1
   })
   if (isGreeting && historyLen <= 2) {
-    return '你好呀！我是你的 AI 恋爱顾问小爱 💕\n\n无论是搭讪技巧、暧昧推进、约会设计还是感情维系，都可以问我！\n\n先告诉我你是男生还是女生？这样我能给你更有针对性的建议～'
+    return '你好呀！我是你的专属恋爱顾问小爱 💕\n\n无论是搭讪技巧、暧昧推进、约会设计还是感情维系，都可以问我！\n\n先告诉我你是男生还是女生？这样我能给你更有针对性的建议～'
   }
 
   // ===== 本地知识库 - 恋爱顾问（30+条覆盖主要场景）=====
@@ -874,11 +874,11 @@ function callCloudFunction({ messages, systemPrompt, maxTokens, onSuccess, onErr
             callCloudFunction({ messages: messages, systemPrompt: systemPrompt, maxTokens: maxTokens, onSuccess: onSuccess, onError: onError, _retry: retryCount + 1 })
           }, 2000)
         } else {
-          onError && onError('AI 请求频繁，请稍等片刻再试')
+          onError && onError('请求频繁，请稍等片刻再试')
         }
       } else if (result && result.code === 408) {
         if (retryCount < MAX_RETRY) {
-          console.warn('[AI] 云函数超时，重试...')
+          console.warn('[coach] 云函数超时，重试...')
           setTimeout(function() {
             callCloudFunction({ messages: messages, systemPrompt: systemPrompt, maxTokens: maxTokens, onSuccess: onSuccess, onError: onError, _retry: retryCount + 1 })
           }, 1500)
@@ -887,13 +887,13 @@ function callCloudFunction({ messages, systemPrompt, maxTokens, onSuccess, onErr
         }
       } else {
         var errMsg = (result && result.error) || '云函数返回异常'
-        console.error('[AI] 云函数返回错误:', errMsg, result)
+        console.error('[coach] 云函数返回错误:', errMsg, result)
         onError && onError(errMsg)
       }
     },
     fail: function(err) {
       var errStr = (err && err.errMsg) ? err.errMsg : JSON.stringify(err)
-      console.error('[AI] 云函数调用失败:', errStr)
+      console.error('[coach] 云函数调用失败:', errStr)
 
       // 未初始化云开发
       if (errStr.indexOf('not inited') !== -1 || errStr.indexOf('cloud is not ready') !== -1) {
@@ -1004,7 +1004,7 @@ function handleError(err, fallbackMsg) {
     })
   } else {
     wx.showToast({
-      title: fallbackMsg || 'AI 请求失败，请稍后重试',
+      title: fallbackMsg || '请求失败，请稍后重试',
       icon: 'none',
       duration: 2500,
     })
@@ -1012,7 +1012,7 @@ function handleError(err, fallbackMsg) {
 }
 
 /**
- * AI 生成约会话题
+ * 生成约会话题
  * @param {Object} params
  * @param {string} params.category - 分类：初次见面/深入了解/搞笑/价值观/撩拨
  * @param {number} params.count - 生成数量，默认8-12
@@ -1046,7 +1046,7 @@ function generateTopics({ category, count = 10 }, onSuccess, onError) {
 }
 
 /**
- * 解析 AI 生成的话题
+ * 解析生成的话题
  * @param {string} rawText
  * @returns {Array<{category: string, questions: string[]}>}
  */
@@ -1071,7 +1071,7 @@ function parseTopics(rawText) {
   if (results.length === 0 && rawText.trim()) {
     const lines = rawText.split('\n').filter(l => l.trim() && l.length > 5)
     results.push({
-      category: 'AI生成话题',
+      category: '推荐话题',
       questions: lines.slice(0, 10).map(l => l.replace(/^[0-9\.\-\s]+/, '').trim())
     })
   }
@@ -1080,7 +1080,7 @@ function parseTopics(rawText) {
 }
 
 /**
- * AI 生成撩人金句
+ * 生成撩人金句
  * @param {Object} params
  * @param {string} params.scene - 场景：早安/晚安/表白/约会/撒娇/挽回/通用
  * @param {string} params.gender - 性别：male/female/both
@@ -1119,7 +1119,7 @@ function generateSweetWords({ scene, gender = 'both', count = 8 }, onSuccess, on
 }
 
 /**
- * 解析 AI 生成的金句
+ * 解析生成的金句
  * @param {string} rawText
  * @returns {Array<{scene: string, text: string}>}
  */
@@ -1154,7 +1154,7 @@ function parseSweetWords(rawText) {
 }
 
 /**
- * 生成灵魂伴侣头像（使用 DeepSeek 图生图服务或其他）
+ * 生成灵魂伴侣头像（使用图像生成服务）
  * @param {Object} params
  * @param {string} params.zodiac - 灵魂伴侣星座
  * @param {string} params.gender - 目标性别 male/female
@@ -1171,7 +1171,7 @@ function generateSoulmateImage({ zodiac, gender, desc, seed, onSuccess, onError,
 
   // 检查是否在本地模式（网络被禁用）
   if (USE_LOCAL_MODE) {
-    console.log('[ImageGen] 本地模式，使用占位图')
+    console.log('[soulmate] 本地模式，使用占位图')
     // 本地模式返回预设的占位图URL
     const placeholderUrls = {
       male: [
@@ -1193,16 +1193,16 @@ function generateSoulmateImage({ zodiac, gender, desc, seed, onSuccess, onError,
     return
   }
 
-  // 尝试使用 DeepSeek API（通过腾讯云等代理）
-  // 注意：这里使用兼容方案，实际生产环境建议使用专门的图像生成服务
+  // 生图服务（实际部署时替换为真实 API 调用）
+  // 注意：生产环境建议通过云函数转发，不要在前端暴露密钥
   const imageUrl = `https://picsum.photos/seed/${seed || Date.now()}/400/400`
 
-  // 模拟生图成功（实际项目中替换为真实API调用）
-  console.log('[ImageGen] 生成图片，prompt:', prompt.substring(0, 50) + '...')
+  // 模拟生图成功（实际项目中替换为真实服务调用）
+  console.log('[soulmate] 生成图片，prompt:', prompt.substring(0, 50) + '...')
 
   // 实际部署时可替换为：
-  // 1. 腾讯云AI绘图：https://cloud.tencent.com/document/product/1759/105548
-  // 2. 阿里通义万相：https://help.aliyun.com/document_detail/275 不.html
+  // 1. 腾讯云图像生成：https://cloud.tencent.com/document/product/1759/105548
+  // 2. 阿里通义万相：https://help.aliyun.com/document_detail/275.html
   // 3. 百度文心一格：https://wenxin.baidu.com/
 
   setTimeout(function() {
@@ -1210,12 +1210,12 @@ function generateSoulmateImage({ zodiac, gender, desc, seed, onSuccess, onError,
   }, 800)
 }
 
-// DeepSeek 生图 API 配置
+// 图像生成接口配置
 const IMAGE_GENERATION_CONFIG = {
-  // DeepSeek 生图 API 端点
+  // 图像生成接口端点（按需配置）
   baseUrl: 'https://api.deepseek.com/v1/images/generations',
   apiKey: 'sk-dc86cbd1925a4bbcb7d267eb210d0bfc',
-  model: 'deepseek-chat', // DeepSeek 使用 chat 模型生成图片描述，然后用图生图服务
+  model: 'deepseek-chat',
 }
 
 // 导出配置供外部使用
@@ -1245,12 +1245,12 @@ module.exports = {
   USE_CLOUD_FUNCTION,
   USE_HYBRID_MODE,
   CLOUD_FUNCTION_NAME,
-  // 新增：话题和金句生成
+  // 话题和金句生成
   generateTopics,
   parseTopics,
   generateSweetWords,
   parseSweetWords,
-  // 新增：生图功能
+  // 生图功能
   generateSoulmateImage,
   IMAGE_GENERATION_CONFIG,
 }

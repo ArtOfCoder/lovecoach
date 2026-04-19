@@ -156,7 +156,7 @@ Page({
 
     this.setData({ generatingNew: true })
 
-    wx.showLoading({ title: 'AI 生成课程中...' })
+    wx.showLoading({ title: '生成课程中...' })
 
     ai.generateCourseList({ gender, category, count: 3 }, (raw) => {
       wx.hideLoading()
@@ -175,9 +175,9 @@ Page({
             category: c.category,
             gender: genderFilter === 'all' ? 'both' : genderFilter,
             chapters: c.chapters,
-            cover: '🤖',
+            cover: '✨',
             coverBg: '#6C63FF',
-            tags: ['AI 生成', category],
+            tags: ['推荐', category],
             isFree: true,
             views: 0,
             isAIGenerated: true,
@@ -193,10 +193,10 @@ Page({
           aiCourses: aiCourseList,
           showAISection: true,
         })
-        wx.showToast({ title: `AI 生成了 ${parsed.length} 门新课程！`, icon: 'none' })
+        wx.showToast({ title: `新增了 ${parsed.length} 门课程！`, icon: 'none' })
       } else {
         this.setData({ generatingNew: false })
-        wx.showToast({ title: 'AI 生成课程失败，稍后再试', icon: 'none' })
+        wx.showToast({ title: '生成课程失败，稍后再试', icon: 'none' })
       }
     }, (err) => {
       wx.hideLoading()
@@ -205,15 +205,15 @@ Page({
       if (err === '__domain_blocked__') {
         ai.handleError(err)
       } else {
-        wx.showToast({ title: 'AI 生成失败，请稍后再试', icon: 'none' })
+        wx.showToast({ title: '生成失败，请稍后再试', icon: 'none' })
       }
     })
   },
 
   clearAICourses() {
     wx.showModal({
-      title: '清除 AI 课程',
-      content: '确定清除所有 AI 生成的课程吗？',
+      title: '清除推荐课程',
+      content: '确定清除所有推荐课程吗？',
       success: res => {
         if (res.confirm) {
           wx.removeStorageSync('aiGeneratedCourses')

@@ -88,7 +88,7 @@ const ADVICE_POOL = {
       { main: '稳定期的你可能已经"太懂他了"——但他也需要被惊到。', actions: ['做一件他不知道你会做的事，给他惊喜', '主动发起一次约会，不等他', '告诉他一件他让你很满意的事（具体的）'] },
       { main: '今天主动表达你对这段关系的"满意感"——让他知道他做得好。', actions: ['说出他最近做的一件让你觉得幸福的事', '不要只说"我很好"，说"因为你，所以很好"', '让他感受到被你认可的成就感'] },
       { main: '今天做一件让你们共同拥有一个"新记忆"的事。', actions: ['提议一个你们没做过的事，比如一起学做一道菜', '不需要多特别，关键是"第一次一起做"', '拍一张照片记录下来'] },
-      { main: '今天观察他最近有什么在意但没说的事，主动问他。', actions: ['找一个安静的时间问他"最近有什么在烦你"', '认真听，不打断，不立刻给建议', '问完说"我在，你说"] },
+      { main: '今天观察他最近有什么在意但没说的事，主动问他。', actions: ['找一个安静的时间问他"最近有什么在烦你"', '认真听，不打断，不立刻给建议', '问完说"我在，你说"'] },
     ],
   },
   cohabit: {
@@ -296,7 +296,7 @@ Page({
     this.setData({ milestone, nextMilestone })
   },
 
-  // AI 关系健康度诊断
+  // 关系健康度诊断
   aiDiagnoseHealth() {
     if (this.data.healthDiagLoading) return
     const { profile, healthItems, healthTotal, stageInfo } = this.data
@@ -324,7 +324,7 @@ Page({
       this.setData({ healthDiagLoading: false, healthDiagnosis: result })
     }, () => {
       this.setData({ healthDiagLoading: false })
-      ai.handleError('', 'AI 诊断失败，请重试')
+      ai.handleError('', '诊断失败，请重试')
     }, 300)
   },
 

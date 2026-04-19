@@ -103,7 +103,7 @@ Page({
     const map = {
       'soulmate_generate': '生成灵魂伴侣',
       'soulmate_pay': '解锁灵魂伴侣',
-      'ai_chat': 'AI问答',
+      'ai_chat': '顾问问答',
       'ai_signal': '信号分析',
       'ai_roleplay': '角色练习',
       'ai_vent': '倾诉模式',
@@ -118,12 +118,12 @@ Page({
     return map[action] || action
   },
 
-  // 查看AI对话详情
+  // 查看对话详情
   viewAiChat(e) {
     const { index } = e.currentTarget.dataset
     const chat = this.data.aiChats[index]
     wx.showModal({
-      title: 'AI对话详情',
+      title: '对话详情',
       content: `问：${chat.question}\n\n答：${chat.answer}`,
       showCancel: false,
       confirmText: '关闭',

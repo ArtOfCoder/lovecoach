@@ -1,4 +1,4 @@
-// pages/roleplay/roleplay.js - 转向 AI 顾问角色练习模式
+// pages/roleplay/roleplay.js - 转向恋爱顾问角色练习模式
 Page({
   onLoad() {
     // ai-coach 是 tabBar 页面，使用 switchTab 并带参数
