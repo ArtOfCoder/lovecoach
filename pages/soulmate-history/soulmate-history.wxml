@@ -4,7 +4,7 @@
   <view class="header-stats" wx:if="{{history.length > 0}}">
     <view class="stat-item">
       <text class="stat-num">{{history.length}}</text>
-      <text class="stat-label">已解锁</text>
+      <text class="stat-label">测试次数</text>
     </view>
     <view class="stat-item">
       <text class="stat-num">{{history.length > 0 ? history[0].formattedDate : '-'}}</text>
@@ -94,7 +94,7 @@
     </button>
     <button class="footer-btn primary-btn" bindtap="goToSoulmate">
       <text class="btn-icon">✨</text>
-      <text>重新测算</text>
+      <text>重新测试</text>
     </button>
   </view>
 </view>

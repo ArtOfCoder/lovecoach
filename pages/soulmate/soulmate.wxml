@@ -1,4 +1,4 @@
-<!-- pages/soulmate/soulmate.wxml - 灵魂伴侣 -->
+<!-- pages/soulmate/soulmate.wxml - 星座配对 -->
 <view class="soulmate-page">
 
   <!-- ========== 步骤1：输入页 ========== -->
@@ -13,8 +13,8 @@
         <text class="zodiac-float z3">♎</text>
         <text class="zodiac-float z4">♑</text>
       </view>
-      <view class="header-title">星盘灵魂伴侣测算</view>
-      <view class="header-sub">星盘解析你的命格，找出命中注定的另一半</view>
+      <view class="header-title">星座配对测试</view>
+      <view class="header-sub">输入生日，探索你的星座性格与最佳配对</view>
     </view>
 
     <!-- 表单卡片 -->
@@ -107,8 +107,8 @@
 
       <!-- 说明文字 -->
       <view class="form-tip">
-        <text class="form-tip-icon">🔮</text>
-        <text class="form-tip-text">根据你的出生信息分析太阳星座、月亮星座、上升星座，为你找到灵魂伴侣</text>
+        <text class="form-tip-icon">⭐</text>
+        <text class="form-tip-text">根据你的生日分析太阳星座、月亮星座和上升星座，探索与你最契合的伴侣星座特质</text>
       </view>
 
     </view>
@@ -116,25 +116,25 @@
     <!-- 生成按钮 -->
     <view class="generate-btn" bindtap="startGenerate">
       <text class="generate-btn-icon">💫</text>
-      <text class="generate-btn-text">开始测算我的灵魂伴侣</text>
+      <text class="generate-btn-text">开始星座配对分析</text>
     </view>
 
     <!-- 底部说明 -->
     <view class="bottom-note">
-      <text>灵魂伴侣头像需打赏 9.9 元解锁</text>
-      <text class="bottom-note-sub">基于星盘算法的娱乐测试，打赏后可查看结果</text>
+      <text>免费查看你的星座配对结果</text>
+      <text class="bottom-note-sub">基于星座运势的娱乐测试，仅供参考</text>
     </view>
     
     <!-- 免责声明 -->
     <view class="ai-disclaimer">
-      <text class="ai-disclaimer-text">本功能基于本地星盘算法生成，仅供娱乐参考</text>
+      <text class="ai-disclaimer-text">本功能基于星座知识库生成，仅供娱乐参考，不代表任何真实建议</text>
     </view>
 
     <!-- 客服入口 -->
     <view class="support-section">
       <view class="support-btn" bindtap="copyWechatId">
         <text class="support-icon">💬</text>
-        <text class="support-text">打赏遇到问题？联系客服</text>
+        <text class="support-text">遇到问题？联系客服</text>
         <text class="support-id">news-tomato</text>
       </view>
     </view>
@@ -190,40 +190,16 @@
     <view class="soulmate-card">
 
       <!-- 标题 -->
-      <view class="sm-title">命中注定的灵魂伴侣</view>
+      <view class="sm-title">你的最佳配对星座</view>
       <view class="sm-subtitle">
-        你的 {{astroSummary.zodiac.name}} 星盘，与 {{astroSummary.soulmateZodiac}} 灵魂共鸣
+        你是 {{astroSummary.zodiac.name}}，与 {{astroSummary.soulmateZodiac}} 星座最为契合
       </view>
 
-      <!-- 头像区域 -->
+      <!-- 头像区域 - 直接显示星座配对图 -->
       <view class="avatar-zone">
-        <!-- 模糊/未解锁状态 - 使用本地渐变头像 -->
-        <view wx:if="{{!soulmate.unlocked}}" class="avatar-blur-wrap" bindtap="payToUnlock">
-          <!-- 使用本地渐变生成头像 + 强模糊效果 -->
-          <view 
-            class="blur-avatar-gradient"
-            style="background: {{soulmate.avatarStyle}};"
-          >
-            <!-- 模糊的发型 -->
-            <view class="blur-hair" style="background: {{soulmate.hairColor}};"></view>
-            <!-- 模糊的脸部 -->
-            <view class="blur-face" style="background: {{soulmate.skinColor}};"></view>
-          </view>
-          
-          <!-- 解锁提示遮罩 -->
-          <view class="unlock-mask-light">
-            <view class="um-bottom-bar">
-              <view class="um-lock-small">🔒</view>
-              <view class="um-title-small">点击解锁真容</view>
-              <view class="um-price-small">¥9.9</view>
-            </view>
-          </view>
-        </view>
-
-        <!-- 已解锁状态 - 显示生成的人物画像 -->
-        <view wx:if="{{soulmate.unlocked}}" class="avatar-unlocked-wrap">
-          <!-- 优先：显示本地星座头像图片 -->
-          <block wx:if="{{soulmate.avatarType === 'image' && soulmate.imageUrl}}">
+        <view class="avatar-unlocked-wrap">
+          <!-- 显示本地星座头像图片 -->
+          <block wx:if="{{soulmate.imageUrl}}">
             <image
               class="unlocked-image"
               src="{{soulmate.imageUrl}}"
@@ -231,23 +207,20 @@
               bindlongpress="onLongPressImage"
             />
           </block>
-          <!-- 降级：显示清晰的渐变头像 -->
+          <!-- 渐变色头像 -->
           <block wx:else>
             <view 
               class="unlocked-avatar"
               style="background: {{soulmate.avatarStyle}};"
             >
-              <!-- 清晰的发型 -->
               <view class="ua-hair" style="background: {{soulmate.hairColor}};"></view>
-              <!-- 清晰的脸部 -->
               <view class="ua-face" style="background: {{soulmate.skinColor}};"></view>
             </view>
           </block>
           <view class="unlocked-badge">
-            <text>✨ 已解锁</text>
+            <text>{{astroSummary.soulmateZodiac}} ✨</text>
           </view>
-          <!-- 长按提示 -->
-          <view class="longpress-hint">长按图片可保存或分享</view>
+          <view class="longpress-hint">长按图片可保存</view>
         </view>
       </view>
 
@@ -282,291 +255,14 @@
 
     <!-- 免责声明 -->
     <view class="ai-disclaimer">
-      <text class="ai-disclaimer-text">本功能基于星盘算法生成，仅供娱乐参考</text>
+      <text class="ai-disclaimer-text">本功能基于星座知识库生成，仅供娱乐参考，不代表任何真实建议</text>
     </view>
 
     <!-- 底部按钮组 -->
     <view class="result-actions">
 
-      <!-- 未解锁：打赏区域 -->
-      <view wx:if="{{!soulmate.unlocked}}" class="pay-section">
-        <!-- 打赏标题 -->
-        <view class="pay-section-header">
-          <text class="pay-section-icon">💎</text>
-          <text class="pay-section-title">打赏解锁完整内容</text>
-        </view>
-        
-        <!-- 价格展示 -->
-        <view class="pay-price-wrap">
-          <text class="pay-price-currency">¥</text>
-          <text class="pay-price-value">9.9</text>
-          <text class="pay-price-unit">元</text>
-        </view>
-        
-        <!-- 支付说明 -->
-        <view class="pay-benefits">
-          <view class="pay-benefit-item">
-            <text class="pay-benefit-icon">✨</text>
-            <text class="pay-benefit-text">生成高清专属头像</text>
-          </view>
-          <view class="pay-benefit-item">
-            <text class="pay-benefit-icon">🔮</text>
-            <text class="pay-benefit-text">永久保存与分享</text>
-          </view>
-          <view class="pay-benefit-item">
-            <text class="pay-benefit-icon">💕</text>
-            <text class="pay-benefit-text">查看完整星盘解析</text>
-          </view>
-        </view>
-        
-        <!-- 收款二维码 -->
-        <view class="pay-qr-section">
-          <view class="pay-qr-title">方式一：扫码打赏</view>
-          <view class="pay-qr-wrap" bindtap="previewQRCode">
-            <image 
-              class="pay-qr-image" 
-              src="/images/pay-qr-code.jpg" 
-              mode="aspectFit"
-              show-menu-by-longpress="{{true}}"
-              data-url="/images/pay-qr-code.jpg"
-            />
-            <view class="pay-qr-shine"></view>
-            <view class="pay-qr-click-mask">
-              <text class="pay-qr-click-text">点击放大</text>
-            </view>
-          </view>
-          <view class="pay-qr-steps">
-            <view class="pay-step">
-              <text class="pay-step-num">1</text>
-              <text class="pay-step-text">长按二维码，选择"保存到手机"</text>
-            </view>
-            <view class="pay-step-arrow">↓</view>
-            <view class="pay-step">
-              <text class="pay-step-num">2</text>
-              <text class="pay-step-text">打开微信扫一扫，点击右下角相册</text>
-            </view>
-            <view class="pay-step-arrow">↓</view>
-            <view class="pay-step">
-              <text class="pay-step-num">3</text>
-              <text class="pay-step-text">选择刚保存的二维码，识别后支付</text>
-            </view>
-          </view>
-        </view>
-
-        <!-- 分割线 -->
-        <view class="pay-divider">
-          <view class="pay-divider-line"></view>
-          <text class="pay-divider-text">或</text>
-          <view class="pay-divider-line"></view>
-        </view>
-
-        <!-- 链接付款方式 -->
-        <view class="pay-link-section">
-          <view class="pay-link-title">方式二：链接付款</view>
-          <view class="pay-link-card" bindtap="copyPayLink">
-            <view class="pay-link-content">
-              <text class="pay-link-icon">🔗</text>
-              <text class="pay-link-text">点击复制付款链接</text>
-            </view>
-            <view class="pay-link-arrow">›</view>
-          </view>
-          <view class="pay-link-steps">
-            <view class="pay-step">
-              <text class="pay-step-num">1</text>
-              <text class="pay-step-text">点击上方卡片复制付款链接</text>
-            </view>
-            <view class="pay-step-arrow">↓</view>
-            <view class="pay-step">
-              <text class="pay-step-num">2</text>
-              <text class="pay-step-text">打开微信，发送到"文件传输助手"</text>
-            </view>
-            <view class="pay-step-arrow">↓</view>
-            <view class="pay-step">
-              <text class="pay-step-num">3</text>
-              <text class="pay-step-text">在聊天窗口点击链接完成支付</text>
-            </view>
-          </view>
-        </view>
-
-        <!-- 用户ID显示区域 -->
-        <view class="user-id-section" bindtap="copyUserId">
-          <view class="user-id-label">您的用户ID（点击复制）</view>
-          <view class="user-id-value">{{userId || '加载中...'}}</view>
-          <view class="user-id-hint">支付后如需人工审核，请提供此ID给客服</view>
-        </view>
-
-        <!-- 打赏指引：扫码 → 上传截图 → 自动解锁 -->
-        <view class="pay-guide-section">
-          <view class="pay-guide-title">
-            <text class="pay-guide-icon">🔓</text>
-            <text>自动解锁流程</text>
-          </view>
-          
-          <view class="pay-guide-steps">
-            <view class="pay-guide-step">
-              <view class="pay-guide-num">1</view>
-              <view class="pay-guide-content">
-                <text class="pay-guide-text">长按二维码打赏 ¥9.9</text>
-                <text class="pay-guide-hint">支持微信扫码支付</text>
-              </view>
-            </view>
-            
-            <view class="pay-guide-arrow">↓</view>
-            
-            <view class="pay-guide-step">
-              <view class="pay-guide-num">2</view>
-              <view class="pay-guide-content">
-                <text class="pay-guide-text">上传支付截图</text>
-                <text class="pay-guide-hint">系统识别验证</text>
-              </view>
-            </view>
-            
-            <view class="pay-guide-arrow">↓</view>
-            
-            <view class="pay-guide-step">
-              <view class="pay-guide-num">3</view>
-              <view class="pay-guide-content">
-                <text class="pay-guide-text">自动验证，秒级解锁</text>
-                <text class="pay-guide-hint">验证通过立即查看生成结果</text>
-              </view>
-            </view>
-          </view>
-        </view>
-
-        <!-- 主解锁按钮 -->
-        <view class="paid-btn primary" bindtap="confirmPaid">
-          <text class="paid-btn-icon">📸</text>
-          <text class="paid-btn-text">我已完成打赏，上传截图解锁</text>
-        </view>
-        
-        <!-- 备用方式：联系客服 -->
-        <view class="pay-alternative">
-          <text class="pay-alt-text">截图无法识别？</text>
-          <text class="pay-alt-link" bindtap="copyWechatId">联系客服人工审核</text>
-        </view>
-        
-        <!-- 打赏说明 -->
-        <view class="pay-notice">
-          <text class="pay-notice-text">本功能基于星盘算法生成娱乐内容，打赏纯属自愿</text>
-        </view>
-
-        <!-- 截图上传弹窗 -->
-        <view wx:if="{{showScreenshotUpload}}" class="screenshot-modal">
-          <view class="screenshot-modal-mask" bindtap="closeScreenshotUpload"></view>
-          <view class="screenshot-modal-content">
-            <view class="screenshot-modal-header">
-              <text class="screenshot-modal-title">📸 上传支付截图</text>
-              <text class="screenshot-modal-close" bindtap="closeScreenshotUpload">✕</text>
-            </view>
-            
-            <view class="screenshot-modal-body">
-              <view class="screenshot-upload-area">
-                <view wx:if="{{!payScreenshot}}" class="screenshot-upload-placeholder" bindtap="choosePayScreenshot">
-                  <text class="upload-placeholder-icon">📷</text>
-                  <text class="upload-placeholder-text">点击上传支付截图</text>
-                  <text class="upload-placeholder-hint">支持相册选择或拍照</text>
-                </view>
-                
-                <view wx:if="{{payScreenshot}}" class="screenshot-preview-wrap">
-                  <image class="screenshot-preview-image" src="{{payScreenshot}}" mode="aspectFit" bindtap="previewScreenshot"/>
-                  <view class="screenshot-preview-actions">
-                    <text class="screenshot-action-btn" bindtap="choosePayScreenshot">重新选择</text>
-                    <text class="screenshot-action-btn delete" bindtap="deleteScreenshot">删除</text>
-                  </view>
-                </view>
-              </view>
-              
-              <view class="screenshot-requirements">
-                <view class="screenshot-req-title">自动识别，截图需包含：</view>
-                <view class="screenshot-req-item">
-                  <text class="req-check">✓</text>
-                  <text>支付金额 ¥9.9</text>
-                </view>
-                <view class="screenshot-req-item">
-                  <text class="req-check">✓</text>
-                  <text>收款方信息（news-tomato）</text>
-                </view>
-                <view class="screenshot-req-item">
-                  <text class="req-check">✓</text>
-                  <text>支付时间</text>
-                </view>
-                <view class="screenshot-req-item">
-                  <text class="req-check">✓</text>
-                  <text>交易单号或商户信息</text>
-                </view>
-              </view>
-              
-              <view class="screenshot-info">
-                <text class="info-icon">🔍</text>
-                <text class="info-text">系统将自动识别截图内容，验证通过立即解锁，无需等待人工审核</text>
-              </view>
-              
-              <view class="screenshot-warning">
-                <text class="warning-icon">⚠️</text>
-                <text class="warning-text">伪造截图、一图多用将被系统自动识别并封禁账户</text>
-              </view>
-            </view>
-            
-            <view class="screenshot-modal-footer">
-              <view class="screenshot-submit-btn {{payScreenshot ? '' : 'disabled'}}" bindtap="submitScreenshotForReview">
-                <text class="submit-icon">🔍</text>
-                <text>自动识别并解锁</text>
-              </view>
-              <view class="screenshot-contact-btn" bindtap="copyWechatId">
-                <text>截图无法识别？联系客服人工审核</text>
-              </view>
-            </view>
-          </view>
-        </view>
-
-        <!-- 原支付验证区域已移除 -->
-        <!-- 原截图上传区域已移除，使用加微信解锁方式 -->
-        <view wx:if="{{false}}" class="pay-pending-section">
-          <view class="pay-pending-icon">⏳</view>
-          <view class="pay-pending-title">截图已提交，等待审核</view>
-          <view class="pay-pending-desc">通常10分钟内完成审核，审核通过后自动解锁。\n请保持网络连接或稍后回来查看。</view>
-          <view class="pay-pending-tip">小程序会自动检测审核结果，无需刷新</view>
-        </view>
-
-        <!-- 未提交状态：上传截图 - 已移除 -->
-        <view wx:if="{{false}}" class="pay-verify-section">
-          <view class="pay-verify-title">
-            <text class="pay-verify-icon">📸</text>
-            <text>上传支付截图验证</text>
-          </view>
-          <view class="pay-verify-desc">支付完成后，请截图包含以下信息的支付成功页面：</view>
-          <view class="pay-verify-requirements">
-            <text class="req-item">✓ 支付金额：¥9.9</text>
-            <text class="req-item">✓ 支付时间</text>
-            <text class="req-item">✓ 交易单号或商户信息</text>
-          </view>
-          <view class="pay-verify-warning">
-            <text class="warning-icon">⚠️</text>
-            <text class="warning-text">截图将被人工审核，伪造截图将被封禁账户</text>
-          </view>
-
-          <!-- 上传截图按钮 -->
-          <view wx:if="{{!payScreenshot}}" class="upload-screenshot-btn" bindtap="choosePayScreenshot">
-            <text class="upload-icon">+</text>
-            <text class="upload-text">点击上传支付截图</text>
-            <text class="upload-hint">支持相册选择或拍照</text>
-          </view>
-
-          <!-- 已上传截图预览 -->
-          <view wx:if="{{payScreenshot}}" class="screenshot-preview">
-            <image class="screenshot-image" src="{{payScreenshot}}" mode="aspectFit" bindtap="previewScreenshot"/>
-            <view class="screenshot-actions">
-              <text class="screenshot-replace" bindtap="choosePayScreenshot">重新上传</text>
-              <text class="screenshot-delete" bindtap="deleteScreenshot">删除</text>
-            </view>
-          </view>
-        </view>
-        
-        <!-- 提交按钮 - 已移除，使用加微信解锁方式 -->
-      </view>
-
-      <!-- 已解锁：操作按钮 -->
-      <view wx:if="{{soulmate.unlocked}}" class="unlocked-actions">
+      <!-- 操作按钮 -->
+      <view class="unlocked-actions">
         <view class="ua-btn" bindtap="saveImage">
           <text class="ua-icon">📥</text>
           <text>保存图片</text>
@@ -580,9 +276,9 @@
         </button>
       </view>
 
-      <!-- 重新测算：付费后才能重新测算 -->
-      <view wx:if="{{soulmate.unlocked}}" class="regen-btn" bindtap="goBack">
-        <text>🔄 重新测算</text>
+      <!-- 重新测试 -->
+      <view class="regen-btn" bindtap="goBack">
+        <text>🔄 重新测试</text>
       </view>
 
     </view>

@@ -92,8 +92,8 @@
       <view class="fc-left">
         <view class="fc-icon-wrap" style="background: #FF6B8A20; color: #FF6B8A;">💕</view>
         <view class="fc-info">
-          <view class="fc-title">灵魂伴侣记录</view>
-          <view class="fc-sub">查看历史测算记录和生成的图片</view>
+          <view class="fc-title">星座配对记录</view>
+          <view class="fc-sub">查看历史测试记录</view>
         </view>
       </view>
       <text class="fc-arrow">›</text>
@@ -117,13 +117,13 @@
     <view class="section-title">✨ 特色功能</view>
     <view class="feature-card soulmate-card" bindtap="goToSoulmate">
       <view class="fc-left">
-        <view class="fc-icon-wrap">🔮</view>
+        <view class="fc-icon-wrap">⭐</view>
         <view class="fc-info">
-          <view class="fc-title">灵魂伴侣测算</view>
-          <view class="fc-sub">星盘解析命格，找命中注定的另一半</view>
+          <view class="fc-title">星座配对测试</view>
+          <view class="fc-sub">输入生日，探索你的星座配对特质</view>
         </view>
       </view>
-      <view class="fc-badge">¥9.9</view>
+      <view class="fc-badge" style="background:#f0fdf4;color:#16a34a;">免费</view>
     </view>
   </view>
 

@@ -1,5 +1,5 @@
 // pages/soulmate-history/soulmate-history.js
-// 灵魂伴侣历史记录页面
+// 星座配对历史记录页面
 
 const storage = require('../../utils/storage')
 
@@ -31,7 +31,7 @@ Page({
     this.setData({
       history: formattedHistory,
       loading: false,
-      emptyText: formattedHistory.length === 0 ? '暂无付费解锁的记录\n快去生成你的灵魂伴侣吧' : '',
+      emptyText: formattedHistory.length === 0 ? '暂无测试记录\n快去做星座配对测试吧' : '',
     })
   },
 
@@ -189,7 +189,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '我的灵魂伴侣记录',
+      title: '我的星座配对测试记录',
       path: '/pages/soulmate-history/soulmate-history',
     }
   },

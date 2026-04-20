@@ -1,5 +1,5 @@
 // pages/soulmate/soulmate.js
-// 灵魂伴侣 - 星盘测算生成命中注定的另一半
+// 星座配对 - 分析星座特质与最佳配对
 
 const ai = require('../../utils/ai')
 const storage = require('../../utils/storage')
@@ -221,12 +221,12 @@ const ZODIAC_TO_KEY = {
   '双鱼座': 'pisces',
 }
 
-// ===== 根据星盘生成灵魂伴侣描述（本地版）=====
+// ===== 根据星盘生成配对描述（本地版）=====
 function generateSoulmateDesc(zodiacName, birthCity, userGender) {
   const soulmateZodiac = getSoulmateZodiac(zodiacName)
   const isForMale = userGender === 'male'
 
-  // 根据灵魂伴侣星座生成描述
+  // 根据配对星座生成描述
   const descMap = {
     '白羊座': isForMale
       ? '她充满活力，敢爱敢恨。会在你最沮丧时拉着你去冒险，用热情点燃你的生命。'
@@ -340,7 +340,7 @@ function generateAvatarColors(seed) {
   return colors[seed % colors.length]
 }
 
-// 根据星盘信息生成本地描述
+// 根据星座信息生成本地配对描述
 function buildLocalDesc(astro, userGender) {
   const targetGender = userGender === 'male' ? '女生' : '男生'
   const zodiacName = astro.zodiac.name
@@ -430,32 +430,23 @@ Page({
     // 星盘结果
     astroSummary: null,
 
-    // 生成的灵魂伴侣数据
+    // 生成的星座配对数据
     soulmate: {
       desc: '',           // 人物描述
-      avatarStyle: '',    // 模糊头像背景渐变色
-      hairColor: 'rgba(40, 20, 60, 0.85)',   // 发色
-      skinColor: 'rgba(255, 220, 195, 0.95)', // 肤色
-      blurred: true,      // 是否模糊（付费前）
-      imageUrl: '',       // 付费后的清晰图片（AI 生成或占位图）
-      unlocked: false,    // 是否已解锁
+      avatarStyle: '',    // 头像背景渐变色
+      hairColor: 'rgba(40, 20, 60, 0.85)',
+      skinColor: 'rgba(255, 220, 195, 0.95)',
+      blurred: false,     // 直接显示，无需付费
+      imageUrl: '',       // 本地星座图片
+      unlocked: true,     // 始终解锁
     },
 
     // 生成进度文字（动画）
-    loadingText: '正在解析星盘数据...',
+    loadingText: '正在分析星座数据...',
     loadingStep: 0,
-
-    // 支付状态
-    paying: false,
-    paySuccess: false,
 
     // 分享状态
     canShare: false,
-
-    // 支付截图
-    payScreenshot: '',
-    // 是否有待审核订单
-    paymentPending: false,
 
     // 用户ID
     userId: '',
@@ -480,13 +471,13 @@ Page({
       userId: userInfo.tempUserId || userId
     })
 
-    // 检查是否已经解锁过（持久化）
+    // 检查是否有缓存的测试结果
     const soulmateData = wx.getStorageSync('soulmateData') || null
-    if (soulmateData && soulmateData.unlocked) {
+    if (soulmateData && soulmateData.astroSummary) {
       this.setData({
         step: 'result',
         astroSummary: soulmateData.astroSummary,
-        soulmate: soulmateData.soulmate,
+        soulmate: { ...soulmateData.soulmate, unlocked: true, blurred: false },
         birthYear: soulmateData.birthYear,
         birthMonth: soulmateData.birthMonth,
         birthDay: soulmateData.birthDay,
@@ -494,19 +485,6 @@ Page({
         canShare: true,
       })
       return
-    }
-
-    // 检查是否被管理员手动解锁（从soulmate_unlocks记录中检查）
-    // 注意：这需要管理员和用户在同一设备上，或者通过其他方式同步
-    // 实际使用场景：用户联系客服，客服在自己的手机上解锁，然后告诉用户"已解锁"
-    // 用户重新进入小程序时，这里会检查到解锁状态
-    this.checkAdminUnlockStatus(userId)
-
-    // 检查是否有待审核订单，如果有则恢复轮询
-    const pendingOrderId = wx.getStorageSync('pending_order_id')
-    if (pendingOrderId) {
-      this.setData({ paymentPending: true })
-      this.startPollingUnlockStatus()
     }
   },
 
@@ -609,11 +587,11 @@ Page({
 
     // 模拟加载进度
     const loadingTexts = [
-      '正在解析星盘数据...',
+      '正在分析星座数据...',
       '计算上升星座与月亮星座...',
-      '分析命运交叉点...',
-      '在茫茫人海中定位你的灵魂伴侣...',
-      '灵魂伴侣正在显现...',
+      '分析星座配对特质...',
+      '在十二星座中寻找最佳配对...',
+      '配对结果即将呈现...',
     ]
     let step = 0
     const timer = setInterval(() => {
@@ -642,15 +620,21 @@ Page({
       const seed = year * 10000 + month * 100 + day
       const avatarColors = generateAvatarColors(seed)
 
+      // 直接生成头像（免费展示，无需付费）
+      const seed = year * 10000 + month * 100 + day
+      const targetGender = userGender === 'male' ? 'female' : 'male'
+      const avatarData = this.getLocalAvatar(targetGender, seed, astroSummary.soulmateZodiac)
+      
       const soulmate = {
         desc,
         avatarStyle: avatarCfg.bg,
         hairColor: avatarColors.hair,
         skinColor: avatarColors.skin,
         bgColor: avatarColors.bg,
-        blurred: true,
-        imageUrl: '', // 付费后使用渐变背景
-        unlocked: false,
+        blurred: false,
+        imageUrl: avatarData.type === 'image' ? avatarData.path : '',
+        avatarType: avatarData.type,
+        unlocked: true,
       }
 
       this.setData({
@@ -661,7 +645,17 @@ Page({
         birthMonth: String(month),
         birthDay: String(day),
         loadingStep: 5,
-        canShare: false,
+        canShare: true,
+      })
+
+      // 保存缓存（下次进入直接展示）
+      wx.setStorageSync('soulmateData', {
+        astroSummary,
+        soulmate,
+        birthYear: String(year),
+        birthMonth: String(month),
+        birthDay: String(day),
+        birthCity,
       })
 
       // 记录用户行为
@@ -680,9 +674,9 @@ Page({
     }
   },
 
-  // 重新生成（回到输入页）
+  // 重新测试（回到输入页）
   regenerate() {
-    // 清除缓存，允许重新生成
+    // 清除缓存，允许重新测试
     wx.removeStorageSync('soulmateData')
     this.setData({
       step: 'input',
@@ -691,13 +685,12 @@ Page({
         avatarStyle: '',
         hairColor: 'rgba(40, 20, 60, 0.85)',
         skinColor: 'rgba(255, 220, 195, 0.95)',
-        blurred: true,
+        blurred: false,
         imageUrl: '',
-        unlocked: false,
+        unlocked: true,
       },
       astroSummary: null,
       canShare: false,
-      paySuccess: false,
     })
   },
 
@@ -1650,9 +1643,9 @@ Page({
     const { soulmate, astroSummary } = this.data
     const zodiacName = astroSummary ? astroSummary.zodiac.name : ''
     return {
-      title: `星盘测出了我的灵魂伴侣，${zodiacName}的人快来看看 💕`,
+      title: `星座配对测试：${zodiacName}最适合和什么星座在一起？💕`,
       path: '/pages/soulmate/soulmate',
-      imageUrl: soulmate.unlocked ? soulmate.imageUrl : '',
+      imageUrl: soulmate.imageUrl || '',
     }
   },
 
@@ -1660,8 +1653,8 @@ Page({
   goBack() {
     if (this.data.step !== 'input') {
       wx.showModal({
-        title: '重新测算',
-        content: '重新测算会清除当前结果，确定吗？',
+        title: '重新测试',
+        content: '重新测试会清除当前结果，确定吗？',
         confirmText: '确定重测',
         confirmColor: '#FF6B8A',
         success: (res) => {

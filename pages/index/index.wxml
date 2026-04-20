@@ -104,19 +104,19 @@
     </view>
   </view>
 
-  <!-- 灵魂伴侣特色入口 Banner -->
+  <!-- 星座配对特色入口 Banner -->
   <view class="section-wrap">
     <view class="soulmate-banner" bindtap="goToSoulmate">
       <view class="smb-left">
-        <view class="smb-tag">🔮 星盘测算</view>
-        <view class="smb-title">测算你的灵魂伴侣</view>
-        <view class="smb-sub">输入出生日期，解析星盘命格，找到命中注定的另一半</view>
+        <view class="smb-tag">⭐ 星座测试</view>
+        <view class="smb-title">星座配对分析</view>
+        <view class="smb-sub">输入生日，分析星座特质，探索最佳配对组合</view>
       </view>
       <view class="smb-right">
         <view class="smb-avatar-demo">
           <view class="smb-blur-face">✨</view>
         </view>
-        <view class="smb-price">解锁 ¥9.9</view>
+        <view class="smb-price">免费测试</view>
       </view>
     </view>
   </view>
@@ -125,8 +125,8 @@
   <view class="section-wrap">
     <view class="quick-grid-4">
       <view class="qg-cell" bindtap="goToSoulmate">
-        <view class="qg-icon" style="background:linear-gradient(135deg,#ede9fe,#fce7f3);">🔮</view>
-        <view class="qg-label">灵魂伴侣</view>
+        <view class="qg-icon" style="background:linear-gradient(135deg,#ede9fe,#fce7f3);">⭐</view>
+        <view class="qg-label">星座配对</view>
       </view>
       <view class="qg-cell" bindtap="goToQuiz">
         <view class="qg-icon" style="background:#ede9fe;">🧠</view>
