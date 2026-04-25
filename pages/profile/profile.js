@@ -25,7 +25,6 @@ Page({
     learnedCourses: [],
   },
 
-  // 隐藏入口：连续点击版本号计数
   _versionClickCount: 0,
   _versionClickTimer: null,
 
@@ -49,16 +48,11 @@ Page({
       return sum + (c ? parseInt(c.duration) : 0)
     }, 0)
     const streakDays = wx.getStorageSync('streakDays') || 1
-
-    // 已学课程
     const learnedCourses = COURSES.filter(c => learnedIds.includes(c.id))
-
-    // 成就
     const badges = BADGES.map(b => ({
       ...b,
       unlocked: learnedCount >= b.condition,
     }))
-
     this.setData({ stats: { learnedCount, totalMinutes, streakDays }, learnedCourses, badges })
   },
 
@@ -103,6 +97,36 @@ Page({
     wx.navigateTo({ url: `/pages/detail/detail?id=${e.currentTarget.dataset.id}` })
   },
 
+  goToCourse() {
+    wx.switchTab({ url: '/pages/course/course' })
+  },
+
+  onBadgeTap(e) {
+    const badge = e.currentTarget.dataset.badge
+    if (badge.unlocked) {
+      wx.showModal({
+        title: `${badge.icon} ${badge.name}`,
+        content: '恭喜你解锁了这个成就！继续保持~',
+        showCancel: false,
+        confirmText: '加油 💪',
+      })
+    } else {
+      const hint = {
+        1: '完成任意一门课程即可解锁',
+        2: '完成 3 门课程即可解锁',
+        3: '完成 6 门课程即可解锁',
+        4: '完成所有课程即可解锁',
+        5: '完成所有课程即可解锁',
+      }
+      wx.showModal({
+        title: `${badge.icon} ${badge.name}`,
+        content: `解锁条件：${hint[badge.id] || '继续努力'}`,
+        showCancel: false,
+        confirmText: '知道了',
+      })
+    }
+  },
+
   goToSoulmate() {
     wx.navigateTo({ url: '/pages/soulmate/soulmate' })
   },
@@ -117,10 +141,6 @@ Page({
 
   editProfile() {
     wx.navigateTo({ url: '/pages/onboarding/onboarding?mode=edit' })
-  },
-
-  goToDetail(e) {
-    wx.navigateTo({ url: `/pages/detail/detail?id=${e.currentTarget.dataset.id}` })
   },
 
   clearProgress() {
@@ -138,7 +158,6 @@ Page({
   },
 
   shareApp() {
-    // 分享通过右上角菜单触发，这里做个提示引导
     wx.showToast({ title: '点击右上角"···"分享给朋友', icon: 'none', duration: 2500 })
   },
 
@@ -150,19 +169,14 @@ Page({
     })
   },
 
-  // 连续点击版本号触发管理员入口
   onVersionClick() {
     this._versionClickCount++
-    
-    // 重置计时器，3秒内连续点击才有效
     if (this._versionClickTimer) {
       clearTimeout(this._versionClickTimer)
     }
     this._versionClickTimer = setTimeout(() => {
       this._versionClickCount = 0
     }, 3000)
-    
-    // 连续点击5次触发管理员验证
     if (this._versionClickCount >= 5) {
       this._versionClickCount = 0
       clearTimeout(this._versionClickTimer)

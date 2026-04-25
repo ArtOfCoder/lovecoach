@@ -201,7 +201,6 @@ Page({
     }, (err) => {
       wx.hideLoading()
       this.setData({ generatingNew: false })
-      const ai = require('../../utils/ai')
       if (err === '__domain_blocked__') {
         ai.handleError(err)
       } else {

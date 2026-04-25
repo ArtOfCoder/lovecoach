@@ -1,14 +1,15 @@
 # 恋爱进化论小程序 - 项目记忆
 
 ## 项目概述
-这是一个微信小程序项目（恋爱教练类），包含 AI 顾问、情侣档案、聊天回复建议等功能。
+这是一个微信小程序项目（恋爱教练类），包含恋爱顾问、情侣档案、聊天回复建议等功能。
+**注意：小程序内所有 AI 字样已清除（审核要求），H5 版本保留 AI 功能。**
 
 ## 关键配置
 
 ### AI 功能配置（重要）
 - **当前模式：本地模式（USE_LOCAL_MODE = true）**
 - **位置：** `utils/ai.js`
-- **原因：** 服务器域名被第三方平台禁用，无法配置白名单
+- **原因：** 个人主体小程序审核要求不得使用 AI 深度合成
 
 ### 三种 AI 模式
 
@@ -254,9 +255,29 @@
 - 首页新增灵魂伴侣 Banner 和宫格入口
 - "我的"页面新增特色功能入口卡片
 
-### 2026-04-03（首次更新）
-- 添加本地模式支持（无需网络）
-- 修改 `utils/ai.js` 支持三种 AI 模式切换
-- 更新 `pages/ai-coach/ai-coach.js` 适配本地模式
-- 创建配置文档 `AI_CONFIG.md`
-- 创建云函数部署文档 `cloudfunctions/README.md`
+### 2026-04-25（审核通过后全面重构：星座配对页面升级 + 3D头像生成）
+
+- **背景**：小程序通过审核后，因反复补丁导致功能和体验严重下降，用户要求全面重构
+- **星座配对页面完全重写**：
+  - `pages/soulmate/soulmate.wxml`：289行重写，新增4大区块
+    - `result-hero` 顶部契合度 Banner（双星座符号 + 大号百分比）
+    - `couple-cards-wrap` 双人物卡片（用户 + 最佳配对并排）
+    - `compat-bars-wrap` 四维契合度进度条（爱情浓度/沟通默契/性格互补/长期稳定）
+    - `pro-con-wrap` 优劣势双栏分析
+  - `pages/soulmate/soulmate.wxss`：暗黑宇宙风重写（#0d0d1e 深色背景，紫粉渐变）
+  - `pages/soulmate/soulmate.js`：新增完整契合度引擎
+    - `ZODIAC_SYMBOL` 星座符号映射（12个星座到emoji符号）
+    - `ZODIAC_KEYWORDS` 星座关键词性格标签
+    - `COMPAT_DATA` 24条配对数据（12配对+镜像），含score/四维值/优劣势列表
+    - `getCompatData()` 获取配对数据
+    - `getCompatLevel()` 90分以上天作之合/85分强烈契合/80分相当匹配
+    - `getMyAvatar()` 获取用户星座头像（双头像支持）
+    - `startGenerate` setData 新增12个字段（compatScore/compatLevel/matchStars/compatDimensions/compatPros/compatCons等）
+    - 缓存恢复 onLoad 更新支持全部新字段
+- **首页 Banner 升级**：`pages/index/index.wxml` 新增标签、评分预览、星座符号预览
+- **Commit**: `6a38dd3` 星座配对页面升级
+- **3D头像生成**（进行中）：使用 Hunyuan Image 模型生成高质量3D星座人物头像
+  - 已成功生成1张（金牛座女，taurus_female_new.png，1.53MB）
+  - 其余23张因服务队列超时（14003错误）未完成
+  - 提示词风格：真人3D渲染/亚洲面孔/星座元素背景/8K质量/无卡通动漫
+- **待完成**：其余23张高质量星座头像 + 其他页面全面美化

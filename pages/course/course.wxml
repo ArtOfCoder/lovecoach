@@ -9,7 +9,7 @@
         <view class="header-sub">共 {{totalCount}} 门课程，系统提升情感能力</view>
       </view>
       <view class="header-search-btn" bindtap="toggleSearch">
-        <text>{{showSearch ? '×' : '🔍'}}</text>
+        <text>{{showSearch ? '✕' : '🔍'}}</text>
       </view>
     </view>
   </view>
@@ -23,7 +23,7 @@
       bindinput="onSearchInput"
       focus="{{showSearch}}"
     />
-    <view wx:if="{{searchKeyword}}" class="search-clear" bindtap="clearSearch">×</view>
+    <view wx:if="{{searchKeyword}}" class="search-clear" bindtap="clearSearch">✕</view>
   </view>
 
   <!-- 性别筛选 -->
@@ -50,12 +50,13 @@
     </view>
   </scroll-view>
 
-  <!-- 课程区域 -->
-  <view class="section-title-row">
-    <view class="section-ttl-txt">
-      📚 {{activeCategory === '全部' ? '全部课程' : activeCategory + '系列'}}
-      <text class="count-badge">{{filteredCourses.length}}</text>
+  <!-- 课程统计条 -->
+  <view class="stats-bar">
+    <view class="stats-bar-left">
+      <text class="stats-bar-icon">📚</text>
+      <text class="stats-bar-text">{{activeCategory === '全部' ? '全部课程' : activeCategory + '系列'}}</text>
     </view>
+    <view class="stats-bar-count">{{filteredCourses.length}} 门</view>
   </view>
 
   <!-- 课程列表 -->
@@ -85,14 +86,19 @@
         <view class="item-footer">
           <text class="item-duration">⏱ {{item.duration}}</text>
           <text class="item-views">👁 {{item.views}}</text>
+          <view wx:if="{{learnedMap[item.id]}}" class="item-learned-tag">已学</view>
         </view>
       </view>
     </view>
 
-    <view wx:if="{{filteredCourses.length === 0}}" class="empty">
-      <view class="empty-icon">🔍</view>
-      <text class="empty-text">{{searchKeyword ? '没有找到匹配的课程' : '暂无相关课程'}}</text>
-      <view wx:if="{{searchKeyword}}" class="empty-hint" bindtap="clearSearch">清除搜索</view>
+    <!-- 空状态 -->
+    <view wx:if="{{filteredCourses.length === 0}}" class="empty-state">
+      <view class="empty-illust">🔍</view>
+      <view class="empty-title">{{searchKeyword ? '没有找到匹配的课程' : '暂无相关课程'}}</view>
+      <view class="empty-desc">{{searchKeyword ? '换个关键词试试吧' : '试试选择其他分类或筛选条件'}}</view>
+      <view wx:if="{{searchKeyword}}" class="empty-action" bindtap="clearSearch">
+        清除搜索
+      </view>
     </view>
   </view>
 
