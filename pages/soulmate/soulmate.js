@@ -582,6 +582,20 @@ Page({
     this.checkAdminUnlockStatus(this.data.userId)
   },
 
+  // 页面卸载时清理定时器
+  onUnload() {
+    if (this._loadingTimer) {
+      clearInterval(this._loadingTimer)
+    }
+  },
+
+  // 页面隐藏时清理定时器
+  onHide() {
+    if (this._loadingTimer) {
+      clearInterval(this._loadingTimer)
+    }
+  },
+
   // 复制用户ID
   copyUserId() {
     const { userId } = this.data
@@ -687,8 +701,12 @@ Page({
       '在十二星座中寻找最佳配对...',
       '配对结果即将呈现...',
     ]
+    // 清理可能残留的加载动画定时器
+    if (this._loadingTimer) {
+      clearInterval(this._loadingTimer)
+    }
     let step = 0
-    const timer = setInterval(() => {
+    this._loadingTimer = setInterval(() => {
       step++
       if (step < loadingTexts.length) {
         this.setData({ loadingText: loadingTexts[step], loadingStep: step })
