@@ -558,7 +558,7 @@
   border: 1rpx solid rgba(255,255,255,.4);
 }
 
-/* ===== 灵魂伴侣 Banner ===== */
+/* ===== 星座配对 Banner ===== */
 .soulmate-banner {
   display: flex;
   align-items: center;
@@ -584,32 +584,47 @@
 
 .smb-left {
   flex: 1;
-  padding-right: 20rpx;
+  padding-right: 16rpx;
 }
 
 .smb-tag {
   font-size: 20rpx;
-  color: rgba(180, 150, 255, 0.9);
-  background: rgba(180, 80, 255, 0.2);
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.15);
   border-radius: 100rpx;
   padding: 4rpx 16rpx;
   display: inline-block;
   margin-bottom: 12rpx;
-  border: 1rpx solid rgba(180, 100, 255, 0.3);
+  border: 1rpx solid rgba(251, 191, 36, 0.3);
 }
 
 .smb-title {
   font-size: 36rpx;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 10rpx;
+  margin-bottom: 8rpx;
   letter-spacing: 1rpx;
 }
 
 .smb-sub {
-  font-size: 22rpx;
+  font-size: 21rpx;
   color: rgba(200, 180, 255, 0.7);
   line-height: 1.5;
+  margin-bottom: 16rpx;
+}
+
+.smb-features {
+  display: flex;
+  gap: 12rpx;
+}
+
+.smb-feat {
+  font-size: 19rpx;
+  color: rgba(196, 181, 253, 0.8);
+  background: rgba(139, 92, 246, 0.15);
+  padding: 4rpx 12rpx;
+  border-radius: 100rpx;
+  border: 1rpx solid rgba(139, 92, 246, 0.25);
 }
 
 .smb-right {
@@ -620,29 +635,21 @@
   flex-shrink: 0;
 }
 
-.smb-avatar-demo {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #f5a7c7, #a78bfa, #60a5fa);
+.smb-zodiac-preview {
   display: flex;
   align-items: center;
-  justify-content: center;
-  filter: blur(4rpx);
-  box-shadow: 0 0 20rpx rgba(180, 100, 255, 0.5);
+  gap: 8rpx;
+  font-size: 36rpx;
+  color: rgba(196, 181, 253, 0.9);
 }
 
-.smb-blur-face {
-  font-size: 40rpx;
-  filter: blur(2rpx);
+.smb-z { font-size: 32rpx; }
+.smb-heart { font-size: 28rpx; }
+
+.smb-score-demo {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #fbbf24;
+  text-shadow: 0 0 12rpx rgba(251, 191, 36, 0.6);
 }
 
-.smb-price {
-  font-size: 22rpx;
-  color: #ffd700;
-  background: rgba(255, 215, 0, 0.15);
-  border-radius: 100rpx;
-  padding: 4rpx 16rpx;
-  border: 1rpx solid rgba(255, 215, 0, 0.3);
-  white-space: nowrap;
-}

@@ -108,15 +108,22 @@
   <view class="section-wrap">
     <view class="soulmate-banner" bindtap="goToSoulmate">
       <view class="smb-left">
-        <view class="smb-tag">⭐ 星座测试</view>
-        <view class="smb-title">星座配对分析</view>
-        <view class="smb-sub">输入生日，分析星座特质，探索最佳配对组合</view>
+        <view class="smb-tag">✨ 限时免费</view>
+        <view class="smb-title">星座配对测试</view>
+        <view class="smb-sub">12星座×配对分析·契合度评分·专属解析</view>
+        <view class="smb-features">
+          <text class="smb-feat">💖 契合度</text>
+          <text class="smb-feat">📊 四维分析</text>
+          <text class="smb-feat">🎭 双人物图</text>
+        </view>
       </view>
       <view class="smb-right">
-        <view class="smb-avatar-demo">
-          <view class="smb-blur-face">✨</view>
+        <view class="smb-zodiac-preview">
+          <text class="smb-z">♈</text>
+          <text class="smb-heart">💕</text>
+          <text class="smb-z">♎</text>
         </view>
-        <view class="smb-price">免费测试</view>
+        <view class="smb-score-demo">88%</view>
       </view>
     </view>
   </view>

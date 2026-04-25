@@ -221,6 +221,70 @@ const ZODIAC_TO_KEY = {
   '双鱼座': 'pisces',
 }
 
+// ===== 星座符号映射 =====
+const ZODIAC_SYMBOL = {
+  '白羊座':'♈','金牛座':'♉','双子座':'♊','巨蟹座':'♋',
+  '狮子座':'♌','处女座':'♍','天秤座':'♎','天蝎座':'♏',
+  '射手座':'♐','摩羯座':'♑','水瓶座':'♒','双鱼座':'♓',
+}
+
+// ===== 星座关键词（性格标签）=====
+const ZODIAC_KEYWORDS = {
+  '白羊座': '热情·勇敢·直接',
+  '金牛座': '稳重·踏实·专一',
+  '双子座': '活泼·聪明·多变',
+  '巨蟹座': '温柔·感性·顾家',
+  '狮子座': '自信·慷慨·耀眼',
+  '处女座': '细心·完美·体贴',
+  '天秤座': '优雅·平衡·温和',
+  '天蝎座': '深情·神秘·专一',
+  '射手座': '乐观·自由·冒险',
+  '摩羯座': '沉稳·务实·可靠',
+  '水瓶座': '独立·创新·个性',
+  '双鱼座': '浪漫·温柔·感性',
+}
+
+// ===== 星座配对契合度数据 =====
+// 四维：爱情浓度、沟通默契、性格互补、长期稳定
+const COMPAT_DATA = {
+  '白羊座_天秤座': { score: 88, love: 90, comm: 82, comp: 92, stable: 80, pros: ['互补型配对','激情四射'], cons: ['容易争吵','需要磨合'] },
+  '金牛座_天蝎座': { score: 90, love: 95, comm: 78, comp: 88, stable: 95, pros: ['深度契合','忠诚专一'], cons: ['固执碰撞','情绪波动'] },
+  '双子座_射手座': { score: 85, love: 85, comm: 92, comp: 80, stable: 78, pros: ['思想共鸣','冒险同行'], cons: ['不够稳定','需要沉淀'] },
+  '巨蟹座_摩羯座': { score: 87, love: 88, comm: 80, comp: 90, stable: 90, pros: ['互补完美','共同目标'], cons: ['情感表达差异','沟通需努力'] },
+  '狮子座_水瓶座': { score: 84, love: 86, comm: 88, comp: 82, stable: 80, pros: ['个性鲜明','彼此尊重'], cons: ['自我较强','需要让步'] },
+  '处女座_双鱼座': { score: 86, love: 90, comm: 75, comp: 95, stable: 84, pros: ['理性感性互补','温柔相待'], cons: ['生活节奏不同','需要包容'] },
+  // 反向配对（同分）
+  '天秤座_白羊座': { score: 88, love: 90, comm: 82, comp: 92, stable: 80, pros: ['互补型配对','激情四射'], cons: ['容易争吵','需要磨合'] },
+  '天蝎座_金牛座': { score: 90, love: 95, comm: 78, comp: 88, stable: 95, pros: ['深度契合','忠诚专一'], cons: ['固执碰撞','情绪波动'] },
+  '射手座_双子座': { score: 85, love: 85, comm: 92, comp: 80, stable: 78, pros: ['思想共鸣','冒险同行'], cons: ['不够稳定','需要沉淀'] },
+  '摩羯座_巨蟹座': { score: 87, love: 88, comm: 80, comp: 90, stable: 90, pros: ['互补完美','共同目标'], cons: ['情感表达差异','沟通需努力'] },
+  '水瓶座_狮子座': { score: 84, love: 86, comm: 88, comp: 82, stable: 80, pros: ['个性鲜明','彼此尊重'], cons: ['自我较强','需要让步'] },
+  '双鱼座_处女座': { score: 86, love: 90, comm: 75, comp: 95, stable: 84, pros: ['理性感性互补','温柔相待'], cons: ['生活节奏不同','需要包容'] },
+}
+
+// 获取契合度数据
+function getCompatData(zodiac1, zodiac2) {
+  const key = `${zodiac1}_${zodiac2}`
+  return COMPAT_DATA[key] || { score: 82, love: 82, comm: 80, comp: 83, stable: 83, pros: ['性格互补','相互理解'], cons: ['需要磨合','多些耐心'] }
+}
+
+// 契合度转等级和星星
+function getCompatLevel(score) {
+  if (score >= 90) return { level: '天作之合', stars: '★★★★★' }
+  if (score >= 85) return { level: '强烈契合', stars: '★★★★☆' }
+  if (score >= 80) return { level: '相当匹配', stars: '★★★★☆' }
+  return { level: '各有魅力', stars: '★★★☆☆' }
+}
+
+// 我的星座头像（根据用户自己的星座）
+function getMyAvatar(zodiacName, userGender, seed) {
+  const zodiacKey = ZODIAC_TO_KEY[zodiacName]
+  if (zodiacKey) {
+    return `/images/soulmate/${zodiacKey}_${userGender}.png`
+  }
+  return ''
+}
+
 // ===== 根据星盘生成配对描述（本地版）=====
 function generateSoulmateDesc(zodiacName, birthCity, userGender) {
   const soulmateZodiac = getSoulmateZodiac(zodiacName)
@@ -441,6 +505,21 @@ Page({
       unlocked: true,     // 始终解锁
     },
 
+    // 我的头像（用户自己星座）
+    myAvatarUrl: '',
+    myAvatarGradient: '',
+
+    // 契合度数据
+    compatScore: 0,
+    compatLevel: '',
+    matchStars: '',
+    compatDimensions: [],
+    compatPros: [],
+    compatCons: [],
+    myZodiacKeyword: '',
+    soulmateKeyword: '',
+    soulmateSymbol: '💕',
+
     // 生成进度文字（动画）
     loadingText: '正在分析星座数据...',
     loadingStep: 0,
@@ -478,6 +557,17 @@ Page({
         step: 'result',
         astroSummary: soulmateData.astroSummary,
         soulmate: { ...soulmateData.soulmate, unlocked: true, blurred: false },
+        myAvatarUrl: soulmateData.myAvatarUrl || '',
+        myAvatarGradient: soulmateData.myAvatarGradient || '',
+        compatScore: soulmateData.compatScore || 85,
+        compatLevel: soulmateData.compatLevel || '强烈契合',
+        matchStars: soulmateData.matchStars || '★★★★☆',
+        compatDimensions: soulmateData.compatDimensions || [],
+        compatPros: soulmateData.compatPros || [],
+        compatCons: soulmateData.compatCons || [],
+        myZodiacKeyword: soulmateData.myZodiacKeyword || '',
+        soulmateKeyword: soulmateData.soulmateKeyword || '',
+        soulmateSymbol: soulmateData.soulmateSymbol || '💕',
         birthYear: soulmateData.birthYear,
         birthMonth: soulmateData.birthMonth,
         birthDay: soulmateData.birthDay,
@@ -621,10 +711,25 @@ Page({
       const avatarColors = generateAvatarColors(seed)
 
       // 直接生成头像（免费展示，无需付费）
-      const seed = year * 10000 + month * 100 + day
       const targetGender = userGender === 'male' ? 'female' : 'male'
       const avatarData = this.getLocalAvatar(targetGender, seed, astroSummary.soulmateZodiac)
       
+      // 我自己的头像（用我的星座+我的性别）
+      const myAvatarUrl = getMyAvatar(astroSummary.zodiac.name, userGender, seed)
+      const myAvatarGradient = avatarColors.bg
+
+      // 契合度计算
+      const compatRaw = getCompatData(astroSummary.zodiac.name, astroSummary.soulmateZodiac)
+      const compatInfo = getCompatLevel(compatRaw.score)
+
+      // 四维契合度柱状图数据
+      const compatDimensions = [
+        { label: '爱情浓度', value: compatRaw.love, color: 'linear-gradient(90deg,#ec4899,#f472b6)' },
+        { label: '沟通默契', value: compatRaw.comm, color: 'linear-gradient(90deg,#8b5cf6,#a78bfa)' },
+        { label: '性格互补', value: compatRaw.comp, color: 'linear-gradient(90deg,#0ea5e9,#38bdf8)' },
+        { label: '长期稳定', value: compatRaw.stable, color: 'linear-gradient(90deg,#10b981,#34d399)' },
+      ]
+
       const soulmate = {
         desc,
         avatarStyle: avatarCfg.bg,
@@ -641,6 +746,17 @@ Page({
         step: 'result',
         astroSummary,
         soulmate,
+        myAvatarUrl,
+        myAvatarGradient,
+        compatScore: compatRaw.score,
+        compatLevel: compatInfo.level,
+        matchStars: compatInfo.stars,
+        compatDimensions,
+        compatPros: compatRaw.pros,
+        compatCons: compatRaw.cons,
+        myZodiacKeyword: ZODIAC_KEYWORDS[astroSummary.zodiac.name] || '',
+        soulmateKeyword: ZODIAC_KEYWORDS[astroSummary.soulmateZodiac] || '',
+        soulmateSymbol: ZODIAC_SYMBOL[astroSummary.soulmateZodiac] || '💕',
         birthYear: String(year),
         birthMonth: String(month),
         birthDay: String(day),
@@ -652,6 +768,17 @@ Page({
       wx.setStorageSync('soulmateData', {
         astroSummary,
         soulmate,
+        myAvatarUrl,
+        myAvatarGradient,
+        compatScore: compatRaw.score,
+        compatLevel: compatInfo.level,
+        matchStars: compatInfo.stars,
+        compatDimensions,
+        compatPros: compatRaw.pros,
+        compatCons: compatRaw.cons,
+        myZodiacKeyword: ZODIAC_KEYWORDS[astroSummary.zodiac.name] || '',
+        soulmateKeyword: ZODIAC_KEYWORDS[astroSummary.soulmateZodiac] || '',
+        soulmateSymbol: ZODIAC_SYMBOL[astroSummary.soulmateZodiac] || '💕',
         birthYear: String(year),
         birthMonth: String(month),
         birthDay: String(day),

@@ -1,28 +1,43 @@
-<!-- pages/soulmate/soulmate.wxml - 星座配对 -->
+<!-- pages/soulmate/soulmate.wxml - 星座配对（全面升级版） -->
 <view class="soulmate-page">
 
   <!-- ========== 步骤1：输入页 ========== -->
   <view wx:if="{{step === 'input'}}" class="step-input">
 
-    <!-- 头部装饰 -->
-    <view class="header-deco">
-      <view class="star-ring">
-        <text class="big-star">✨</text>
-        <text class="zodiac-float z1">♈</text>
-        <text class="zodiac-float z2">♋</text>
-        <text class="zodiac-float z3">♎</text>
-        <text class="zodiac-float z4">♑</text>
+    <!-- 头部 -->
+    <view class="input-header">
+      <view class="input-header-bg"></view>
+      <view class="input-zodiac-row">
+        <text class="iz-symbol">♈</text>
+        <text class="iz-symbol">♉</text>
+        <text class="iz-symbol">♊</text>
+        <text class="iz-symbol">♋</text>
+        <text class="iz-symbol">♌</text>
+        <text class="iz-symbol">♍</text>
       </view>
-      <view class="header-title">星座配对测试</view>
-      <view class="header-sub">输入生日，探索你的星座性格与最佳配对</view>
+      <view class="input-title-wrap">
+        <view class="input-title">星座配对测试</view>
+        <view class="input-subtitle">探索你与TA的星座缘分指数</view>
+      </view>
+      <view class="input-zodiac-row">
+        <text class="iz-symbol">♎</text>
+        <text class="iz-symbol">♏</text>
+        <text class="iz-symbol">♐</text>
+        <text class="iz-symbol">♑</text>
+        <text class="iz-symbol">♒</text>
+        <text class="iz-symbol">♓</text>
+      </view>
     </view>
 
     <!-- 表单卡片 -->
     <view class="form-card">
 
-      <!-- 性别选择 -->
+      <!-- 我是 -->
       <view class="form-group">
-        <view class="form-label">我是</view>
+        <view class="form-label">
+          <text class="form-label-icon">👤</text>
+          <text>我是</text>
+        </view>
         <view class="gender-row">
           <view
             class="gender-opt {{userGender === 'male' ? 'active' : ''}}"
@@ -45,14 +60,17 @@
 
       <!-- 出生日期 -->
       <view class="form-group">
-        <view class="form-label">出生日期</view>
+        <view class="form-label">
+          <text class="form-label-icon">🗓</text>
+          <text>出生日期</text>
+        </view>
         <view class="date-row">
           <view class="date-input-wrap">
             <input
               class="date-input"
               type="number"
               placeholder="年"
-              placeholder-style="color:rgba(255,255,255,0.35);font-size:28rpx;"
+              placeholder-style="color:rgba(255,255,255,0.4);font-size:26rpx;"
               maxlength="4"
               value="{{birthYear}}"
               bindinput="onBirthYearInput"
@@ -65,7 +83,7 @@
               class="date-input"
               type="number"
               placeholder="月"
-              placeholder-style="color:rgba(255,255,255,0.35);font-size:28rpx;"
+              placeholder-style="color:rgba(255,255,255,0.4);font-size:26rpx;"
               maxlength="2"
               value="{{birthMonth}}"
               bindinput="onBirthMonthInput"
@@ -78,7 +96,7 @@
               class="date-input"
               type="number"
               placeholder="日"
-              placeholder-style="color:rgba(255,255,255,0.35);font-size:28rpx;"
+              placeholder-style="color:rgba(255,255,255,0.4);font-size:26rpx;"
               maxlength="2"
               value="{{birthDay}}"
               bindinput="onBirthDayInput"
@@ -91,52 +109,33 @@
 
       <!-- 出生地 -->
       <view class="form-group">
-        <view class="form-label">出生城市 <text class="optional-tag">（可选）</text></view>
+        <view class="form-label">
+          <text class="form-label-icon">📍</text>
+          <text>出生城市 <text class="optional-tag">（可选）</text></text>
+        </view>
         <view class="city-input-wrap">
-          <text class="city-icon">📍</text>
           <input
             class="city-input"
             type="text"
-            placeholder="如：北京、上海（影响上升星座）"
-            placeholder-style="color:rgba(255,255,255,0.35);font-size:24rpx;"
+            placeholder="如：北京、上海（影响上升星座计算）"
+            placeholder-style="color:rgba(255,255,255,0.4);font-size:24rpx;"
             value="{{birthCity}}"
             bindinput="onBirthCityInput"
           />
         </view>
       </view>
 
-      <!-- 说明文字 -->
-      <view class="form-tip">
-        <text class="form-tip-icon">⭐</text>
-        <text class="form-tip-text">根据你的生日分析太阳星座、月亮星座和上升星座，探索与你最契合的伴侣星座特质</text>
-      </view>
-
     </view>
 
     <!-- 生成按钮 -->
     <view class="generate-btn" bindtap="startGenerate">
-      <text class="generate-btn-icon">💫</text>
-      <text class="generate-btn-text">开始星座配对分析</text>
+      <text class="generate-btn-icon">✨</text>
+      <text class="generate-btn-text">开始星座配对</text>
     </view>
 
-    <!-- 底部说明 -->
-    <view class="bottom-note">
-      <text>免费查看你的星座配对结果</text>
-      <text class="bottom-note-sub">基于星座运势的娱乐测试，仅供参考</text>
-    </view>
-    
     <!-- 免责声明 -->
-    <view class="ai-disclaimer">
-      <text class="ai-disclaimer-text">本功能基于星座知识库生成，仅供娱乐参考，不代表任何真实建议</text>
-    </view>
-
-    <!-- 客服入口 -->
-    <view class="support-section">
-      <view class="support-btn" bindtap="copyWechatId">
-        <text class="support-icon">💬</text>
-        <text class="support-text">遇到问题？联系客服</text>
-        <text class="support-id">news-tomato</text>
-      </view>
+    <view class="input-footer">
+      <text class="input-footer-text">基于星座知识库分析，结果仅供娱乐参考</text>
     </view>
 
   </view>
@@ -144,17 +143,18 @@
   <!-- ========== 步骤2：加载中 ========== -->
   <view wx:if="{{step === 'loading'}}" class="step-loading">
     <view class="loading-cosmos">
-      <view class="cosmos-ring ring1">
-        <text class="orbit-star s1">⭐</text>
+      <view class="cosmos-orbit orbit1">
+        <view class="orbit-planet p1">♈</view>
       </view>
-      <view class="cosmos-ring ring2">
-        <text class="orbit-star s2">✨</text>
+      <view class="cosmos-orbit orbit2">
+        <view class="orbit-planet p2">💕</view>
       </view>
-      <view class="cosmos-ring ring3">
-        <text class="orbit-star s3">💫</text>
+      <view class="cosmos-orbit orbit3">
+        <view class="orbit-planet p3">♎</view>
       </view>
-      <view class="cosmos-center">🔮</view>
+      <view class="cosmos-core">✨</view>
     </view>
+    <view class="loading-title">正在分析星座配对</view>
     <view class="loading-text">{{loadingText}}</view>
     <view class="loading-steps">
       <view class="ls-dot {{loadingStep >= 0 ? 'done' : ''}}"></view>
@@ -168,119 +168,164 @@
   <!-- ========== 步骤3：结果页 ========== -->
   <view wx:if="{{step === 'result'}}" class="step-result">
 
-    <!-- 星盘徽章 -->
-    <view class="astro-banner">
-      <view class="astro-tag">
-        <text class="at-symbol">{{astroSummary.zodiac.symbol}}</text>
-        <text class="at-name">{{astroSummary.zodiac.name}}</text>
-      </view>
-      <view class="astro-divider">×</view>
-      <view class="astro-tag soulmate-tag">
-        <text class="at-symbol">💖</text>
-        <text class="at-name">灵魂伴侣</text>
-      </view>
-      <view class="astro-divider">×</view>
-      <view class="astro-tag">
-        <text class="at-symbol">🌙</text>
-        <text class="at-name">{{astroSummary.moonSign}}</text>
+    <!-- 顶部渐变头图 -->
+    <view class="result-hero">
+      <view class="result-hero-bg"></view>
+      <view class="rh-zodiac-info">
+        <view class="rh-my-zodiac">
+          <view class="rhz-symbol">{{astroSummary.zodiac.symbol}}</view>
+          <view class="rhz-name">{{astroSummary.zodiac.name}}</view>
+          <view class="rhz-label">我的星座</view>
+        </view>
+        <view class="rh-heart-divider">
+          <text class="rh-heart">💖</text>
+          <view class="rh-compat-score">{{compatScore}}%</view>
+          <view class="rh-compat-label">契合度</view>
+        </view>
+        <view class="rh-soulmate-zodiac">
+          <view class="rhz-symbol soulmate-color">{{soulmateSymbol}}</view>
+          <view class="rhz-name">{{astroSummary.soulmateZodiac}}</view>
+          <view class="rhz-label">最佳配对</view>
+        </view>
       </view>
     </view>
 
-    <!-- 核心卡片：灵魂伴侣 -->
-    <view class="soulmate-card">
-
-      <!-- 标题 -->
-      <view class="sm-title">你的最佳配对星座</view>
-      <view class="sm-subtitle">
-        你是 {{astroSummary.zodiac.name}}，与 {{astroSummary.soulmateZodiac}} 星座最为契合
+    <!-- 配对人物双卡 -->
+    <view class="couple-cards-wrap">
+      <view class="couple-card my-card">
+        <view class="cc-label-tag my-tag">我</view>
+        <image
+          wx:if="{{myAvatarUrl}}"
+          class="cc-avatar"
+          src="{{myAvatarUrl}}"
+          mode="aspectFill"
+          bindlongpress="onLongPressImage"
+        />
+        <view wx:else class="cc-avatar-placeholder" style="background:{{myAvatarGradient}};">
+          <text>{{astroSummary.zodiac.symbol}}</text>
+        </view>
+        <view class="cc-zodiac-name">{{astroSummary.zodiac.name}}</view>
+        <view class="cc-zodiac-keyword">{{myZodiacKeyword}}</view>
       </view>
 
-      <!-- 头像区域 - 直接显示星座配对图 -->
-      <view class="avatar-zone">
-        <view class="avatar-unlocked-wrap">
-          <!-- 显示本地星座头像图片 -->
-          <block wx:if="{{soulmate.imageUrl}}">
-            <image
-              class="unlocked-image"
-              src="{{soulmate.imageUrl}}"
-              mode="aspectFill"
-              bindlongpress="onLongPressImage"
-            />
-          </block>
-          <!-- 渐变色头像 -->
-          <block wx:else>
-            <view 
-              class="unlocked-avatar"
-              style="background: {{soulmate.avatarStyle}};"
-            >
-              <view class="ua-hair" style="background: {{soulmate.hairColor}};"></view>
-              <view class="ua-face" style="background: {{soulmate.skinColor}};"></view>
-            </view>
-          </block>
-          <view class="unlocked-badge">
-            <text>{{astroSummary.soulmateZodiac}} ✨</text>
+      <view class="couple-match-center">
+        <view class="match-ring">
+          <text class="match-ring-text">{{compatLevel}}</text>
+        </view>
+        <view class="match-stars">{{matchStars}}</view>
+      </view>
+
+      <view class="couple-card soulmate-card-new">
+        <view class="cc-label-tag soulmate-tag-new">TA</view>
+        <image
+          wx:if="{{soulmate.imageUrl}}"
+          class="cc-avatar"
+          src="{{soulmate.imageUrl}}"
+          mode="aspectFill"
+          bindlongpress="onLongPressImage"
+        />
+        <view wx:else class="cc-avatar-placeholder" style="background:{{soulmate.avatarStyle}};">
+          <text>{{soulmateSymbol}}</text>
+        </view>
+        <view class="cc-zodiac-name">{{astroSummary.soulmateZodiac}}</view>
+        <view class="cc-zodiac-keyword">{{soulmateKeyword}}</view>
+      </view>
+    </view>
+
+    <!-- 配对详情卡片 -->
+    <view class="result-detail-card">
+
+      <!-- 星盘信息行 -->
+      <view class="astro-info-row">
+        <view class="air-item">
+          <view class="air-icon">☀️</view>
+          <view class="air-content">
+            <view class="air-label">太阳星座</view>
+            <view class="air-value">{{astroSummary.zodiac.name}}</view>
           </view>
-          <view class="longpress-hint">长按图片可保存</view>
+        </view>
+        <view class="air-item">
+          <view class="air-icon">↑</view>
+          <view class="air-content">
+            <view class="air-label">上升星座</view>
+            <view class="air-value">{{astroSummary.ascendant}}</view>
+          </view>
+        </view>
+        <view class="air-item">
+          <view class="air-icon">🌙</view>
+          <view class="air-content">
+            <view class="air-label">月亮星座</view>
+            <view class="air-value">{{astroSummary.moonSign}}</view>
+          </view>
         </view>
       </view>
 
-      <!-- 灵魂伴侣描述 -->
-      <view class="sm-desc-wrap">
-        <view class="sm-desc-quote">"</view>
-        <view class="sm-desc">{{soulmate.desc}}</view>
-        <view class="sm-desc-quote end-quote">"</view>
+      <!-- 分割线 -->
+      <view class="divider-line"></view>
+
+      <!-- 配对描述 -->
+      <view class="compat-desc-wrap">
+        <view class="cdw-title">
+          <text class="cdw-icon">💬</text>
+          <text>配对解析</text>
+        </view>
+        <view class="cdw-text">{{soulmate.desc}}</view>
       </view>
 
-      <!-- 星盘详情 -->
-      <view class="astro-detail">
-        <view class="ad-item">
-          <text class="ad-label">太阳星座</text>
-          <text class="ad-value">{{astroSummary.zodiac.symbol}} {{astroSummary.zodiac.name}}</text>
+      <!-- 四维契合度 -->
+      <view class="compat-bars-wrap">
+        <view class="cbw-title">
+          <text class="cbw-icon">📊</text>
+          <text>四维契合度</text>
         </view>
-        <view class="ad-item">
-          <text class="ad-label">上升星座</text>
-          <text class="ad-value">↑ {{astroSummary.ascendant}}</text>
-        </view>
-        <view class="ad-item">
-          <text class="ad-label">月亮星座</text>
-          <text class="ad-value">🌙 {{astroSummary.moonSign}}</text>
-        </view>
-        <view class="ad-item">
-          <text class="ad-label">灵魂伴侣</text>
-          <text class="ad-value ad-highlight">💕 {{astroSummary.soulmateZodiac}}</text>
+        <view class="compat-bar-item" wx:for="{{compatDimensions}}" wx:key="label">
+          <view class="cbi-label">{{item.label}}</view>
+          <view class="cbi-track">
+            <view class="cbi-fill" style="width:{{item.value}}%;background:{{item.color}};"></view>
+          </view>
+          <view class="cbi-value">{{item.value}}</view>
         </view>
       </view>
 
+      <!-- 优劣势分析 -->
+      <view class="pro-con-wrap">
+        <view class="pc-col">
+          <view class="pc-title pros">💚 优势</view>
+          <view class="pc-item" wx:for="{{compatPros}}" wx:key="*this">
+            <text class="pc-dot">·</text>
+            <text>{{item}}</text>
+          </view>
+        </view>
+        <view class="pc-col">
+          <view class="pc-title cons">🔶 注意</view>
+          <view class="pc-item" wx:for="{{compatCons}}" wx:key="*this">
+            <text class="pc-dot">·</text>
+            <text>{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+    </view>
+
+    <!-- 底部操作 -->
+    <view class="result-actions">
+      <view class="ra-btn save-btn" bindtap="saveImage">
+        <text class="ra-icon">📥</text>
+        <text class="ra-text">保存图片</text>
+      </view>
+      <button class="ra-btn share-btn" open-type="share">
+        <text class="ra-icon">💌</text>
+        <text class="ra-text">分享好友</text>
+      </button>
+    </view>
+
+    <view class="retest-btn" bindtap="goBack">
+      <text>🔄 重新测试</text>
     </view>
 
     <!-- 免责声明 -->
-    <view class="ai-disclaimer">
-      <text class="ai-disclaimer-text">本功能基于星座知识库生成，仅供娱乐参考，不代表任何真实建议</text>
-    </view>
-
-    <!-- 底部按钮组 -->
-    <view class="result-actions">
-
-      <!-- 操作按钮 -->
-      <view class="unlocked-actions">
-        <view class="ua-btn" bindtap="saveImage">
-          <text class="ua-icon">📥</text>
-          <text>保存图片</text>
-        </view>
-        <button
-          class="ua-btn ua-share-btn"
-          open-type="share"
-        >
-          <text class="ua-icon">📤</text>
-          <text>分享好友</text>
-        </button>
-      </view>
-
-      <!-- 重新测试 -->
-      <view class="regen-btn" bindtap="goBack">
-        <text>🔄 重新测试</text>
-      </view>
-
+    <view class="result-disclaimer">
+      <text>基于星座知识库生成，仅供娱乐参考，不代表真实建议</text>
     </view>
 
   </view>
