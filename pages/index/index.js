@@ -183,7 +183,8 @@ Page({
   },
 
   loadRecommendCourses(gender) {
-    const list = COURSES.filter(c => c.gender === gender).slice(0, 4)
+    // 优先显示匹配性别的课程，通用课程（both）也纳入
+    const list = COURSES.filter(c => c.gender === gender || c.gender === 'both').slice(0, 4)
     this.setData({ recommendCourses: list })
   },
 

@@ -124,7 +124,7 @@
       </view>
       <view class="reply-explain">💡 {{item.explain}}</view>
       <view class="reply-actions">
-        <view class="reply-copy" bindtap="copyReply" data-text="{{item.text}}">📋 复制</view>
+        <view class="reply-copy" bindtap="copyReply" data-index="{{index}}" data-type="reply">📋 复制</view>
         <view class="reply-upgrade {{item.upgrading?'reply-upgrade-loading':''}}" bindtap="upgradeReply" data-index="{{index}}">
           <view wx:if="{{item.upgrading}}" class="upgrade-loading-row">
             <view class="upgrade-dot"></view>
@@ -140,7 +140,7 @@
       <view class="upgraded-version" wx:if="{{item.upgraded}}">
         <view class="upgraded-label">✨ 优化版</view>
         <view class="upgraded-text">{{item.upgraded}}</view>
-        <view class="upgraded-copy" bindtap="copyReply" data-text="{{item.upgraded}}">📋 复制优化版</view>
+        <view class="upgraded-copy" bindtap="copyReply" data-index="{{index}}" data-type="upgraded">📋 复制优化版</view>
       </view>
     </view>
   </view>
@@ -184,7 +184,7 @@
         <view class="saved-scene">{{item.scene}}</view>
         <view class="saved-text">{{item.text}}</view>
       </view>
-      <view class="saved-copy-btn" bindtap="copyReply" data-text="{{item.text}}">复制</view>
+      <view class="saved-copy-btn" bindtap="copySavedReply" data-index="{{index}}">复制</view>
     </view>
   </view>
 

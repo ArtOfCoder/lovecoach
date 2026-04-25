@@ -31,6 +31,9 @@ App({
     if (!onboardingDone && !userGender) {
       // 首次使用：自动分配默认性别和昵称，不强制跳引导页
       this.autoInitUserInfo()
+    } else if (onboardingDone && userGender) {
+      // 已完成引导，直接使用已有数据
+      console.log('[App] 已完成引导，使用已有用户信息')
     }
     
     // 获取用户登录凭证（用于获取唯一标识）

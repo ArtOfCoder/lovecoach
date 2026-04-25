@@ -503,10 +503,25 @@ Page({
   },
 
   copyReply(e) {
-    const { text } = e.currentTarget.dataset
+    const { index, type } = e.currentTarget.dataset
+    if (index === undefined) return
+    const reply = this.data.replies[index]
+    if (!reply) return
+    const text = type === 'upgraded' ? reply.upgraded : reply.text
     if (!text) return
     wx.setClipboardData({
       data: text,
+      success: () => wx.showToast({ title: '已复制！', icon: 'success' }),
+    })
+  },
+
+  copySavedReply(e) {
+    const { index } = e.currentTarget.dataset
+    if (index === undefined) return
+    const saved = this.data.savedReplies[index]
+    if (!saved) return
+    wx.setClipboardData({
+      data: saved.text,
       success: () => wx.showToast({ title: '已复制！', icon: 'success' }),
     })
   },
@@ -523,7 +538,7 @@ Page({
     
     setTimeout(() => {
       // 本地关键词匹配解读
-      let result = this.getLocalAnalysis(taText, myGender, currentScene)
+      let result = this.getLocalAnalysis(this.data.taText, this.data.myGender, this.data.currentScene)
       this.setData({ analyzingTA: false, analyzeResult: result })
     }, 600)
   },

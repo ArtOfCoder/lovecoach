@@ -44,7 +44,7 @@ function checkScreenshotUsed(imageHash) {
   return usedScreenshots.some(item => {
     // 简单匹配：如果哈希相同或时间非常接近，认为是同一张图
     return item.hash === imageHash || 
-           (Math.abs(item.timestamp - Date.now()) < 10000 && item.hash.startsWith(item.hash.substring(0, 10)))
+           (Math.abs(item.timestamp - Date.now()) < 10000 && imageHash.startsWith(item.hash.substring(0, 10)))
   })
 }
 
@@ -572,10 +572,14 @@ Page({
         birthMonth: soulmateData.birthMonth,
         birthDay: soulmateData.birthDay,
         birthCity: soulmateData.birthCity,
+        userGender: soulmateData.userGender || userGender,
         canShare: true,
       })
       return
     }
+
+    // 检查管理员是否已手动解锁
+    this.checkAdminUnlockStatus(this.data.userId)
   },
 
   // 复制用户ID
@@ -1631,6 +1635,7 @@ Page({
       birthMonth,
       birthDay,
       birthCity,
+      userGender,
     }
     wx.setStorageSync('soulmateData', saveData)
 
@@ -1644,7 +1649,7 @@ Page({
         userGender,
         astroSummary,
         soulmate: newSoulmate,
-        imageUrl,
+        imageUrl: newSoulmate.imageUrl || '',
         unlocked: true,
         payTime: Date.now(),
         seed: parseInt(birthYear || 2000) * 10000 + parseInt(birthMonth || 1) * 100 + parseInt(birthDay || 1),
