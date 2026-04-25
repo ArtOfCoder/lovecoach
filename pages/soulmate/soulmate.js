@@ -724,7 +724,7 @@ Page({
       // 生成描述（使用本地星盘知识库）
       const desc = buildLocalDesc(astroSummary, userGender)
 
-      clearInterval(timer)
+      clearInterval(this._loadingTimer)
 
       // 头像：使用本地生成的头像
       // 预览时显示模糊版本，付费后显示清晰版本（同一张图）
@@ -817,7 +817,7 @@ Page({
       })
 
     } catch (err) {
-      clearInterval(timer)
+      clearInterval(this._loadingTimer)
       wx.showToast({ title: '生成失败，请重试', icon: 'none' })
       this.setData({ step: 'input' })
     }
