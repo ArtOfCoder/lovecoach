@@ -280,7 +280,7 @@ function getCompatLevel(score) {
 function getMyAvatar(zodiacName, userGender, seed) {
   const zodiacKey = ZODIAC_TO_KEY[zodiacName]
   if (zodiacKey) {
-    return `/images/soulmate/${zodiacKey}_${userGender}.png`
+    return `/images/soulmate/${zodiacKey}_${userGender}.jpg`
   }
   return ''
 }
@@ -1594,7 +1594,7 @@ Page({
     if (soulmateZodiac) {
       const zodiacKey = ZODIAC_TO_KEY[soulmateZodiac]
       if (zodiacKey) {
-        const imgPath = `/images/soulmate/${zodiacKey}_${gender}.png`
+        const imgPath = `/images/soulmate/${zodiacKey}_${gender}.jpg`
         return { type: 'image', path: imgPath, zodiacKey }
       }
     }
