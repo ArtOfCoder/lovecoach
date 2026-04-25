@@ -43,7 +43,7 @@
   <view class="section">
     <view class="section-title-row">
       <view class="section-title">🏆 学习成就</view>
-      <view class="section-sub">{{badges.filter(b=>b.unlocked).length}}/{{badges.length}} 已解锁</view>
+      <view class="section-sub">{{unlockedBadgeCount}}/{{badges.length}} 已解锁</view>
     </view>
     <view class="badge-grid">
       <view

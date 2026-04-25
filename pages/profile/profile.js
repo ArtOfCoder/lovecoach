@@ -22,6 +22,7 @@ Page({
       streakDays: 1,
     },
     badges: [],
+    unlockedBadgeCount: 0,
     learnedCourses: [],
   },
 
@@ -53,7 +54,8 @@ Page({
       ...b,
       unlocked: learnedCount >= b.condition,
     }))
-    this.setData({ stats: { learnedCount, totalMinutes, streakDays }, learnedCourses, badges })
+    const unlockedBadgeCount = badges.filter(b => b.unlocked).length
+    this.setData({ stats: { learnedCount, totalMinutes, streakDays }, learnedCourses, badges, unlockedBadgeCount })
   },
 
   setGender(e) {
